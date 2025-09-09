@@ -1,0 +1,49 @@
+C:\Users\Adir\Desktop\Coding\Dev\dormhub
+├── app
+|  ├── (protected)
+|  |  ├── layout.tsx
+|  |  └── marketplace
+|  |     └── page.tsx
+|  ├── (public)
+|  |  └── page.tsx
+|  ├── api
+|  ├── auth
+|  |  └── actions.ts
+|  ├── components
+|  |  ├── Auth0Provider.tsx
+|  |  └── Profile.js
+|  ├── favicon.ico
+|  ├── globals.css
+|  ├── layout.tsx
+|  ├── page.tsx
+|  ├── rideshare
+|  |  └── page.tsx
+|  └── studybuddy
+|     └── page.tsx
+├── dormhub-diagram.png
+├── eslint.config.mjs
+├── lib
+|  ├── auth.ts
+|  ├── auth0.ts
+|  ├── mock.ts
+|  ├── repos.ts
+|  └── types.ts
+├── middleware.ts
+├── next-env.d.ts
+├── next.config.ts
+├── output.txt
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── public
+|  ├── file.svg
+|  ├── globe.svg
+|  ├── next.svg
+|  ├── vercel.svg
+|  └── window.svg
+├── README.md
+└── tsconfig.json
+
+directory: 1001 file: 5646
+
+ignored: directory (12)
