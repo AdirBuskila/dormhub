@@ -3,40 +3,222 @@ import { randomUUID } from "crypto";
 import type { Repos, TipsRepo, InfoRepo, TipFilter, InfoFilter } from "./repos";
 import type { Tip, TextTip, ProductTip, InfoItem, Id, Pagination, Page, ISODateTime, Status, InfoCategory } from "./types";
 
-const now = () => new Date().toISOString() as ISODateTime;
-
 // -------------------------
 // Seed data
 // -------------------------
+
+const now = () => new Date().toISOString() as ISODateTime;
+const daysAgo = (d: number) => {
+  const dt = new Date();
+  dt.setDate(dt.getDate() - d);
+  return dt.toISOString() as ISODateTime;
+};
+const hoursAgo = (h: number) => {
+  const dt = new Date();
+  dt.setHours(dt.getHours() - h);
+  return dt.toISOString() as ISODateTime;
+};
+
 const seedTips: Tip[] = [
+  // TEXT — Internet/WiFi
   {
     id: randomUUID(),
     ownerId: "user_alex" as Id,
     type: "text",
     title: "Router placement that actually works",
-    text: "Put the router near the hallway, not inside the bedroom closet.",
+    text: "Put the router near the hallway, not inside the bedroom closet. Signal is way better for both rooms.",
     tags: ["internet", "wifi"],
     images: [],
     helpfulCount: 4,
     flagCount: 0,
     status: "active",
-    createdAt: now(),
+    createdAt: daysAgo(9),
   } as TextTip,
+
+  // PRODUCT — Curtains
   {
     id: randomUUID(),
     ownerId: "user_maya" as Id,
     type: "product",
     title: "Blackout curtain that fits Dorm C windows",
-    text: "This one blocks 90% light. Needed 2 units for full width.",
+    text: "Blocks ~90% light. Needed 2 units for full width; length 220cm fits well.",
     tags: ["sleep", "curtains"],
-    images: [],
+    images: ["https://placehold.co/240x240?text=Curtains"],
     helpfulCount: 9,
     flagCount: 0,
     status: "active",
-    productUrl: "https://www.aliexpress.com/example-curtain",
+    productUrl: "https://example.com/blackout-curtain",
     approxPriceIls: 65,
-    createdAt: now(),
+    store: "AliExpress",
+    apartmentFit: "Dorm C studio",
+    createdAt: daysAgo(7),
   } as ProductTip,
+
+  // TEXT — Laundry
+  {
+    id: randomUUID(),
+    ownerId: "user_noa" as Id,
+    type: "text",
+    title: "Laundry tip: mornings are empty",
+    text: "Machines are free 07:00–08:30 most weekdays. Bring your own detergent—campus one is pricey.",
+    tags: ["laundry", "money"],
+    images: [],
+    helpfulCount: 6,
+    flagCount: 0,
+    status: "active",
+    createdAt: daysAgo(6),
+  } as TextTip,
+
+  // PRODUCT — Shower caddy
+  {
+    id: randomUUID(),
+    ownerId: "user_omer" as Id,
+    type: "product",
+    title: "Over-the-door shower caddy (doesn’t rust)",
+    text: "Fits the dorm bathroom doors; no drilling needed.",
+    tags: ["bathroom", "organize"],
+    images: ["https://placehold.co/240x240?text=Caddy"],
+    helpfulCount: 3,
+    flagCount: 0,
+    status: "active",
+    productUrl: "https://example.com/shower-caddy",
+    approxPriceIls: 49,
+    store: "IKEA",
+    apartmentFit: "Dorm A/B bathrooms",
+    createdAt: daysAgo(5),
+  } as ProductTip,
+
+  // TEXT — Noise/Quiet hours
+  {
+    id: randomUUID(),
+    ownerId: "user_yuval" as Id,
+    type: "text",
+    title: "Quietest study spots nearby",
+    text: "Library 3rd floor (back corner) and the lounge of Dorm B after 21:00 are usually empty.",
+    tags: ["study", "quiet"],
+    images: [],
+    helpfulCount: 5,
+    flagCount: 0,
+    status: "active",
+    createdAt: daysAgo(4),
+  } as TextTip,
+
+  // PRODUCT — Power strip with long cord
+  {
+    id: randomUUID(),
+    ownerId: "user_lior" as Id,
+    type: "product",
+    title: "5-socket power strip, 3m cable",
+    text: "Outlets are awkward in Dorm A; this length reaches the desk easily.",
+    tags: ["electronics", "desk"],
+    images: ["https://placehold.co/240x240?text=Power+Strip"],
+    helpfulCount: 2,
+    flagCount: 0,
+    status: "active",
+    productUrl: "https://example.com/power-strip-3m",
+    approxPriceIls: 35,
+    store: "Local Hardware",
+    apartmentFit: "Dorm A",
+    createdAt: daysAgo(3),
+  } as ProductTip,
+
+  // TEXT — Kitchen
+  {
+    id: randomUUID(),
+    ownerId: "user_dan" as Id,
+    type: "text",
+    title: "Shared kitchen etiquette that works",
+    text: "Write your room number on containers. Friday noon is a good time to clean fridge—less crowded.",
+    tags: ["kitchen", "community"],
+    images: [],
+    helpfulCount: 1,
+    flagCount: 0,
+    status: "active",
+    createdAt: hoursAgo(26),
+  } as TextTip,
+
+  // PRODUCT — Door draft stopper
+  {
+    id: randomUUID(),
+    ownerId: "user_rina" as Id,
+    type: "product",
+    title: "Draft stopper for hallway door",
+    text: "Cuts hallway noise and cold air. Self-adhesive, easy install.",
+    tags: ["noise", "comfort"],
+    images: ["https://placehold.co/240x240?text=Draft+Stopper"],
+    helpfulCount: 8,
+    flagCount: 0,
+    status: "active",
+    productUrl: "https://example.com/draft-stopper",
+    approxPriceIls: 28,
+    store: "Amazon",
+    apartmentFit: "Dorm C",
+    createdAt: hoursAgo(20),
+  } as ProductTip,
+
+  // TEXT — Transport
+  {
+    id: randomUUID(),
+    ownerId: "user_ilan" as Id,
+    type: "text",
+    title: "Bus tip to campus gate",
+    text: "Bus 12 is faster before 8am; after that take 7A—less crowded and similar time.",
+    tags: ["transport", "time"],
+    images: [],
+    helpfulCount: 0,
+    flagCount: 0,
+    status: "active",
+    createdAt: hoursAgo(8),
+  } as TextTip,
+
+  // PRODUCT — Under-bed storage
+  {
+    id: randomUUID(),
+    ownerId: "user_tal" as Id,
+    type: "product",
+    title: "Under-bed rolling storage (fits frame height)",
+    text: "Two bins fit under the standard dorm bed; check height 18cm.",
+    tags: ["storage", "organize"],
+    images: ["https://placehold.co/240x240?text=Storage+Bin"],
+    helpfulCount: 11,
+    flagCount: 0,
+    status: "active",
+    productUrl: "https://example.com/underbed-storage",
+    approxPriceIls: 79,
+    store: "IKEA",
+    apartmentFit: "Dorm A/B/C",
+    createdAt: hoursAgo(3),
+  } as ProductTip,
+
+  // TEXT — Example of HIDDEN (moderation)
+  {
+    id: randomUUID(),
+    ownerId: "user_hidden" as Id,
+    type: "text",
+    title: "Poster removal policy",
+    text: "Posters are okay on cork strips only; tape on paint will be charged.",
+    tags: ["maintenance", "rules"],
+    images: [],
+    helpfulCount: 0,
+    flagCount: 3,
+    status: "hidden",
+    createdAt: daysAgo(2),
+  } as TextTip,
+
+  // TEXT — Example of ARCHIVED (older tip)
+  {
+    id: randomUUID(),
+    ownerId: "user_old" as Id,
+    type: "text",
+    title: "Old exam bank link",
+    text: "Moved to the new site last semester. Keeping this archived as reference.",
+    tags: ["study", "link"],
+    images: [],
+    helpfulCount: 2,
+    flagCount: 0,
+    status: "archived",
+    createdAt: daysAgo(120),
+  } as TextTip,
 ];
 
 const seedInfo: InfoItem[] = [
@@ -60,6 +242,7 @@ const seedInfo: InfoItem[] = [
     createdAt: now(),
   },
 ];
+
 
 // -------------------------
 // Helpers

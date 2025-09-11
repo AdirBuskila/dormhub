@@ -1,6 +1,7 @@
 // app/(protected)/tips/page.tsx
 import { getRepos } from "@/lib/repos";
 import TipCard from "./TipCard";
+import { AddButton } from "@/app/(protected)/tips/AddButton";
 
 type Props = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -92,6 +93,7 @@ export default async function TipsPage({ searchParams }: Props) {
           </a>
         ) : <span />}
       </nav>
+      <AddButton/>
     </main>
   );
 }

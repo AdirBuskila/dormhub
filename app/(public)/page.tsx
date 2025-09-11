@@ -1,8 +1,6 @@
 // app/(public)/page.tsx
 import Auth0Provider from "../components/Auth0Provider";
 import Profile from "../components/Profile";
-import Logo from "../components/Logo";
-import Nav from "../components/Nav";
 import { ValueCard } from "../components/ValueCard";
 import { Hero } from "../components/Hero";
 import { FeatureGrid } from "../components/FeatureGrid";

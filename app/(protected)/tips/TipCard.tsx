@@ -2,7 +2,7 @@
 
 import { useTransition } from "react";
 import type { Tip } from "@/lib/types";
-import { toggleHelpfulAction, reportTipAction } from "./_actions"
+import { toggleHelpfulAction, reportTipAction } from "./tipActions.server"
 
 export default function TipCard({ tip }: { tip: Tip }) {
   const [pendingHelpful, startHelpful] = useTransition();
