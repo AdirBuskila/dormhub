@@ -23,7 +23,7 @@ Built with **Next.js 14**, **TypeScript**, **TailwindCSS + DaisyUI**, and **Appw
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/yourusername/dormhub.git
+git clone https://github.com/AdirBuskila/dormhub
 cd dormhub
 ````
 
