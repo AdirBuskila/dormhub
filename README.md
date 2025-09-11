@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏡 DormHub
 
-## Getting Started
+> All your problems, solved.  
+DormHub is a student-life super-app for sharing tips, borrowing/selling items, finding study buddies, and organizing rides.  
+Built with **Next.js 14**, **TypeScript**, **TailwindCSS + DaisyUI**, and **Appwrite**.
 
-First, run the development server:
+---
+
+## ✨ Features
+
+- 📌 **Tips & Recommendations** — Share life hacks, product finds, and study tips with dorm mates.  
+- 🛒 **Swap & Sell** — List items you no longer need or grab second-hand essentials.  
+- 📚 **Study Buddy** — Connect with peers studying the same subjects.  
+- 🚗 **Ride Share** — Hitch a ride or offer one to classmates.  
+- 🔐 **Auth0 Authentication** — Secure login and user verification.  
+- 📷 **Image Uploads** — Attach pictures to your tips (powered by Appwrite Storage).  
+- 🎨 **Modern UI** — TailwindCSS & DaisyUI components for fast, clean styling.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/yourusername/dormhub.git
+cd dormhub
+````
+
+### 2. Install dependencies
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+### 3. Configure environment
+
+Create a `.env.local` with your secrets:
+
+```env
+AUTH0_SECRET=your_auth0_secret
+AUTH0_DOMAIN=your_auth0_domain
+AUTH0_CLIENT_ID=your_auth0_client_id
+AUTH0_CLIENT_SECRET=your_auth0_client_secret
+
+APPWRITE_PROJECT_ID=your_appwrite_project_id
+APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
+```
+
+### 4. Run the dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* ⚛️ [Next.js](https://nextjs.org/) (App Router, Server Actions)
+* 💨 [TailwindCSS](https://tailwindcss.com/) + [DaisyUI](https://daisyui.com/)
+* 🗄️ [Appwrite](https://appwrite.io/) (Database + Storage)
+* 🔑 [Auth0](https://auth0.com/) (Authentication)
+* 🧪 [Zod](https://zod.dev/) (Schema validation)
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🤝 Contributing
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Pull requests are welcome! For major changes, open an issue first.
+Make sure to update tests as appropriate.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 📜 License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT License © 2025 DormHub Team
