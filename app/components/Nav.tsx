@@ -3,7 +3,7 @@ import { useUser } from '@auth0/nextjs-auth0'
 import React from 'react'
 
 const Nav = () => {
-    const { user, isLoading } = useUser()
+    const { user } = useUser()
     return (
         <nav className="flex gap-3">
             {!user && <a href="/auth/login" className="btn">Log in</a>}
