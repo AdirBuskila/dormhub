@@ -3,6 +3,7 @@ import { getRepos } from "@/lib/repos";
 import TipCard from "./TipCard";
 import { AddButton } from "@/app/(protected)/tips/AddButton";
 import { TipModal } from "./TipModal.client";
+import TipDetailModal from "./TipDetailModal.client";
 
 type Props = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -17,7 +18,7 @@ export default async function TipsPage({ searchParams }: Props) {
   const filter = {
     type: (sp.type as "text" | "product" | undefined) ?? undefined,
     q: (sp.q as string | undefined) ?? undefined,
-    sort: ((sp.sort as "new" | "top" | undefined) ?? "new"),
+    sort: ((sp.sort as "top" | "new" | undefined) ?? "top"),
     tag: (sp.tag as string | undefined) ?? undefined,
     hasImage: sp.img === "1",
     sinceDays: sp.days ? Number(sp.days) : undefined,
@@ -96,6 +97,7 @@ export default async function TipsPage({ searchParams }: Props) {
       </nav>
       <AddButton/>
       <TipModal />
+      <TipDetailModal />
     </main>
   );
 }

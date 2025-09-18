@@ -85,3 +85,23 @@ export const ListTipsFilter = z.object({
   sinceDays: z.coerce.number().int().positive().optional(),
 });
 export type ListTipsFilter = z.infer<typeof ListTipsFilter>;
+
+/** ─────────────────────────────────────────────────────────────
+ * Update Tip input (all fields optional; server enforces shape)
+ * ────────────────────────────────────────────────────────────*/
+export const UpdateTipInput = z
+  .object({
+    // common
+    title: Title.optional(),
+    text: Body.optional(),
+    tags: Tags.optional(),
+    images: Images.optional(),
+    // product-only; harmless if updating a text tip (ignored downstream)
+    productUrl: ProductUrl.optional(),
+    approxPriceIls: ApproxPriceIls.optional(),
+    store: Store.optional(),
+    apartmentFit: ApartmentFit.optional(),
+    status: TipStatus.optional(),
+  })
+  .strict();
+export type UpdateTipInput = z.infer<typeof UpdateTipInput>;

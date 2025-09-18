@@ -51,11 +51,6 @@ export const TipModal = () => {
           }}
         />
 
-        <div className="modal-action">
-          <button className="btn btn-ghost" onClick={handleClose}>
-            Cancel
-          </button>
-        </div>
       </div>
 
       {/* Backdrop closes the modal too */}

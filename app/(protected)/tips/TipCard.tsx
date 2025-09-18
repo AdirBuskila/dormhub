@@ -13,7 +13,7 @@ export default function TipCard({ tip }: { tip: Tip }) {
   return (
     <article className="rounded-2xl border p-4 space-y-2">
       <header className="flex items-baseline justify-between">
-        <h3 className="text-lg font-semibold">{tip.title}</h3>
+        <a href={`/tips?view=${tip.id}`} className="text-lg font-semibold underline-offset-2 hover:underline">{tip.title}</a>
         <span className="text-xs opacity-70">
           {new Date(tip.createdAt).toLocaleDateString()}
         </span>
@@ -50,7 +50,7 @@ export default function TipCard({ tip }: { tip: Tip }) {
         <button
           className="btn btn-sm"
           disabled={pendingHelpful}
-          onClick={() => startHelpful(() => toggleHelpfulAction(tip.id))}
+          onClick={() => startHelpful(async () => { await toggleHelpfulAction(tip.id); })}
         >
           👍 Helpful ({tip.helpfulCount})
         </button>
@@ -58,7 +58,7 @@ export default function TipCard({ tip }: { tip: Tip }) {
         <button
           className="btn btn-sm btn-ghost"
           disabled={pendingReport}
-          onClick={() => startReport(() => reportTipAction(tip.id))}
+          onClick={() => startReport(async () => { await reportTipAction(tip.id); })}
         >
           ⚑ Report
         </button>

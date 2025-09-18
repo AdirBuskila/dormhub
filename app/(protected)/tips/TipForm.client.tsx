@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 // TODO 2: import your real server action
-// import { createTipAction } from "./tipActions.server";
+import { createTipAction } from "./tipActions.server";
 
 type TipType = "text" | "product";
 const MAX_IMAGES = 5;
@@ -61,12 +61,17 @@ export default function TipForm({ onCancel, onSuccess }: Props) {
 
     setUploading(true);
     try {
-      // TODO 1: Replace this preview stub with your Appwrite upload:
-      // storage.createFile(...); storage.getFilePreview(...).href
-      const urls = await Promise.all(
-        selected.map(async (f) => URL.createObjectURL(f)) // demo only
+      const uploaded = await Promise.all(
+        selected.map(async (file) => {
+          const fd = new FormData();
+          fd.append("file", file);
+          const res = await fetch("/api/uploads", { method: "POST", body: fd });
+          if (!res.ok) throw new Error("Upload failed");
+          const data = (await res.json()) as { fileId: string; url: string };
+          return data.url; // store preview URL; you can store fileId alongside if needed
+        })
       );
-      setImages((prev) => [...prev, ...urls]);
+      setImages((prev) => [...prev, ...uploaded]);
     } finally {
       setUploading(false);
       ev.target.value = "";
@@ -97,9 +102,11 @@ export default function TipForm({ onCancel, onSuccess }: Props) {
         payload.apartmentFit = apartmentFit.trim();
       }
 
-      // TODO 2: Call your server action
-      // const res = await createTipAction(payload);
-      // if (!res?.ok) { setErrors({ form: res?.error || "Failed to post" }); return; }
+      const res = await createTipAction(payload)
+      if (!res?.ok) {
+        setErrors({ form: res?.error || "Failed to post" });
+        return
+      }
 
       onSuccess();
     } catch {

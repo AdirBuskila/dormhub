@@ -16,7 +16,7 @@ export interface TipsRepo {
   list(filter: TipFilter, pg: Pagination): Promise<Page<Tip>>;
   get(id: Id): Promise<Tip | null>;
   create(payload: Omit<TextTip, "id"|"helpfulCount"|"flagCount"|"createdAt"|"updatedAt"|"status"> | Omit<ProductTip, "id"|"helpfulCount"|"flagCount"|"createdAt"|"updatedAt"|"status">, actorId: Id): Promise<Tip>;
-  update(id: Id, patch: Partial<TextTip & ProductTip>, actorId: Id): Promise<Tip>;
+  update(id: Id, patch: Partial<Tip>, actorId: Id): Promise<Tip>;
   remove(id: Id, actorId: Id): Promise<void>;
   toggleHelpful(id: Id, actorId: Id): Promise<{ helpfulCount: number }>;
   report(id: Id, actorId: Id): Promise<{ flagCount: number; status: "active"|"hidden"|"archived" }>;
@@ -46,7 +46,12 @@ export interface Repos {
 let cached: Repos | null = null;
 export async function getRepos(): Promise<Repos> {
   if (cached) return cached;
-  const { createMockRepos } = await import("./mock");
-  cached = createMockRepos();
-  return cached;
+  try {
+    const { createAppwriteRepos } = await import("@/lib/repos/appwrite/index");
+    cached = await createAppwriteRepos();
+  } catch (err) {
+    const { createMockRepos } = await import("./mock");
+    cached = createMockRepos();
+  }
+  return cached as Repos;
 }
