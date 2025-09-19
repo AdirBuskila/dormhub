@@ -41,6 +41,7 @@ export interface InfoRepo {
 export interface Repos {
   tips: TipsRepo;
   info: InfoRepo;
+  users?: UsersRepo;
 }
 
 let cached: Repos | null = null;

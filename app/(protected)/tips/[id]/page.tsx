@@ -1,10 +1,12 @@
 import { getRepos } from "@/lib/repos";
+import { auth0 } from "@/lib/auth0";
 
 type Props = { params: { id: string } };
 
 export default async function TipDetailPage({ params }: Props) {
   const repos = await getRepos();
   const tip = await repos.tips.get(params.id);
+  const session = await auth0.getSession();
   if (!tip) {
     return (
       <main className="p-6">
