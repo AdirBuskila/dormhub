@@ -1,14 +1,26 @@
+// app/api/tips/[id]/route.ts
 import { NextResponse } from "next/server";
 import { auth0 } from "@/lib/auth0";
 import { getRepos } from "@/lib/repos";
 import { UpdateTipInput } from "@/lib/validation/tips";
 
-type Params = { params: { id: string } };
+// Helper that resolves `context.params` whether it's provided as an object
+// or a Promise (the runtime can vary across Next versions / tooling).
+async function resolveIdFromContext(context: { params: any }) {
+  const p = context.params;
+  if (p && typeof p.then === "function") {
+    const resolved = await p;
+    return resolved.id;
+  }
+  return p.id;
+}
 
-export async function GET(_request: Request, { params }: Params) {
+// GET /api/tips/:id  -> returns a tip by id
+export async function GET(_request: Request, context: { params: any }) {
   try {
+    const id = await resolveIdFromContext(context);
     const repos = await getRepos();
-    const tip = await repos.tips.get(params.id);
+    const tip = await repos.tips.get(id);
     if (!tip) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(tip, { status: 200 });
   } catch (err: any) {
@@ -16,8 +28,10 @@ export async function GET(_request: Request, { params }: Params) {
   }
 }
 
-export async function PUT(request: Request, { params }: Params) {
+// PUT /api/tips/:id  -> replace/update tip (requires auth)
+export async function PUT(request: Request, context: { params: any }) {
   try {
+    const id = await resolveIdFromContext(context);
     const session = await auth0.getSession();
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -29,23 +43,23 @@ export async function PUT(request: Request, { params }: Params) {
     }
 
     const repos = await getRepos();
-    const updated = await repos.tips.update(params.id, parsed.data, session.user.sub as string);
+    const updated = await repos.tips.update(id, parsed.data, session.user.sub as string);
     return NextResponse.json(updated, { status: 200 });
   } catch (err: any) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
 
-export async function DELETE(_request: Request, { params }: Params) {
+// DELETE /api/tips/:id  -> delete (requires auth)
+export async function DELETE(_request: Request, context: { params: any }) {
   try {
+    const id = await resolveIdFromContext(context);
     const session = await auth0.getSession();
     if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const repos = await getRepos();
-    await repos.tips.remove(params.id, session.user.sub as string);
+    await repos.tips.remove(id, session.user.sub as string);
     return new NextResponse(null, { status: 204 });
   } catch (err: any) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
-
-

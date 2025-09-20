@@ -41,7 +41,8 @@ export interface InfoRepo {
 export interface Repos {
   tips: TipsRepo;
   info: InfoRepo;
-  users?: UsersRepo;
+  // `UsersRepo` type wasn't declared in the codebase; use `any` for now to satisfy TS.
+  users?: any;
 }
 
 let cached: Repos | null = null;
