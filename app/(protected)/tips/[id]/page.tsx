@@ -1,20 +1,13 @@
 import { getRepos } from "@/lib/repos";
-import { auth0 } from "@/lib/auth0";
+import { notFound } from "next/navigation";
 
 type Props = { params: { id: string } };
 
 export default async function TipDetailPage({ params }: Props) {
   const repos = await getRepos();
   const tip = await repos.tips.get(params.id);
-  const session = await auth0.getSession();
-  if (!tip) {
-    return (
-      <main className="p-6">
-        <h1 className="text-xl font-semibold">Tip not found</h1>
-        <a href="/tips" className="link">Back to tips</a>
-      </main>
-    );
-  }
+  if (!tip) return notFound();
+
   return (
     <main className="p-6 space-y-4">
       <a href="/tips" className="link">← Back to tips</a>
