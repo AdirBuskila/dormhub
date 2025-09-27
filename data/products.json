@@ -1,0 +1,1192 @@
+[
+  {
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "storage": "1TB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 17 Pro Max",
+    "storage": "2TB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 17 Pro",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 17 Pro",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 17 Pro",
+    "storage": "1TB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 17 Air",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 17 Air",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 17 Air",
+    "storage": "1TB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 17",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 17",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 16 Pro Max",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 16 Pro",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 16 Pro",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 16 Plus",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 16",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 16",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 16",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 16 e",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 15 Pro Max",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 15 Pro",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 15",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 15",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 14 Pro Max",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 14 Pro",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 14",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 13 Pro Max",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 13 Pro",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 13",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 13 Mini",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 13 CPO",
+    "storage": "128GB",
+    "condition": "refurbished",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 12 Pro Max",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 12 Pro",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 12",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 11",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy S25 Ultra",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy S25 Ultra",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy S25 Ultra",
+    "storage": "1TB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy S25+",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy S25+",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy S25",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy S25",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy S24 Ultra",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy S24+",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy S24",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy S24 FE",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy Z Fold 7",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy Z Flip 7",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A56",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A56",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A56",
+    "storage": "256GB/12GB RAM",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A55",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A55",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A36",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A36",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A36",
+    "storage": "256GB/12GB RAM",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A26",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A16",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A16",
+    "storage": "256GB/8GB RAM",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A06",
+    "storage": "64GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy A06",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi A3",
+    "storage": "4GB/128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi A5",
+    "storage": "64GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi A5",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi 14C",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi 14C",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Note 14",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Redmi Note 14 Pro",
+    "storage": "256GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Poco X7",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Poco X7 Pro",
+    "storage": "512GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Phone Line",
+    "model": "F33",
+    "storage": "32GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Phone Line",
+    "model": "F34",
+    "storage": "32GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Blackview",
+    "model": "N2000",
+    "storage": "64GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Nokia",
+    "model": "105 4G",
+    "storage": "4GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Nokia",
+    "model": "110 4G",
+    "storage": "4GB",
+    "condition": "new",
+    "category": "phone",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPad 10",
+    "storage": "64GB",
+    "condition": "new",
+    "category": "tablet",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPad 11 (A16)",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "tablet",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy Tab A9+",
+    "storage": "128GB",
+    "condition": "new",
+    "category": "tablet",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy Tab A9+",
+    "storage": "64GB",
+    "condition": "new",
+    "category": "tablet",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy Tab A9",
+    "storage": "64GB",
+    "condition": "new",
+    "category": "tablet",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy Tab Kids 50",
+    "storage": "64GB/3GB RAM",
+    "condition": "new",
+    "category": "tablet",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "AirPods 3",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "AirPods 4",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "AirPods 4 ANC",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "AirPods Pro 2",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "AirPods Pro 3",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "AirPods Max",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy Buds FE",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy Buds 3",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy Buds 3 Pro",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "JBL",
+    "model": "Wave Flex",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "JBL",
+    "model": "Wave Beam",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "JBL",
+    "model": "Tune 125",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "JBL",
+    "model": "Tune 520",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "JBL",
+    "model": "Tune Beam",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Xiaomi",
+    "model": "Buds 6",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "earphones",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "Apple Watch Series 10",
+    "storage": "41mm",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "Apple Watch Series 10",
+    "storage": "45mm",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "Apple Watch Ultra 2",
+    "storage": "49mm",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "Apple Watch SE (2nd Gen)",
+    "storage": "40mm",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "Apple Watch SE (2nd Gen)",
+    "storage": "44mm",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy Watch 7",
+    "storage": "44mm",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy Watch 7 Classic",
+    "storage": "46mm",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Galaxy Watch Ultra",
+    "storage": "49mm + Cell",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "AirTag",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "Apple Pencil",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "Charger Type-C to Type-C",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "Charger USB-C to Lightning",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "Original Head 20W",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "USB-C to Lightning Cable (1m)",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Apple",
+    "model": "iPhone 16 Cable M1",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  },
+  {
+    "brand": "Samsung",
+    "model": "Original Head 25W",
+    "storage": "N/A",
+    "condition": "new",
+    "category": "accessories",
+    "stock": 0,
+    "min_stock_alert": 5,
+    "image_url": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=400&fit=crop"
+  }
+]

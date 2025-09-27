@@ -1,0 +1,381 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import Layout from './Layout';
+import { DashboardStats } from '@/types/database';
+import { getDashboardStats } from '@/lib/database';
+import { formatCurrency, formatDate } from '@/lib/utils';
+import {
+  Package,
+  Users,
+  ShoppingCart,
+  DollarSign,
+  TrendingUp,
+  AlertTriangle,
+  Clock,
+  CheckCircle
+} from 'lucide-react';
+
+export default function Dashboard() {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadStats() {
+      try {
+        const data = await getDashboardStats();
+        setStats(data);
+      } catch (error) {
+        console.warn('Failed to load dashboard stats, using mock data:', error);
+        // Set mock data for development
+        setStats({
+          ordersToDeliverToday: 0,
+          lowStockItems: 0,
+          outstandingDebts: 0,
+          totalRevenue: 0,
+          totalProfit: 0,
+          recentOrders: [],
+          lowStockProducts: [],
+          overduePayments: []
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadStats();
+  }, []);
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <Layout>
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900">Failed to load dashboard</h2>
+          <p className="text-gray-600">Please try refreshing the page</p>
+        </div>
+      </Layout>
+    );
+  }
+
+  const statCards = [
+    {
+      name: 'Orders to Deliver Today',
+      value: stats.ordersToDeliverToday,
+      icon: ShoppingCart,
+      color: 'bg-blue-500',
+      textColor: 'text-blue-600',
+      bgColor: 'bg-blue-50'
+    },
+    {
+      name: 'Low Stock Items',
+      value: stats.lowStockItems,
+      icon: AlertTriangle,
+      color: 'bg-yellow-500',
+      textColor: 'text-yellow-600',
+      bgColor: 'bg-yellow-50'
+    },
+    {
+      name: 'Outstanding Debts',
+      value: formatCurrency(stats.outstandingDebts),
+      icon: DollarSign,
+      color: 'bg-red-500',
+      textColor: 'text-red-600',
+      bgColor: 'bg-red-50'
+    },
+    {
+      name: 'Total Revenue',
+      value: formatCurrency(stats.totalRevenue),
+      icon: TrendingUp,
+      color: 'bg-green-500',
+      textColor: 'text-green-600',
+      bgColor: 'bg-green-50'
+    },
+    {
+      name: 'Total Profit',
+      value: formatCurrency(stats.totalProfit),
+      icon: CheckCircle,
+      color: 'bg-indigo-500',
+      textColor: 'text-indigo-600',
+      bgColor: 'bg-indigo-50'
+    }
+  ];
+
+  return (
+    <Layout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Welcome back! Here's what's happening with your business today.
+          </p>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
+            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+              Quick Actions
+            </h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <a
+                href="/inventory"
+                className="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500 rounded-lg border border-gray-300 hover:border-gray-400"
+              >
+                <div>
+                  <span className="rounded-lg inline-flex p-3 bg-purple-50 text-purple-700 ring-4 ring-white">
+                    <Package className="h-6 w-6" />
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-lg font-medium">
+                    <span className="absolute inset-0" aria-hidden="true" />
+                    Manage Inventory
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Edit products, update stock, bulk operations
+                  </p>
+                </div>
+              </a>
+
+              <a
+                href="/clients"
+                className="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500 rounded-lg border border-gray-300 hover:border-gray-400"
+              >
+                <div>
+                  <span className="rounded-lg inline-flex p-3 bg-orange-50 text-orange-700 ring-4 ring-white">
+                    <Users className="h-6 w-6" />
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-lg font-medium">
+                    <span className="absolute inset-0" aria-hidden="true" />
+                    Manage Clients
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Add clients, track payments, manage debts
+                  </p>
+                </div>
+              </a>
+
+              <a
+                href="/customer"
+                className="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500 rounded-lg border border-gray-300 hover:border-gray-400"
+              >
+                <div>
+                  <span className="rounded-lg inline-flex p-3 bg-green-50 text-green-700 ring-4 ring-white">
+                    <Users className="h-6 w-6" />
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-lg font-medium">
+                    <span className="absolute inset-0" aria-hidden="true" />
+                    Customer Portal
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-500">
+                    View products from customer perspective
+                  </p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {statCards.map((card) => (
+            <div key={card.name} className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0">
+                    <div className={`p-3 rounded-md ${card.bgColor}`}>
+                      <card.icon className={`h-6 w-6 ${card.textColor}`} />
+                    </div>
+                  </div>
+                  <div className="ml-5 w-0 flex-1">
+                    <dl>
+                      <dt className="text-sm font-medium text-gray-500 truncate">
+                        {card.name}
+                      </dt>
+                      <dd className="text-lg font-medium text-gray-900">
+                        {card.value}
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {/* Recent Orders */}
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+                Recent Orders
+              </h3>
+              <div className="flow-root">
+                <ul className="-my-5 divide-y divide-gray-200">
+                  {stats.recentOrders.map((order) => (
+                    <li key={order.id} className="py-4">
+                      <div className="flex items-center space-x-4">
+                        <div className="flex-shrink-0">
+                          <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                            <ShoppingCart className="h-4 w-4 text-gray-500" />
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {order.client?.name || 'Unknown Client'}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {formatCurrency(order.total_price)} • {formatDate(order.created_at)}
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                            order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                            order.status === 'reserved' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {order.status}
+                          </span>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Low Stock Alerts */}
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+                Low Stock Alerts
+              </h3>
+              <div className="flow-root">
+                <ul className="-my-5 divide-y divide-gray-200">
+                  {stats.lowStockProducts.map((product) => (
+                    <li key={product.id} className="py-4">
+                      <div className="flex items-center space-x-4">
+                        <div className="flex-shrink-0">
+                          <div className="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center">
+                            <Package className="h-4 w-4 text-yellow-600" />
+                          </div>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">
+                            {product.brand} {product.model}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {product.storage} • {product.condition}
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <span className="text-sm font-medium text-red-600">
+                            {product.stock} left
+                          </span>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-white shadow rounded-lg">
+          <div className="px-4 py-5 sm:p-6">
+            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+              Quick Actions
+            </h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <button className="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500 rounded-lg border border-gray-300 hover:border-gray-400">
+                <div>
+                  <span className="rounded-lg inline-flex p-3 bg-indigo-50 text-indigo-700 ring-4 ring-white">
+                    <Package className="h-6 w-6" />
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-lg font-medium">
+                    <span className="absolute inset-0" />
+                    Add Product
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Add a new product to inventory
+                  </p>
+                </div>
+              </button>
+
+              <button className="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500 rounded-lg border border-gray-300 hover:border-gray-400">
+                <div>
+                  <span className="rounded-lg inline-flex p-3 bg-green-50 text-green-700 ring-4 ring-white">
+                    <ShoppingCart className="h-6 w-6" />
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-lg font-medium">
+                    <span className="absolute inset-0" />
+                    Create Order
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Create a new order for a client
+                  </p>
+                </div>
+              </button>
+
+              <button className="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500 rounded-lg border border-gray-300 hover:border-gray-400">
+                <div>
+                  <span className="rounded-lg inline-flex p-3 bg-blue-50 text-blue-700 ring-4 ring-white">
+                    <Users className="h-6 w-6" />
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-lg font-medium">
+                    <span className="absolute inset-0" />
+                    Add Client
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Add a new client to the system
+                  </p>
+                </div>
+              </button>
+
+              <button className="relative group bg-white p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500 rounded-lg border border-gray-300 hover:border-gray-400">
+                <div>
+                  <span className="rounded-lg inline-flex p-3 bg-purple-50 text-purple-700 ring-4 ring-white">
+                    <DollarSign className="h-6 w-6" />
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-lg font-medium">
+                    <span className="absolute inset-0" />
+                    Record Payment
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Record a payment from a client
+                  </p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
+}
