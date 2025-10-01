@@ -1,20 +1,46 @@
--- Migration: Update enums and add business features
+-- Migration: Update enums and add clerk_user_id
 -- Run this in your Supabase SQL Editor
 
--- 1. Add 'credit' to payment_method enum type
+-- 1. Update product_category enum to include more categories
+ALTER TYPE product_category ADD VALUE IF NOT EXISTS 'phone';
+ALTER TYPE product_category ADD VALUE IF NOT EXISTS 'tablet';
+ALTER TYPE product_category ADD VALUE IF NOT EXISTS 'earphones';
+ALTER TYPE product_category ADD VALUE IF NOT EXISTS 'accessories';
+
+-- 2. Update order_status enum
+ALTER TYPE order_status ADD VALUE IF NOT EXISTS 'draft';
+ALTER TYPE order_status ADD VALUE IF NOT EXISTS 'reserved';
+ALTER TYPE order_status ADD VALUE IF NOT EXISTS 'delivered';
+ALTER TYPE order_status ADD VALUE IF NOT EXISTS 'closed';
+
+-- 3. Update payment_method enum
+ALTER TYPE payment_method ADD VALUE IF NOT EXISTS 'cash';
+ALTER TYPE payment_method ADD VALUE IF NOT EXISTS 'transfer';
+ALTER TYPE payment_method ADD VALUE IF NOT EXISTS 'check';
 ALTER TYPE payment_method ADD VALUE IF NOT EXISTS 'credit';
 
--- 2. Add 'portal' to order_status enum if it doesn't exist (for source field later)
--- Note: We'll use a text field for source instead of enum for flexibility
+-- 4. Add new enum types
 DO $$ 
 BEGIN
-    -- Check if order_source type exists, if not create it
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'order_source') THEN
         CREATE TYPE order_source AS ENUM ('whatsapp', 'phone', 'portal');
     END IF;
 END $$;
 
--- 3. Add 'pending', 'inspected', 'restocked', 'refurbish', 'scrap' for returns status
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'alert_type') THEN
+        CREATE TYPE alert_type AS ENUM ('low_stock', 'undelivered', 'overdue_payment', 'reserved_stale');
+    END IF;
+END $$;
+
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'alert_severity') THEN
+        CREATE TYPE alert_severity AS ENUM ('info', 'warning', 'danger');
+    END IF;
+END $$;
+
 DO $$ 
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'return_status') THEN
@@ -22,98 +48,39 @@ BEGIN
     END IF;
 END $$;
 
--- 4. Safely rename stock to total_stock in products table
-DO $$ 
-BEGIN
-    -- Check if stock column exists and total_stock doesn't
-    IF EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'products' AND column_name = 'stock'
-    ) AND NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'products' AND column_name = 'total_stock'
-    ) THEN
-        ALTER TABLE products RENAME COLUMN stock TO total_stock;
-    END IF;
-    
-    -- If total_stock doesn't exist at all, add it
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'products' AND column_name = 'total_stock'
-    ) THEN
-        ALTER TABLE products ADD COLUMN total_stock INTEGER DEFAULT 0;
-    END IF;
-    
-    -- Ensure reserved_stock exists
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'products' AND column_name = 'reserved_stock'
-    ) THEN
-        ALTER TABLE products ADD COLUMN reserved_stock INTEGER DEFAULT 0;
-    END IF;
-END $$;
+-- 5. Update orders table to use order_source enum
+ALTER TABLE orders 
+  ALTER COLUMN source TYPE order_source USING source::order_source;
 
--- 5. Add new columns to orders table
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS promised_date DATE;
-ALTER TABLE orders ADD COLUMN IF NOT EXISTS source TEXT;
+-- 6. Update returns table to use return_status enum
+ALTER TABLE returns 
+  ALTER COLUMN status TYPE return_status USING status::return_status;
 
--- 6. Add new columns to payments table
-ALTER TABLE payments ADD COLUMN IF NOT EXISTS reference TEXT;
-
--- 7. Add status column to returns table using the new enum
-DO $$ 
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'returns' AND column_name = 'status'
-    ) THEN
-        ALTER TABLE returns ADD COLUMN status return_status DEFAULT 'pending';
-    END IF;
-END $$;
+-- 7. Update alerts table to use proper enums
+ALTER TABLE alerts 
+  ALTER COLUMN type TYPE alert_type USING type::alert_type,
+  ALTER COLUMN severity TYPE alert_severity USING severity::alert_severity;
 
 -- 8. Add clerk_user_id to clients table if not exists
 ALTER TABLE clients ADD COLUMN IF NOT EXISTS clerk_user_id TEXT UNIQUE;
-ALTER TABLE clients ADD COLUMN IF NOT EXISTS email TEXT;
 
+-- Create index for clerk_user_id
 CREATE INDEX IF NOT EXISTS idx_clients_clerk_user_id ON clients(clerk_user_id);
 
--- 9. Create alerts table
-CREATE TABLE IF NOT EXISTS alerts (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  type TEXT NOT NULL CHECK (type IN ('low_stock', 'undelivered', 'overdue_payment', 'reserved_stale')),
-  ref_id UUID,
-  message TEXT NOT NULL,
-  severity TEXT CHECK (severity IN ('info', 'warning', 'danger')) DEFAULT 'warning',
-  delivered BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
+-- 9. Add email column to clients table if not exists
+ALTER TABLE clients ADD COLUMN IF NOT EXISTS email TEXT;
 
-CREATE INDEX IF NOT EXISTS idx_alerts_type ON alerts(type);
-CREATE INDEX IF NOT EXISTS idx_alerts_delivered ON alerts(delivered);
-CREATE INDEX IF NOT EXISTS idx_alerts_created_at ON alerts(created_at);
+-- 10. Update products table with image_url if not exists
+ALTER TABLE products ADD COLUMN IF NOT EXISTS image_url TEXT;
 
--- 10. Create outbound_messages table for WhatsApp stubs
-CREATE TABLE IF NOT EXISTS outbound_messages (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  channel TEXT NOT NULL CHECK (channel IN ('whatsapp')),
-  to_client_id UUID REFERENCES clients(id) ON DELETE SET NULL,
-  template TEXT NOT NULL,
-  payload JSONB NOT NULL,
-  sent BOOLEAN DEFAULT false,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE INDEX IF NOT EXISTS idx_outbound_messages_sent ON outbound_messages(sent);
-CREATE INDEX IF NOT EXISTS idx_outbound_messages_created_at ON outbound_messages(created_at);
-
--- 11. Create view for available stock
+-- 11. Create updated view for products with stock
 CREATE OR REPLACE VIEW products_with_stock AS
 SELECT 
   p.*,
-  (p.total_stock - p.reserved_stock) AS available_stock
+  (p.total_stock - COALESCE(p.reserved_stock, 0)) AS available_stock
 FROM products p;
 
--- 12. Create function to check low stock and create alerts
+-- 12. Update function to handle new stock structure
 CREATE OR REPLACE FUNCTION check_low_stock_alerts()
 RETURNS INTEGER AS $$
 DECLARE
@@ -121,9 +88,9 @@ DECLARE
   product_row RECORD;
 BEGIN
   FOR product_row IN 
-    SELECT id, brand, model, storage, total_stock, reserved_stock, min_stock_alert
+    SELECT id, brand, model, storage, total_stock, COALESCE(reserved_stock, 0) as reserved_stock, min_stock_alert
     FROM products
-    WHERE (total_stock - reserved_stock) <= min_stock_alert
+    WHERE (total_stock - COALESCE(reserved_stock, 0)) <= min_stock_alert
   LOOP
     -- Check if alert already exists for today
     IF NOT EXISTS (
@@ -157,7 +124,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- 13. Enable RLS on new tables if they exist
-DO $$ 
+DO $$
 BEGIN
     IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'alerts') THEN
         ALTER TABLE alerts ENABLE ROW LEVEL SECURITY;
@@ -172,11 +139,7 @@ BEGIN
     END IF;
 END $$;
 
--- 14. Add helpful comments
-COMMENT ON TABLE alerts IS 'System alerts for low stock, overdue payments, undelivered orders';
-COMMENT ON TABLE outbound_messages IS 'Queue for outbound WhatsApp messages';
-COMMENT ON COLUMN products.total_stock IS 'Total physical inventory';
-COMMENT ON COLUMN products.reserved_stock IS 'Stock reserved for orders';
-
--- Success!
-SELECT '✅ Migration completed successfully!' AS status;
+-- 14. Add comments for documentation
+COMMENT ON COLUMN clients.clerk_user_id IS 'Clerk authentication user ID - links to Clerk user';
+COMMENT ON COLUMN clients.email IS 'Client email address';
+COMMENT ON COLUMN products.image_url IS 'URL to product image';

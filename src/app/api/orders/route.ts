@@ -6,14 +6,18 @@ export async function POST(request: NextRequest) {
   try {
     // Get authenticated user
     const { userId } = await auth();
+    console.log('Orders API - userId:', userId);
+    
     if (!userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Parse request body
     const { clientId, items } = await request.json();
+    console.log('Orders API - clientId:', clientId, 'items:', items);
 
     if (!clientId || !items || items.length === 0) {
+      console.log('Orders API - Missing required fields');
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -28,7 +32,10 @@ export async function POST(request: NextRequest) {
       .eq('clerk_user_id', userId)
       .single();
 
+    console.log('Orders API - client lookup result:', { client, clientError });
+
     if (clientError || !client) {
+      console.log('Orders API - Client not found or error:', clientError);
       return NextResponse.json(
         { error: 'Client not found' },
         { status: 404 }
@@ -36,10 +43,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate all products exist and have stock
-    const productIds = items.map((item: any) => item.productId);
+    const productIds = items.map((item: { productId: string }) => item.productId);
     const { data: products, error: productsError } = await supabaseAdmin
       .from('products')
-      .select('id, stock')
+      .select('id, total_stock')
       .in('id', productIds);
 
     if (productsError) {
@@ -58,7 +65,7 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      if (product.stock < item.quantity) {
+      if (product.total_stock < item.quantity) {
         return NextResponse.json(
           { error: `Insufficient stock for product ${item.productId}` },
           { status: 400 }
@@ -86,18 +93,22 @@ export async function POST(request: NextRequest) {
     }
 
     // Create order items
-    const orderItems = items.map((item: any) => ({
+    const orderItems = items.map((item: { productId: string; quantity: number; price?: number }) => ({
       order_id: order.id,
       product_id: item.productId,
       quantity: item.quantity,
       price: item.price || 0
     }));
 
+    console.log('Orders API - Creating order items:', orderItems);
+
     const { error: itemsError } = await supabaseAdmin
       .from('order_items')
       .insert(orderItems);
 
     if (itemsError) {
+      console.log('Orders API - Order items creation failed:', itemsError);
+      
       // Clean up the order if items creation fails
       await supabaseAdmin
         .from('orders')
@@ -105,7 +116,7 @@ export async function POST(request: NextRequest) {
         .eq('id', order.id);
 
       return NextResponse.json(
-        { error: 'Failed to create order items' },
+        { error: `Failed to create order items: ${itemsError.message}` },
         { status: 500 }
       );
     }

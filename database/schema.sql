@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TYPE product_condition AS ENUM ('new', 'refurbished', 'used', 'activated', 'open_box');
 CREATE TYPE product_category AS ENUM ('phone', 'tablet', 'earphones', 'accessories');
 CREATE TYPE order_status AS ENUM ('draft', 'reserved', 'delivered', 'closed');
-CREATE TYPE payment_method AS ENUM ('cash', 'transfer', 'check');
+CREATE TYPE payment_method AS ENUM ('cash', 'transfer', 'check', 'credit');
 CREATE TYPE return_reason AS ENUM ('defective', 'unsold', 'trade_in');
 CREATE TYPE return_condition AS ENUM ('returned', 'refurbish', 'restocked');
 
@@ -106,76 +106,18 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Add updated_at triggers
-CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON products
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+-- Create triggers for updated_at
+CREATE TRIGGER update_updated_at_on_products 
+    BEFORE UPDATE ON products 
+    FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
-CREATE TRIGGER update_clients_updated_at BEFORE UPDATE ON clients
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER update_updated_at_on_clients 
+    BEFORE UPDATE ON clients 
+    FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
-CREATE TRIGGER update_orders_updated_at BEFORE UPDATE ON orders
-    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
--- Function to update client totals
-CREATE OR REPLACE FUNCTION update_client_totals()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF TG_OP = 'INSERT' OR TG_OP = 'UPDATE' THEN
-        -- Update total_spent
-        UPDATE clients 
-        SET total_spent = (
-            SELECT COALESCE(SUM(oi.quantity * oi.price), 0)
-            FROM orders o
-            JOIN order_items oi ON o.id = oi.order_id
-            WHERE o.client_id = NEW.client_id AND o.status = 'delivered'
-        )
-        WHERE id = NEW.client_id;
-        
-        -- Update total_debt
-        UPDATE clients 
-        SET total_debt = (
-            SELECT COALESCE(SUM(oi.quantity * oi.price), 0) - COALESCE(SUM(p.amount), 0)
-            FROM orders o
-            JOIN order_items oi ON o.id = oi.order_id
-            LEFT JOIN payments p ON p.client_id = o.client_id
-            WHERE o.client_id = NEW.client_id AND o.status = 'delivered'
-        )
-        WHERE id = NEW.client_id;
-    END IF;
-    
-    RETURN COALESCE(NEW, OLD);
-END;
-$$ language 'plpgsql';
-
--- Add triggers to update client totals
-CREATE TRIGGER update_client_totals_on_order_item_change
-    AFTER INSERT OR UPDATE OR DELETE ON order_items
-    FOR EACH ROW EXECUTE FUNCTION update_client_totals();
-
-CREATE TRIGGER update_client_totals_on_payment_change
-    AFTER INSERT OR UPDATE OR DELETE ON payments
-    FOR EACH ROW EXECUTE FUNCTION update_client_totals();
-
--- Function to update order total price
-CREATE OR REPLACE FUNCTION update_order_total()
-RETURNS TRIGGER AS $$
-BEGIN
-    UPDATE orders 
-    SET total_price = (
-        SELECT COALESCE(SUM(quantity * price), 0)
-        FROM order_items 
-        WHERE order_id = COALESCE(NEW.order_id, OLD.order_id)
-    )
-    WHERE id = COALESCE(NEW.order_id, OLD.order_id);
-    
-    RETURN COALESCE(NEW, OLD);
-END;
-$$ language 'plpgsql';
-
--- Add trigger to update order total
-CREATE TRIGGER update_order_total_on_item_change
-    AFTER INSERT OR UPDATE OR DELETE ON order_items
-    FOR EACH ROW EXECUTE FUNCTION update_order_total();
+CREATE TRIGGER update_updated_at_on_orders 
+    BEFORE UPDATE ON orders 
+    FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 -- Row Level Security (RLS) policies
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
@@ -185,8 +127,7 @@ ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE returns ENABLE ROW LEVEL SECURITY;
 
--- Create policies (allow all operations for authenticated users)
--- Note: In production, you should create more restrictive policies
+-- Create policies for development (allow all operations)
 CREATE POLICY "Allow all operations for authenticated users" ON products
     FOR ALL USING (auth.role() = 'authenticated');
 
