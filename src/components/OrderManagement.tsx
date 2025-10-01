@@ -16,7 +16,11 @@ import {
   ShoppingCart
 } from 'lucide-react';
 
-export default function OrderManagement() {
+interface OrderManagementProps {
+  isAdmin?: boolean;
+}
+
+export default function OrderManagement({ isAdmin = true }: OrderManagementProps) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
@@ -133,7 +137,7 @@ export default function OrderManagement() {
   }
 
   return (
-    <Layout>
+    <Layout isAdmin={isAdmin}>
       <div className="space-y-6">
         {/* Header */}
         <div className="sm:flex sm:items-center sm:justify-between">

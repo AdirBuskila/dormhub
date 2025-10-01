@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-// import { UserButton } from '@clerk/nextjs'; // Disabled for development
+import { UserButton, SignInButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import { cn } from '@/lib/utils';
 import {
   LayoutDashboard,
@@ -21,17 +22,6 @@ import {
   Wrench
 } from 'lucide-react';
 
-  const navigation = [
-    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-    { name: 'Inventory', href: '/inventory', icon: Package },
-    { name: 'Clients', href: '/clients', icon: Users },
-    { name: 'Orders', href: '/orders', icon: ShoppingCart },
-    { name: 'Payments', href: '/payments', icon: CreditCard },
-    { name: 'Returns', href: '/returns', icon: RotateCcw },
-    { name: 'Alerts', href: '/alerts', icon: Bell },
-    { name: 'Customer Portal', href: '/customer', icon: Users },
-  ];
-
 const categoryIcons = {
   phone: Smartphone,
   tablet: Tablet,
@@ -41,11 +31,28 @@ const categoryIcons = {
 
 interface LayoutProps {
   children: React.ReactNode;
+  isAdmin?: boolean;
 }
 
-export default function Layout({ children }: LayoutProps) {
+export default function Layout({ children, isAdmin = false }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const { isSignedIn } = useUser();
+
+  // Define navigation based on admin status
+  const navigation = isAdmin ? [
+    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+    { name: 'Inventory', href: '/inventory', icon: Package },
+    { name: 'Clients', href: '/clients', icon: Users },
+    { name: 'Orders', href: '/orders', icon: ShoppingCart },
+    { name: 'Payments', href: '/payments', icon: CreditCard },
+    { name: 'Returns', href: '/returns', icon: RotateCcw },
+    { name: 'Alerts', href: '/alerts', icon: Bell },
+    { name: 'Customer Portal', href: '/customer', icon: Users },
+  ] : [
+    { name: 'New Order', href: '/customer/new-order', icon: ShoppingCart },
+    { name: 'My Orders', href: '/customer', icon: Package },
+  ];
 
   return (
     <div className="h-screen flex overflow-hidden bg-gray-100">
@@ -63,7 +70,7 @@ export default function Layout({ children }: LayoutProps) {
                 <X className="h-6 w-6 text-white" />
               </button>
             </div>
-            <SidebarContent pathname={pathname} />
+            <SidebarContent pathname={pathname} navigation={navigation} />
           </div>
         </div>
       )}
@@ -71,7 +78,7 @@ export default function Layout({ children }: LayoutProps) {
       {/* Desktop sidebar */}
       <div className="hidden md:flex md:flex-shrink-0">
         <div className="flex flex-col w-64">
-          <SidebarContent pathname={pathname} />
+          <SidebarContent pathname={pathname} navigation={navigation} />
         </div>
       </div>
 
@@ -100,9 +107,15 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             </div>
             <div className="ml-4 flex items-center md:ml-6">
-              <div className="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-medium">
-                U
-              </div>
+              {isSignedIn ? (
+                <UserButton afterSignOutUrl="/" />
+              ) : (
+                <SignInButton mode="modal">
+                  <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                    Sign In
+                  </button>
+                </SignInButton>
+              )}
             </div>
           </div>
         </div>
@@ -120,7 +133,7 @@ export default function Layout({ children }: LayoutProps) {
   );
 }
 
-function SidebarContent({ pathname }: { pathname: string }) {
+function SidebarContent({ pathname, navigation }: { pathname: string; navigation: Array<{ name: string; href: string; icon: any }> }) {
   return (
     <div className="flex flex-col h-0 flex-1 border-r border-gray-200 bg-white">
       <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">

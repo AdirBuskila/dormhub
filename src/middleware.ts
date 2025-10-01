@@ -1,11 +1,20 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-// Development middleware - allows all routes
-// Replace with Clerk middleware when you have real API keys
-export function middleware(request: NextRequest) {
-  return NextResponse.next();
-}
+// Define public routes (no authentication required)
+const isPublicRoute = createRouteMatcher([
+  '/',
+  '/sign-in(.*)',
+  '/sign-up(.*)',
+  '/api/health',
+  '/api/test-db'
+]);
+
+export default clerkMiddleware((auth, req) => {
+  if (isPublicRoute(req)) return;
+  
+  console.log('Middleware protecting route:', req.nextUrl.pathname);
+  auth.protect();
+});
 
 export const config = {
   matcher: [

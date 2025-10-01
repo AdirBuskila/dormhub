@@ -1,7 +1,11 @@
 export type ProductCondition = 'new' | 'refurbished' | 'used' | 'activated' | 'open_box';
 export type ProductCategory = 'phone' | 'tablet' | 'earphones' | 'accessories';
 export type OrderStatus = 'draft' | 'reserved' | 'delivered' | 'closed';
-export type PaymentMethod = 'cash' | 'transfer' | 'check';
+export type PaymentMethod = 'cash' | 'transfer' | 'check' | 'credit';
+export type OrderSource = 'whatsapp' | 'phone' | 'portal';
+export type ReturnStatus = 'pending' | 'inspected' | 'restocked' | 'refurbish' | 'scrap';
+export type AlertType = 'low_stock' | 'undelivered' | 'overdue_payment' | 'reserved_stale';
+export type AlertSeverity = 'info' | 'warning' | 'danger';
 export type ReturnReason = 'defective' | 'unsold' | 'trade_in';
 export type ReturnCondition = 'returned' | 'refurbish' | 'restocked';
 
@@ -12,12 +16,13 @@ export interface Product {
   storage: string;
   condition: ProductCondition;
   category: ProductCategory;
-  stock: number;
+  total_stock: number;
   reserved_stock: number;
   min_stock_alert: number;
   image_url?: string;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
+  available_stock?: number; // Computed field from view
 }
 
 export interface Client {
@@ -37,9 +42,11 @@ export interface Order {
   id: string;
   client_id: string;
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
   status: OrderStatus;
   total_price: number;
+  promised_date?: string | null;
+  source?: OrderSource | null;
   notes: string | null;
   client?: Client;
   order_items?: OrderItem[];
@@ -60,6 +67,7 @@ export interface Payment {
   order_id: string | null;
   amount: number;
   method: PaymentMethod;
+  reference?: string | null;
   date: string;
   created_at: string;
   client?: Client;
@@ -72,6 +80,7 @@ export interface Return {
   client_id: string | null;
   reason: ReturnReason;
   condition: ReturnCondition;
+  status: ReturnStatus;
   created_at: string;
   product?: Product;
   client?: Client;
@@ -122,5 +131,26 @@ export interface CreatePaymentData {
   order_id?: string;
   amount: number;
   method: PaymentMethod;
+  reference?: string;
   date: string;
+}
+
+export interface Alert {
+  id: string;
+  type: AlertType;
+  ref_id: string | null;
+  message: string;
+  severity: AlertSeverity;
+  delivered: boolean;
+  created_at: string;
+}
+
+export interface OutboundMessage {
+  id: string;
+  channel: 'whatsapp';
+  to_client_id: string | null;
+  template: string;
+  payload: Record<string, any>;
+  sent: boolean;
+  created_at: string;
 }

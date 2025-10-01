@@ -16,7 +16,11 @@ import {
   CheckCircle
 } from 'lucide-react';
 
-export default function InventoryManagement() {
+interface InventoryManagementProps {
+  isAdmin?: boolean;
+}
+
+export default function InventoryManagement({ isAdmin = true }: InventoryManagementProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -201,7 +205,7 @@ export default function InventoryManagement() {
   }
 
   return (
-    <Layout>
+    <Layout isAdmin={isAdmin}>
       <div className="space-y-6">
         {/* Header */}
         <div className="sm:flex sm:items-center sm:justify-between">

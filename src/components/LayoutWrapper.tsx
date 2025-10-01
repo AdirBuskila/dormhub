@@ -1,8 +1,10 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
-import AlertsManagement from '@/components/AlertsManagement';
+import Layout from './Layout';
 
-export default async function AlertsPage() {
+/**
+ * Server component wrapper that checks admin status and passes to client Layout
+ */
+export default async function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const { userId } = await auth();
   const user = await currentUser();
   
@@ -13,11 +15,6 @@ export default async function AlertsPage() {
     const userEmail = user.emailAddresses[0]?.emailAddress?.toLowerCase();
     isAdmin = userEmail ? adminEmails.includes(userEmail) : false;
   }
-  
-  // Redirect non-admin users to customer portal
-  if (userId && user && !isAdmin) {
-    redirect('/customer');
-  }
-  
-  return <AlertsManagement isAdmin={isAdmin} />;
+
+  return <Layout isAdmin={isAdmin}>{children}</Layout>;
 }

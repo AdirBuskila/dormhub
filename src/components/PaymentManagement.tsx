@@ -16,7 +16,11 @@ import {
   ShoppingCart
 } from 'lucide-react';
 
-export default function PaymentManagement() {
+interface PaymentManagementProps {
+  isAdmin?: boolean;
+}
+
+export default function PaymentManagement({ isAdmin = true }: PaymentManagementProps) {
   const [payments, setPayments] = useState<Payment[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -99,7 +103,7 @@ export default function PaymentManagement() {
   }
 
   return (
-    <Layout>
+    <Layout isAdmin={isAdmin}>
       <div className="space-y-6">
         {/* Header */}
         <div className="sm:flex sm:items-center sm:justify-between">

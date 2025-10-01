@@ -17,7 +17,11 @@ import {
   RefreshCw
 } from 'lucide-react';
 
-export default function ReturnManagement() {
+interface ReturnManagementProps {
+  isAdmin?: boolean;
+}
+
+export default function ReturnManagement({ isAdmin = true }: ReturnManagementProps) {
   const [returns, setReturns] = useState<Return[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
@@ -104,7 +108,7 @@ export default function ReturnManagement() {
   }
 
   return (
-    <Layout>
+    <Layout isAdmin={isAdmin}>
       <div className="space-y-6">
         {/* Header */}
         <div className="sm:flex sm:items-center sm:justify-between">

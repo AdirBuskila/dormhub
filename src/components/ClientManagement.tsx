@@ -17,7 +17,11 @@ import {
   MapPin
 } from 'lucide-react';
 
-export default function ClientManagement() {
+interface ClientManagementProps {
+  isAdmin?: boolean;
+}
+
+export default function ClientManagement({ isAdmin = true }: ClientManagementProps) {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -136,7 +140,7 @@ export default function ClientManagement() {
   }
 
   return (
-    <Layout>
+    <Layout isAdmin={isAdmin}>
       <div className="space-y-6">
         {/* Header */}
         <div className="sm:flex sm:items-center sm:justify-between">

@@ -16,7 +16,11 @@ import {
   Bell
 } from 'lucide-react';
 
-export default function AlertsManagement() {
+interface AlertsManagementProps {
+  isAdmin?: boolean;
+}
+
+export default function AlertsManagement({ isAdmin = true }: AlertsManagementProps) {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -148,7 +152,7 @@ export default function AlertsManagement() {
   };
 
   return (
-    <Layout>
+    <Layout isAdmin={isAdmin}>
       <div className="space-y-6">
         {/* Header */}
         <div>
