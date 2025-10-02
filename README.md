@@ -1,115 +1,170 @@
 # Mobile For You Business Management System
 
-A comprehensive business management system for mobile device distribution companies, built with Next.js, TypeScript, and Supabase.
+A comprehensive, modern business management system designed specifically for mobile device distribution companies. Built with Next.js 15, TypeScript, and Supabase, this system streamlines inventory management, order processing, client relationships, and automated notifications.
 
-## Features
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-Database-green?style=flat-square&logo=supabase)](https://supabase.com/)
+[![Clerk](https://img.shields.io/badge/Clerk-Authentication-purple?style=flat-square)](https://clerk.com/)
+[![Twilio](https://img.shields.io/badge/Twilio-WhatsApp-red?style=flat-square&logo=twilio)](https://www.twilio.com/)
 
-### 🏠 Dashboard
-- Real-time business overview with key metrics
-- Quick action buttons for common tasks
-- Recent orders and low stock alerts
-- Revenue and profit tracking
+## 🚀 Key Features
 
-### 📦 Inventory Management
-- Complete product catalog with brands, models, storage, and conditions
-- Stock level tracking with low stock alerts
-- Reserved stock management for pending orders
-- Category-based organization (phones, tablets, earphones, accessories)
+### 📊 **Business Intelligence Dashboard**
+- **Real-time Metrics**: Live business overview with key performance indicators
+- **Revenue Tracking**: Comprehensive profit and loss analysis
+- **Quick Actions**: Streamlined access to common business operations
+- **Visual Analytics**: Charts and graphs for data-driven decision making
 
-### 👥 Client Management
-- Client database with contact information
-- Payment terms and custom pricing
-- Purchase history and outstanding debt tracking
-- Client performance analytics
+### 📱 **Advanced Inventory Management**
+- **Multi-Category Support**: Phones, tablets, earphones, and accessories
+- **Condition Tracking**: New, refurbished, used, activated, and open-box items
+- **Stock Management**: Real-time stock levels with reservation system
+- **Automated Alerts**: Low stock notifications with configurable thresholds
+- **Bulk Operations**: Efficient inventory updates and management
 
-### 🛒 Order Management
-- Order creation and lifecycle management (draft → reserved → delivered → closed)
-- Multi-item orders with automatic pricing
-- Order status tracking and updates
-- Client-specific order history
+### 👥 **Comprehensive Client Management**
+- **Client Database**: Complete contact information and business details
+- **Payment Terms**: Flexible payment arrangements and custom pricing
+- **Purchase History**: Detailed transaction records and analytics
+- **Debt Management**: Outstanding balance tracking and payment reminders
+- **Performance Metrics**: Client profitability and engagement analysis
 
-### 💰 Payment Tracking
-- Payment recording with multiple methods (cash, transfer, check)
-- Debt management and overdue payment alerts
-- Payment history and analytics
-- Order-linked payment tracking
+### 🛒 **Streamlined Order Processing**
+- **Multi-Step Workflow**: Draft → Reserved → Delivered → Closed
+- **Real-time Updates**: Live order status tracking and notifications
+- **Multi-Item Orders**: Complex order management with item-specific pricing
+- **Client Integration**: Seamless customer portal for order placement
+- **Order History**: Complete audit trail and historical data
 
-### 🔄 Returns & Trade-ins
-- Return processing with reason tracking
-- Trade-in management
-- Refurbishment workflow
-- Inventory restocking from returns
+### 💰 **Financial Management**
+- **Payment Tracking**: Multiple payment methods (cash, transfer, check, credit)
+- **Debt Monitoring**: Automated overdue payment detection
+- **Financial Reports**: Comprehensive revenue and profit analysis
+- **Invoice Management**: Automated invoice generation and tracking
 
-### 🔔 Alerts & Notifications
-- Low stock alerts
-- Orders pending delivery
-- Overdue payment notifications
-- Outstanding debt tracking
+### 🔔 **Smart Notifications System**
+- **WhatsApp Integration**: Automated customer communications via Twilio
+- **Multi-Channel Alerts**: Low stock, overdue payments, pending deliveries
+- **Scheduled Automation**: Daily alerts and message dispatch via Vercel cron
+- **Template System**: Customizable message templates for different scenarios
+- **Real-time Monitoring**: Live alert dashboard with severity levels
 
-## Tech Stack
+## 🛠️ Technology Stack
 
-- **Frontend**: Next.js 15, React 18, TypeScript
-- **Styling**: Tailwind CSS
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Clerk
-- **Icons**: Lucide React
-- **Charts**: Recharts
+### **Frontend & UI**
+- **Next.js 15** - React framework with App Router
+- **TypeScript 5.0** - Type-safe development
+- **Tailwind CSS** - Utility-first CSS framework
+- **Lucide React** - Beautiful, customizable icons
+- **Recharts** - Composable charting library
 
-## Getting Started
+### **Backend & Database**
+- **Supabase** - PostgreSQL database with real-time subscriptions
+- **Row Level Security (RLS)** - Database-level security policies
+- **Server Actions** - Secure server-side operations
 
-### Prerequisites
+### **Authentication & Security**
+- **Clerk** - Complete authentication solution
+- **Middleware Protection** - Route-level security
+- **Admin Role Management** - Email-based admin access control
 
-- Node.js 18+ 
-- npm or yarn
-- Supabase account
-- Clerk account
+### **Communication & Notifications**
+- **Twilio WhatsApp API** - Business messaging platform
+- **Vercel Cron Jobs** - Scheduled task automation
+- **Template Engine** - Dynamic message generation
 
-### Installation
+### **Deployment & Infrastructure**
+- **Vercel** - Optimized hosting platform
+- **Edge Runtime** - Global performance optimization
+- **Environment Management** - Secure configuration handling
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd mobileforyou
-   ```
+## 📋 Prerequisites
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+Before you begin, ensure you have the following installed and configured:
 
-3. **Set up environment variables**
-   Create a `.env.local` file in the root directory:
-   ```env
-   # Clerk Authentication
-   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_clerk_publishable_key_here
-   CLERK_SECRET_KEY=your_clerk_secret_key_here
+- **Node.js 18+** - JavaScript runtime environment
+- **npm or yarn** - Package manager
+- **Git** - Version control system
+- **Supabase Account** - Database and backend services
+- **Clerk Account** - Authentication services
+- **Twilio Account** - WhatsApp messaging (optional for notifications)
 
-   # Supabase
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
-   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key_here
+## ⚡ Quick Start
 
-   # App Configuration
-   NEXT_PUBLIC_APP_URL=http://localhost:3000
-   ```
+### 1. **Clone & Install**
+```bash
+# Clone the repository
+git clone https://github.com/your-username/mobileforyou.git
+cd mobileforyou
 
-4. **Set up Supabase database**
-   - Create a new Supabase project
-   - Run the SQL schema from `database/schema.sql` in your Supabase SQL editor
-   - Enable Row Level Security (RLS) policies
+# Install dependencies
+npm install
+```
 
-5. **Set up Clerk authentication**
-   - Create a new Clerk application
-   - Configure the authentication settings
-   - Add your domain to the allowed origins
+### 2. **Environment Configuration**
+Create a `.env.local` file in the root directory:
 
-6. **Start the development server**
-   ```bash
-   npm run dev
-   ```
+```env
+# Clerk Authentication (Required)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+ADMIN_EMAILS=admin@yourcompany.com,owner@yourcompany.com
 
-7. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+# Supabase Database (Required)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# Application Configuration
+NEXT_PUBLIC_APP_URL=http://localhost:3001
+
+# WhatsApp/Twilio Notifications (Optional)
+WHATSAPP_PROVIDER=twilio
+WHATSAPP_TEST_MODE=true
+TWILIO_ACCOUNT_SID=AC...
+TWILIO_AUTH_TOKEN=your_auth_token
+TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
+
+# Alert Configuration (Optional)
+ALERT_UNDELIVERED_DAYS=3
+ALERT_OVERDUE_DAYS=14
+ALERT_RESERVED_STALE_DAYS=3
+```
+
+### 3. **Database Setup**
+```bash
+# Run the database migration in your Supabase SQL editor
+# Copy and paste the contents of: database/alerts_and_outbound_messages.sql
+```
+
+### 4. **Start Development Server**
+```bash
+npm run dev
+```
+
+### 5. **Access the Application**
+Open your browser and navigate to [http://localhost:3001](http://localhost:3001)
+
+## 🔧 Detailed Setup Guide
+
+### **Supabase Configuration**
+1. Create a new Supabase project at [supabase.com](https://supabase.com)
+2. Navigate to **Settings → API** to get your project URL and keys
+3. Run the database migration in **SQL Editor**
+4. Enable Row Level Security (RLS) policies
+
+### **Clerk Authentication Setup**
+1. Create a new Clerk application at [clerk.com](https://clerk.com)
+2. Configure authentication providers (Google, email, etc.)
+3. Add your domain to allowed origins
+4. Copy your publishable and secret keys
+
+### **Twilio WhatsApp Setup** (Optional)
+1. Create a Twilio account at [twilio.com](https://twilio.com)
+2. Enable WhatsApp sandbox in the Twilio console
+3. Join the sandbox by sending "join <sandbox-code>" to the Twilio WhatsApp number
+4. Use E.164 phone format (e.g., +972501234567)
 
 ## Database Schema
 
@@ -204,6 +259,61 @@ The application can be deployed to any platform that supports Next.js:
 ## License
 
 This project is licensed under the MIT License.
+
+## Alerts & WhatsApp Notifications
+
+### Environment Variables
+
+The alerts and WhatsApp notification system requires the following environment variables:
+
+```env
+# WhatsApp/Twilio Configuration
+WHATSAPP_PROVIDER=twilio
+WHATSAPP_TEST_MODE=true
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
+
+# Alert Thresholds (optional)
+ALERT_UNDELIVERED_DAYS=3
+ALERT_OVERDUE_DAYS=14
+ALERT_RESERVED_STALE_DAYS=3
+```
+
+### Manual Testing
+
+Test the alerts and WhatsApp system with these API endpoints:
+
+```bash
+# Run alerts manually
+curl -X POST http://localhost:3000/api/run-alerts
+
+# Dispatch queued WhatsApp messages
+curl -X POST http://localhost:3000/api/dispatch-messages
+
+# Test WhatsApp message
+curl -X POST http://localhost:3000/api/test-whatsapp \
+  -H "Content-Type: application/json" \
+  -d '{"to":"+972501234567","template":"order_confirmation","variables":{"orderId":"123","summary":"iPhone 15 Pro"}}'
+```
+
+### Twilio Setup
+
+1. **Create Twilio Account**: Sign up at [twilio.com](https://www.twilio.com)
+2. **Get WhatsApp Sandbox**: Enable WhatsApp sandbox in Twilio console
+3. **Join Sandbox**: Send "join <sandbox-code>" to the Twilio WhatsApp number
+4. **Phone Format**: Use E.164 format (e.g., +972501234567)
+
+### Test Mode vs Production
+
+- **Test Mode** (`WHATSAPP_TEST_MODE=true`): Messages are logged to console and queued in database
+- **Production Mode** (`WHATSAPP_TEST_MODE=false`): Messages are sent via Twilio API
+
+### Automated Scheduling
+
+Vercel cron jobs automatically run:
+- **Daily Alerts**: 8:00 AM Jerusalem time (`/api/run-alerts`)
+- **Message Dispatch**: Every 5 minutes (`/api/dispatch-messages`)
 
 ## Support
 
