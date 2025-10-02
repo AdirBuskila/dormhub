@@ -416,7 +416,7 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
               <div className="text-center py-8">
                 <ShoppingCart className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  Welcome to Mobile4U!
+                  Welcome to Mobile For You!
                 </h3>
                 <p className="mt-1 text-sm text-gray-500">
                   Start by creating your first order to see your dashboard come to life.

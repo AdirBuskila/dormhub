@@ -1,4 +1,4 @@
-# 🚀 Mobile4U Setup Guide
+# 🚀 Mobile For You Setup Guide
 
 ## ✅ Current Status
 The application is now running successfully at `http://localhost:3000`!
@@ -90,7 +90,7 @@ npm run dev
 
 Open your browser and go to: **http://localhost:3000**
 
-You should see the Mobile4U dashboard with:
+You should see the Mobile For You dashboard with:
 - Business overview cards
 - Quick action buttons
 - Navigation sidebar
@@ -98,4 +98,4 @@ You should see the Mobile4U dashboard with:
 
 ## 🎉 Success!
 
-Once you complete the Supabase setup, you'll have a fully functional business management system for Ofir's phone distribution company!
+Once you complete the Supabase setup, you'll have a fully functional business management system for your mobile device distribution company!

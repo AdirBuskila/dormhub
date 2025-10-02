@@ -1,6 +1,6 @@
-# Mobile4U Business Management System
+# Mobile For You Business Management System
 
-A comprehensive business management system for phone distribution companies, built with Next.js, TypeScript, and Supabase.
+A comprehensive business management system for mobile device distribution companies, built with Next.js, TypeScript, and Supabase.
 
 ## Features
 
@@ -69,7 +69,7 @@ A comprehensive business management system for phone distribution companies, bui
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd mobile4u
+   cd mobileforyou
    ```
 
 2. **Install dependencies**

@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mobile4U - Business Management System",
-  description: "Complete business management system for phone distribution company",
+  title: "Mobile For You - Business Management System",
+  description: "Complete business management system for mobile device distribution company",
 };
 
 export default function RootLayout({

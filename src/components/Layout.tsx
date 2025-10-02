@@ -101,7 +101,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
                     <Smartphone className="h-5 w-5" />
                   </div>
                   <h1 className="block w-full pl-8 pr-3 py-2 border-transparent rounded-md leading-5 bg-gray-50 text-gray-900 text-lg font-medium">
-                    Mobile4U Business System
+                    Mobile For You Business System
                   </h1>
                 </div>
               </div>
@@ -140,7 +140,7 @@ function SidebarContent({ pathname, navigation }: { pathname: string; navigation
         <div className="flex items-center flex-shrink-0 px-4">
           <div className="flex items-center">
             <Smartphone className="h-8 w-8 text-indigo-600" />
-            <span className="ml-2 text-xl font-bold text-gray-900">Mobile4U</span>
+            <span className="ml-2 text-xl font-bold text-gray-900">Mobile For You</span>
           </div>
         </div>
         <nav className="mt-5 flex-1 px-2 space-y-1">
