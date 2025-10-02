@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Layout from '@/components/Layout';
 import { Package, CheckCircle, Clock, ArrowLeft } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
@@ -67,10 +68,10 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Layout isAdmin={false}>
+      <div className="max-w-3xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white shadow rounded-lg p-6 mb-8">
+        <div className="bg-white shadow rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Link
@@ -98,7 +99,7 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
         </div>
 
         {/* Status Message */}
-        <div className="bg-white shadow rounded-lg p-6 mb-8">
+        <div className="bg-white shadow rounded-lg p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               {getStatusIcon(order.status)}
@@ -167,6 +168,6 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
           </Link>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }

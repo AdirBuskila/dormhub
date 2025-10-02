@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Layout from '@/components/Layout';
 import { Client } from '@/lib/db/clients';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { ShoppingCart, Package, Clock, CheckCircle } from 'lucide-react';
@@ -36,10 +37,10 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
     .reduce((sum, order) => sum + order.total_price, 0);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <Layout isAdmin={false}>
+      <div className="space-y-6">
         {/* Header */}
-        <div className="bg-white shadow rounded-lg p-6 mb-8">
+        <div className="bg-white shadow rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
@@ -60,7 +61,7 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-5">
               <div className="flex items-center">
@@ -204,6 +205,6 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
