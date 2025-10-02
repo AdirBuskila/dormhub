@@ -1,18 +1,26 @@
+'use client';
+
 import { SignUp } from '@clerk/nextjs';
+import { useTranslations } from 'next-intl';
 
 export default function SignUpPage() {
+  const t = useTranslations();
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Mobile For You Business System
+            Mobile For You {t('auth.businessSystem')}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Create your account to get started
+            {t('auth.signUpDescription')}
           </p>
         </div>
-        <SignUp />
+        <SignUp 
+          afterSignUpUrl="/"
+          redirectUrl="/"
+        />
       </div>
     </div>
   );

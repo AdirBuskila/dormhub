@@ -5,7 +5,9 @@ import { UserButton, SignInButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
+import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
+import LanguageSwitcher from './LanguageSwitcher';
 import {
   LayoutDashboard,
   Package,
@@ -38,20 +40,21 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const { isSignedIn } = useUser();
+  const t = useTranslations();
 
   // Define navigation based on admin status
   const navigation = isAdmin ? [
-    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-    { name: 'Inventory', href: '/inventory', icon: Package },
-    { name: 'Clients', href: '/clients', icon: Users },
-    { name: 'Orders', href: '/orders', icon: ShoppingCart },
-    { name: 'Payments', href: '/payments', icon: CreditCard },
-    { name: 'Returns', href: '/returns', icon: RotateCcw },
-    { name: 'Alerts', href: '/alerts', icon: Bell },
-    { name: 'Customer Portal', href: '/customer', icon: Users },
+    { name: t('navigation.dashboard'), href: '/', icon: LayoutDashboard },
+    { name: t('navigation.inventory'), href: '/inventory', icon: Package },
+    { name: t('navigation.clients'), href: '/clients', icon: Users },
+    { name: t('navigation.orders'), href: '/orders', icon: ShoppingCart },
+    { name: t('navigation.payments'), href: '/payments', icon: CreditCard },
+    { name: t('navigation.returns'), href: '/returns', icon: RotateCcw },
+    { name: t('navigation.alerts'), href: '/alerts', icon: Bell },
+    { name: t('navigation.customerPortal'), href: '/customer', icon: Users },
   ] : [
-    { name: 'New Order', href: '/customer/new-order', icon: ShoppingCart },
-    { name: 'My Orders', href: '/customer', icon: Package },
+    { name: t('navigation.newOrder'), href: '/customer/new-order', icon: ShoppingCart },
+    { name: t('navigation.myOrders'), href: '/customer', icon: Package },
   ];
 
   return (
@@ -101,18 +104,19 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
                     <Smartphone className="h-5 w-5" />
                   </div>
                   <h1 className="block w-full pl-8 pr-3 py-2 border-transparent rounded-md leading-5 bg-gray-50 text-gray-900 text-lg font-medium">
-                    Mobile For You Business System
+                    Mobile For You {isAdmin ? t('auth.businessSystem') : t('auth.customerPortal')}
                   </h1>
                 </div>
               </div>
             </div>
-            <div className="ml-4 flex items-center md:ml-6">
+            <div className="ml-4 flex items-center space-x-4 md:ml-6">
+              <LanguageSwitcher />
               {isSignedIn ? (
                 <UserButton afterSignOutUrl="/" />
               ) : (
                 <SignInButton mode="modal">
                   <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                    Sign In
+                    {t('auth.signIn')}
                   </button>
                 </SignInButton>
               )}

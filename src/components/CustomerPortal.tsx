@@ -191,10 +191,11 @@ export default function CustomerPortal() {
         </div>
       </div>
 
-      {/* Products Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      {/* Products Grid - Mobile Optimized */}
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {filteredProducts.map((product) => (
           <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+            {/* Product Image */}
             <div className="aspect-w-16 aspect-h-9 bg-gray-200">
               {product.image_url ? (
                 <img
@@ -212,9 +213,12 @@ export default function CustomerPortal() {
                 </div>
               )}
             </div>
+            
+            {/* Product Details */}
             <div className="p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-lg font-semibold text-gray-900">
+              {/* Title and Stock - Mobile Optimized */}
+              <div className="mb-3">
+                <h3 className="text-base sm:text-lg font-semibold text-gray-900 leading-tight mb-2">
                   {product.brand} {product.model}
                 </h3>
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -226,26 +230,30 @@ export default function CustomerPortal() {
                 </span>
               </div>
               
-              <div className="space-y-1 mb-4">
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">Storage:</span> {product.storage}
-                </p>
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">Condition:</span> 
-                  <span className={`ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+              {/* Product Info - Mobile Optimized */}
+              <div className="space-y-2 mb-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 font-medium">Storage:</span>
+                  <span className="text-sm text-gray-900">{product.storage}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 font-medium">Condition:</span>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                     product.condition === 'new' ? 'bg-blue-100 text-blue-800' :
                     product.condition === 'refurbished' ? 'bg-purple-100 text-purple-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>
                     {product.condition}
                   </span>
-                </p>
-                <p className="text-sm text-gray-600 capitalize">
-                  <span className="font-medium">Category:</span> {product.category}
-                </p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 font-medium">Category:</span>
+                  <span className="text-sm text-gray-900 capitalize">{product.category}</span>
+                </div>
               </div>
 
-              <div className="flex items-center justify-between">
+              {/* Price and Add Button - Mobile Optimized */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
                 <div className="text-lg font-bold text-indigo-600">
                   {/* Mock pricing */}
                   {product.category === 'phone' && formatCurrency(500)}
@@ -256,9 +264,9 @@ export default function CustomerPortal() {
                 <button
                   onClick={() => addToCart(product)}
                   disabled={product.stock === 0}
-                  className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
-                  <ShoppingCart className="h-4 w-4 mr-1" />
+                  <ShoppingCart className="h-4 w-4 mr-2" />
                   Add to Cart
                 </button>
               </div>

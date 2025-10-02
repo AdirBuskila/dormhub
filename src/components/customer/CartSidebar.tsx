@@ -2,6 +2,7 @@
 
 import { CartItem } from './NewOrderPage';
 import { Package, Minus, Plus, Trash2, ShoppingCart } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface CartSidebarProps {
   items: CartItem[];
@@ -18,6 +19,7 @@ export default function CartSidebar({
   onSubmit,
   submitting
 }: CartSidebarProps) {
+  const t = useTranslations();
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (item.quantity * 0), 0); // Using 0 for MVP
 
@@ -108,26 +110,26 @@ export default function CartSidebar({
             <div className="border-t border-gray-200 pt-4">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Items ({totalItems})</span>
+                  <span className="text-gray-600">{t('common.total')} ({totalItems})</span>
                   <span className="text-gray-900">{totalItems}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal</span>
+                  <span className="text-gray-600">{t('common.total')}</span>
                   <span className="text-gray-900">$0.00</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Tax</span>
+                  <span className="text-gray-600">{t('common.total')}</span>
                   <span className="text-gray-900">$0.00</span>
                 </div>
                 <div className="flex justify-between text-lg font-medium border-t border-gray-200 pt-2">
-                  <span>Total</span>
+                  <span>{t('common.total')}</span>
                   <span>$0.00</span>
                 </div>
               </div>
 
               <div className="mt-4 text-xs text-gray-500">
                 <p>
-                  Note: Pricing will be set by our team before delivery.
+                  {t('customer.finalPricing')}
                 </p>
               </div>
 
@@ -140,12 +142,12 @@ export default function CartSidebar({
                 {submitting ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Creating Order...
+                    {t('common.loading')}
                   </>
                 ) : (
                   <>
                     <ShoppingCart className="h-4 w-4 mr-2" />
-                    Submit Order
+                    {t('customer.proceedToCheckout')}
                   </>
                 )}
               </button>

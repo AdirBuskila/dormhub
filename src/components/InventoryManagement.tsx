@@ -5,6 +5,7 @@ import Layout from './Layout';
 import { Product, CreateProductData, ProductCondition, ProductCategory } from '@/types/database';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '@/lib/database';
 import { formatCurrency, getConditionColor } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 import {
   Plus,
   Search,
@@ -21,6 +22,7 @@ interface InventoryManagementProps {
 }
 
 export default function InventoryManagement({ isAdmin = true }: InventoryManagementProps) {
+  const t = useTranslations();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -210,9 +212,9 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
         {/* Header */}
         <div className="sm:flex sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Inventory Management</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t('inventory.inventoryManagement')}</h1>
             <p className="mt-1 text-sm text-gray-500">
-              Manage your product inventory, stock levels, and alerts.
+              {t('inventory.inventoryDescription')}
             </p>
           </div>
           <div className="mt-4 sm:mt-0">
@@ -221,7 +223,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <Plus className="h-4 w-4 mr-2" />
-              Add Product
+              {t('inventory.addProduct')}
             </button>
           </div>
         </div>
@@ -261,7 +263,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Total Products</dt>
+                    <dt className="text-sm font-medium text-gray-500 truncate">{t('inventory.totalProducts')}</dt>
                     <dd className="text-lg font-medium text-gray-900">{products.length}</dd>
                   </dl>
                 </div>
@@ -277,7 +279,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Low Stock Items</dt>
+                    <dt className="text-sm font-medium text-gray-500 truncate">{t('inventory.lowStockAlerts')}</dt>
                     <dd className="text-lg font-medium text-gray-900">{lowStockProducts.length}</dd>
                   </dl>
                 </div>
@@ -293,7 +295,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">In Stock Items</dt>
+                    <dt className="text-sm font-medium text-gray-500 truncate">{t('inventory.inStockItems')}</dt>
                     <dd className="text-lg font-medium text-gray-900">
                       {products.filter(p => p.stock > p.min_stock_alert).length}
                     </dd>
@@ -314,7 +316,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                 </div>
                 <input
                   type="text"
-                  placeholder="Search products..."
+                  placeholder={t('inventory.searchProducts')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -329,18 +331,18 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                   onChange={(e) => setFilterCategory(e.target.value)}
                   className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                 >
-                  <option value="all">All Categories</option>
-                  <option value="phone">Phones</option>
-                  <option value="tablet">Tablets</option>
-                  <option value="earphones">Earphones</option>
-                  <option value="accessories">Accessories</option>
+                  <option value="all">{t('inventory.allCategories')}</option>
+                  <option value="phone">{t('inventory.phones')}</option>
+                  <option value="tablet">{t('inventory.tablets')}</option>
+                  <option value="earphones">{t('inventory.earphones')}</option>
+                  <option value="accessories">{t('inventory.accessories')}</option>
                 </select>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Products Table */}
+        {/* Products List - Mobile Optimized */}
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
           {filteredProducts.length > 0 && (
             <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
@@ -352,90 +354,186 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mr-3"
                 />
                 <span className="text-sm font-medium text-gray-700">
-                  Select All ({filteredProducts.length} products)
+                  {t('inventory.selectAll')} ({filteredProducts.length} {t('inventory.productsSelected')})
                 </span>
               </div>
             </div>
           )}
-          <ul className="divide-y divide-gray-200">
-            {filteredProducts.map((product) => (
-              <li key={product.id}>
-                <div className="px-4 py-4 flex items-center justify-between">
-                  <div className="flex items-center">
+          
+          {/* Mobile Layout */}
+          <div className="block sm:hidden">
+            <div className="space-y-4 p-4">
+              {filteredProducts.map((product) => (
+                <div key={product.id} className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex items-start space-x-3 mb-3">
                     <input
                       type="checkbox"
                       checked={selectedProducts.includes(product.id)}
                       onChange={() => handleSelectProduct(product.id)}
-                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mr-3"
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mt-1"
                     />
-                    <div className="flex-shrink-0 h-12 w-12">
+                    
+                    {/* Product Image */}
+                    <div className="flex-shrink-0">
                       {product.image_url ? (
                         <img
                           src={product.image_url}
                           alt={`${product.brand} ${product.model}`}
-                          className="h-12 w-12 rounded-lg object-cover border border-gray-200"
+                          className="h-16 w-16 rounded-lg object-cover border border-gray-200"
                           onError={(e) => {
-                            // Fallback to icon if image fails to load
                             e.currentTarget.style.display = 'none';
                             e.currentTarget.nextElementSibling.style.display = 'flex';
                           }}
                         />
                       ) : null}
                       <div 
-                        className={`h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center ${product.image_url ? 'hidden' : 'flex'}`}
+                        className={`h-16 w-16 rounded-lg bg-gray-200 flex items-center justify-center ${product.image_url ? 'hidden' : 'flex'}`}
                       >
-                        <Package className="h-6 w-6 text-gray-500" />
+                        <Package className="h-8 w-8 text-gray-500" />
                       </div>
                     </div>
-                    <div className="ml-4">
-                      <div className="flex items-center">
-                        <p className="text-sm font-medium text-gray-900">
-                          {product.brand} {product.model}
-                        </p>
-                        <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getConditionColor(product.condition)}`}>
+
+                    {/* Product Info */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-gray-900 leading-tight mb-1">
+                        {product.brand} {product.model}
+                      </h3>
+                      <div className="flex items-center space-x-2 mb-2">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getConditionColor(product.condition)}`}>
                           {product.condition}
                         </span>
-                      </div>
-                      <div className="flex items-center mt-1">
-                        <p className="text-sm text-gray-500">
-                          {product.storage} • {product.category}
-                        </p>
                         {product.stock <= product.min_stock_alert && (
-                          <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
                             Low Stock
                           </span>
                         )}
                       </div>
+                      
+                      <div className="space-y-1">
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Storage:</span>
+                          <span className="text-sm text-gray-900">{product.storage}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Category:</span>
+                          <span className="text-sm text-gray-900 capitalize">{product.category}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Stock:</span>
+                          <span className="text-sm text-gray-900">{product.stock}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-600">Reserved:</span>
+                          <span className="text-sm text-gray-900">{product.reserved_stock}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">
-                        Stock: {product.stock}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        Reserved: {product.reserved_stock}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => openEditModal(product)}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteProduct(product.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex justify-end space-x-2 pt-3 border-t border-gray-200">
+                    <button
+                      onClick={() => openEditModal(product)}
+                      className="inline-flex items-center px-3 py-1 border border-indigo-300 rounded-md text-sm font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100"
+                    >
+                      <Edit className="h-4 w-4 mr-1" />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteProduct(product.id)}
+                      className="inline-flex items-center px-3 py-1 border border-red-300 rounded-md text-sm font-medium text-red-700 bg-red-50 hover:bg-red-100"
+                    >
+                      <Trash2 className="h-4 w-4 mr-1" />
+                      Delete
+                    </button>
                   </div>
                 </div>
-              </li>
-            ))}
-          </ul>
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop Layout */}
+          <div className="hidden sm:block">
+            <ul className="divide-y divide-gray-200">
+              {filteredProducts.map((product) => (
+                <li key={product.id}>
+                  <div className="px-4 py-4 flex items-center justify-between">
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedProducts.includes(product.id)}
+                        onChange={() => handleSelectProduct(product.id)}
+                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded mr-3"
+                      />
+                      <div className="flex-shrink-0 h-12 w-12">
+                        {product.image_url ? (
+                          <img
+                            src={product.image_url}
+                            alt={`${product.brand} ${product.model}`}
+                            className="h-12 w-12 rounded-lg object-cover border border-gray-200"
+                            onError={(e) => {
+                              // Fallback to icon if image fails to load
+                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.nextElementSibling.style.display = 'flex';
+                            }}
+                          />
+                        ) : null}
+                        <div 
+                          className={`h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center ${product.image_url ? 'hidden' : 'flex'}`}
+                        >
+                          <Package className="h-6 w-6 text-gray-500" />
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <div className="flex items-center">
+                          <p className="text-sm font-medium text-gray-900">
+                            {product.brand} {product.model}
+                          </p>
+                          <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getConditionColor(product.condition)}`}>
+                            {product.condition}
+                          </span>
+                        </div>
+                        <div className="flex items-center mt-1">
+                          <p className="text-sm text-gray-500">
+                            {product.storage} • {product.category}
+                          </p>
+                          {product.stock <= product.min_stock_alert && (
+                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                              Low Stock
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-4">
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-gray-900">
+                          Stock: {product.stock}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Reserved: {product.reserved_stock}
+                        </p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => openEditModal(product)}
+                          className="text-indigo-600 hover:text-indigo-900"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(product.id)}
+                          className="text-red-600 hover:text-red-900"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
         {/* Add/Edit Product Modal */}
@@ -482,11 +580,11 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                         onChange={(e) => setFormData({ ...formData, condition: e.target.value as ProductCondition })}
                         className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       >
-                        <option value="new">New</option>
-                        <option value="refurbished">Refurbished</option>
-                        <option value="used">Used</option>
-                        <option value="activated">Activated</option>
-                        <option value="open_box">Open Box</option>
+                        <option value="new">{t('inventory.new')}</option>
+                        <option value="refurbished">{t('inventory.refurbished')}</option>
+                        <option value="used">{t('inventory.used')}</option>
+                        <option value="activated">{t('inventory.activated')}</option>
+                        <option value="open_box">{t('inventory.openBox')}</option>
                       </select>
                     </div>
                     <div>
@@ -497,9 +595,9 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                         className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       >
                         <option value="phone">Phone</option>
-                        <option value="tablet">Tablet</option>
-                        <option value="earphones">Earphones</option>
-                        <option value="accessories">Accessories</option>
+                        <option value="tablet">{t('inventory.tablets')}</option>
+                        <option value="earphones">{t('inventory.earphones')}</option>
+                        <option value="accessories">{t('inventory.accessories')}</option>
                       </select>
                     </div>
                   </div>

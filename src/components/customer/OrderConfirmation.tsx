@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Layout from '@/components/Layout';
 import { Package, CheckCircle, Clock, ArrowLeft } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface OrderItem {
   id: string;
@@ -30,6 +31,7 @@ interface OrderConfirmationProps {
 }
 
 export default function OrderConfirmation({ order }: OrderConfirmationProps) {
+  const t = useTranslations();
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'delivered':
@@ -57,13 +59,13 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
   const getStatusMessage = (status: string) => {
     switch (status) {
       case 'delivered':
-        return 'Your order has been delivered successfully!';
+        return t('customer.orderDelivered');
       case 'reserved':
-        return 'Your order has been reserved and is ready for delivery.';
+        return t('customer.orderReserved');
       case 'draft':
-        return 'Your order has been received and is being processed.';
+        return t('customer.orderProcessed');
       default:
-        return 'Your order is being processed.';
+        return t('customer.orderBeingProcessed');
     }
   };
 
@@ -82,7 +84,7 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
               </Link>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Order Confirmation
+                  {t('customer.orderConfirmation')}
                 </h1>
                 <p className="text-gray-600">
                   Order #{order.id.slice(0, 8)}
@@ -92,7 +94,7 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
             <div className="flex items-center space-x-2">
               {getStatusIcon(order.status)}
               <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
-                {order.status}
+                {t(`orders.orderStatus.${order.status}`)}
               </span>
             </div>
           </div>

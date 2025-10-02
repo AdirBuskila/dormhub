@@ -7,6 +7,7 @@ import { Product } from '@/types/database';
 import { supabase } from '@/lib/supabase';
 import NewOrderProductList from './NewOrderProductList';
 import CartSidebar from './CartSidebar';
+import { useTranslations } from 'next-intl';
 
 interface CartItem {
   product: Product;
@@ -18,6 +19,7 @@ interface NewOrderPageProps {
 }
 
 export default function NewOrderPage({ clientId }: NewOrderPageProps) {
+  const t = useTranslations();
   const [products, setProducts] = useState<Product[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,7 +108,7 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
       router.push(`/customer/orders/${orderId}`);
     } catch (error) {
       console.error('Failed to submit order:', error);
-      alert('Failed to create order. Please try again.');
+      alert(t('common.error'));
     } finally {
       setSubmitting(false);
     }
@@ -117,7 +119,7 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
       <Layout isAdmin={false}>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-          <span className="ml-2">Loading products...</span>
+          <span className="ml-2">{t('common.loading')}</span>
         </div>
       </Layout>
     );
@@ -131,14 +133,14 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Create New Order
+                {t('customer.createNewOrder')}
               </h1>
               <p className="text-gray-600">
-                Browse products and add them to your order
+                {t('customer.orderDescription')}
               </p>
             </div>
             <div className="text-sm text-gray-500">
-              {cart.length} item{cart.length !== 1 ? 's' : ''} in cart
+              {cart.length} {t('customer.itemsInCart')}
             </div>
           </div>
         </div>

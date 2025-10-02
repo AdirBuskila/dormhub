@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import Layout from './Layout';
 import { DashboardStats } from '@/types/database';
 import { getDashboardStats } from '@/lib/database';
@@ -18,11 +19,14 @@ import {
 
 interface DashboardProps {
   isAdmin?: boolean;
+  showSignInPrompt?: boolean;
 }
 
-export default function Dashboard({ isAdmin = true }: DashboardProps) {
+export default function Dashboard({ isAdmin = true, showSignInPrompt = false }: DashboardProps) {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations();
+  const locale = useLocale();
 
   useEffect(() => {
     async function loadStats() {
@@ -74,7 +78,7 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
   // Admin-only stat cards
   const adminStatCards = [
     {
-      name: 'Orders to Deliver Today',
+      name: t('dashboard.ordersToDeliverToday'),
       value: stats.ordersToDeliverToday,
       icon: ShoppingCart,
       color: 'bg-blue-500',
@@ -82,7 +86,7 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
       bgColor: 'bg-blue-50'
     },
     {
-      name: 'Low Stock Items',
+      name: t('dashboard.lowStockItems'),
       value: stats.lowStockItems,
       icon: AlertTriangle,
       color: 'bg-yellow-500',
@@ -90,7 +94,7 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
       bgColor: 'bg-yellow-50'
     },
     {
-      name: 'Outstanding Debts',
+      name: t('dashboard.outstandingDebts'),
       value: formatCurrency(stats.outstandingDebts),
       icon: DollarSign,
       color: 'bg-red-500',
@@ -98,7 +102,7 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
       bgColor: 'bg-red-50'
     },
     {
-      name: 'Total Revenue',
+      name: t('dashboard.totalRevenue'),
       value: formatCurrency(stats.totalRevenue),
       icon: TrendingUp,
       color: 'bg-green-500',
@@ -106,7 +110,7 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
       bgColor: 'bg-green-50'
     },
     {
-      name: 'Total Profit',
+      name: t('dashboard.totalProfit'),
       value: formatCurrency(stats.totalProfit),
       icon: CheckCircle,
       color: 'bg-indigo-500',
@@ -145,18 +149,50 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
 
   const statCards = isAdmin ? adminStatCards : customerStatCards;
 
+  // Show sign-in prompt for unauthenticated users
+  if (showSignInPrompt) {
+    return (
+      <Layout isAdmin={false}>
+        <div className="space-y-6">
+          <div className="text-center py-12">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              {t('auth.welcome')}
+            </h1>
+            <p className="text-lg text-gray-600 mb-8">
+              {t('auth.signInPrompt')}
+            </p>
+            <div className="flex justify-center space-x-4">
+              <a
+                href={`/${locale}/sign-in`}
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                {t('auth.signIn')}
+              </a>
+              <a
+                href={`/${locale}/sign-up`}
+                className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                {t('auth.signUp')}
+              </a>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout isAdmin={isAdmin}>
       <div className="space-y-6">
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {isAdmin ? 'Business Dashboard' : 'My Dashboard'}
+            {isAdmin ? t('dashboard.businessDashboard') : t('dashboard.myDashboard')}
           </h1>
           <p className="mt-1 text-sm text-gray-500">
             {isAdmin 
-              ? "Welcome back! Here's what's happening with your business today."
-              : "Welcome back! Here's your account overview and quick actions."
+              ? t('dashboard.businessWelcome')
+              : t('dashboard.customerWelcome')
             }
           </p>
         </div>
@@ -165,7 +201,7 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
             <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-              Quick Actions
+              {t('dashboard.quickActions')}
             </h3>
             
             {isAdmin ? (
@@ -183,10 +219,10 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
                   <div className="mt-4">
                     <h3 className="text-lg font-medium">
                       <span className="absolute inset-0" aria-hidden="true" />
-                      Manage Inventory
+                      {t('dashboard.manageInventory')}
                     </h3>
                     <p className="mt-2 text-sm text-gray-500">
-                      Edit products, update stock, bulk operations
+                      {t('dashboard.manageInventoryDesc')}
                     </p>
                   </div>
                 </a>
@@ -203,10 +239,10 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
                   <div className="mt-4">
                     <h3 className="text-lg font-medium">
                       <span className="absolute inset-0" aria-hidden="true" />
-                      Manage Clients
+                      {t('dashboard.manageClients')}
                     </h3>
                     <p className="mt-2 text-sm text-gray-500">
-                      Add clients, track payments, manage debts
+                      {t('dashboard.manageClientsDesc')}
                     </p>
                   </div>
                 </a>
@@ -223,10 +259,10 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
                   <div className="mt-4">
                     <h3 className="text-lg font-medium">
                       <span className="absolute inset-0" aria-hidden="true" />
-                      Customer Portal
+                      {t('navigation.customerPortal')}
                     </h3>
                     <p className="mt-2 text-sm text-gray-500">
-                      View products from customer perspective
+                      {t('dashboard.customerPortalDesc')}
                     </p>
                   </div>
                 </a>
@@ -332,7 +368,7 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
             <div className="bg-white shadow rounded-lg">
               <div className="px-4 py-5 sm:p-6">
                 <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                  Recent Orders
+                  {t('dashboard.recentOrders')}
                 </h3>
                 <div className="flow-root">
                   <ul className="-my-5 divide-y divide-gray-200">
@@ -373,7 +409,7 @@ export default function Dashboard({ isAdmin = true }: DashboardProps) {
             <div className="bg-white shadow rounded-lg">
               <div className="px-4 py-5 sm:p-6">
                 <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                  Low Stock Alerts
+                  {t('dashboard.lowStockAlerts')}
                 </h3>
                 <div className="flow-root">
                   <ul className="-my-5 divide-y divide-gray-200">

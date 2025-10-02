@@ -5,6 +5,7 @@ import Layout from '@/components/Layout';
 import { Client } from '@/lib/db/clients';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { ShoppingCart, Package, Clock, CheckCircle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface Order {
   id: string;
@@ -30,6 +31,7 @@ interface CustomerDashboardProps {
 }
 
 export default function CustomerDashboard({ client, orders }: CustomerDashboardProps) {
+  const t = useTranslations();
   const recentOrders = orders.slice(0, 5);
   const outstandingOrders = orders.filter(order => order.status !== 'closed');
   const totalSpent = orders
@@ -44,18 +46,18 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Welcome back, {client.name}!
+                {t('customer.welcomeBack')}, {client.name}!
               </h1>
               <p className="text-gray-600">
-                Manage your orders and browse our latest products
+                {t('customer.manageOrders')}
               </p>
             </div>
             <Link
               href="/customer/new-order"
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              New Order
+              <ShoppingCart className='h-4 w-4 mr-2' />
+              {t('navigation.newOrder')}
             </Link>
           </div>
         </div>
@@ -71,7 +73,7 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
                 <div className="ml-5 w-0 flex-1">
                   <dl>
                     <dt className="text-sm font-medium text-gray-500 truncate">
-                      Total Orders
+                      {t('customer.totalOrders')}
                     </dt>
                     <dd className="text-lg font-medium text-gray-900">
                       {orders.length}
@@ -91,7 +93,7 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
                 <div className="ml-5 w-0 flex-1">
                   <dl>
                     <dt className="text-sm font-medium text-gray-500 truncate">
-                      Outstanding Orders
+                      {t('customer.outstandingOrders')}
                     </dt>
                     <dd className="text-lg font-medium text-gray-900">
                       {outstandingOrders.length}
@@ -111,7 +113,7 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
                 <div className="ml-5 w-0 flex-1">
                   <dl>
                     <dt className="text-sm font-medium text-gray-500 truncate">
-                      Total Spent
+                      {t('customer.totalSpent')}
                     </dt>
                     <dd className="text-lg font-medium text-gray-900">
                       {formatCurrency(totalSpent)}
@@ -127,25 +129,25 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
             <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-              Recent Orders
+              {t('customer.recentOrders')}
             </h3>
             
             {orders.length === 0 ? (
               <div className="text-center py-8">
                 <Package className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  No orders yet
+                  {t('customer.noOrdersYet')}
                 </h3>
                 <p className="mt-1 text-sm text-gray-500">
-                  Get started by creating your first order.
+                  {t('customer.getStartedByCreating')}
                 </p>
                 <div className="mt-6">
                   <Link
                     href="/customer/new-order"
                     className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    Create Your First Order
+                    <ShoppingCart className='h-4 w-4 mr-2' />
+                    {t('dashboard.createFirstOrder')}
                   </Link>
                 </div>
               </div>
@@ -166,7 +168,7 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
                               order.status === 'draft' ? 'bg-gray-100 text-gray-800' :
                               'bg-blue-100 text-blue-800'
                             }`}>
-                              {order.status}
+                              {t(`orders.orderStatus.${order.status}`)}
                             </span>
                           </div>
                           <div className="mt-1 flex items-center text-sm text-gray-500">
@@ -182,7 +184,7 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
                             href={`/customer/orders/${order.id}`}
                             className="text-indigo-600 hover:text-indigo-900 text-sm font-medium"
                           >
-                            View Details
+                            {t('customer.viewDetails')}
                           </Link>
                         </div>
                       </div>
@@ -196,7 +198,7 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
                       href="/customer/orders"
                       className="text-sm text-indigo-600 hover:text-indigo-500"
                     >
-                      View all orders
+                      {t('customer.viewAllOrders')}
                     </Link>
                   </div>
                 )}
