@@ -22,8 +22,10 @@ const intlMiddleware = createIntlMiddleware({
 });
 
 export default clerkMiddleware((auth, req) => {
-  // Skip middleware for API routes
+  // For API routes, only run Clerk middleware (no i18n or protection)
   if (req.nextUrl.pathname.startsWith('/api/')) {
+    // Let Clerk set up auth context but don't protect API routes here
+    // API routes will handle their own authentication
     return;
   }
 
@@ -51,9 +53,11 @@ export const config = {
     // all requests that have a locale prefix
     '/(he|en)/:path*',
 
+    // API routes - need Clerk middleware for authentication
+    '/api/:path*',
+
     // Enable redirects that add missing locales
     // (e.g. `/pathnames` -> `/en/pathnames`)
-    // Exclude API routes from internationalization
-    '/((?!api|_next|_vercel|.*\\..*).*)'
+    '/((?!_next|_vercel|.*\\..*).*)'
   ],
 };

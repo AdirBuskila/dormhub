@@ -103,7 +103,9 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
       if (!response.ok) {
         const errorData = await response.json();
         console.error('Order creation failed:', errorData);
-        throw new Error(`Failed to create order: ${errorData.error || 'Unknown error'}`);
+        const errorMessage = errorData.error || 'Unknown error';
+        const errorDetails = errorData.details ? ` (${errorData.details})` : '';
+        throw new Error(`Failed to create order: ${errorMessage}${errorDetails}`);
       }
 
       const { orderId } = await response.json();

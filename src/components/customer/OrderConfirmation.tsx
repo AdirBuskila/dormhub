@@ -32,6 +32,20 @@ interface OrderConfirmationProps {
 
 export default function OrderConfirmation({ order }: OrderConfirmationProps) {
   const t = useTranslations();
+
+  // Safety check for order data
+  if (!order || !order.id) {
+    return (
+      <Layout isAdmin={false}>
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <h2 className="text-xl font-bold text-red-900">Invalid Order Data</h2>
+            <p className="mt-2 text-red-700">The order information is missing or invalid.</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'delivered':
@@ -123,25 +137,80 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
             <h2 className="text-lg font-medium text-gray-900">Order Details</h2>
           </div>
           <div className="px-6 py-4">
-            <ul className="divide-y divide-gray-200">
-              {order.order_items.map((item) => (
-                <li key={item.id} className="py-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <h4 className="text-sm font-medium text-gray-900">
-                        {item.product.brand} {item.product.model}
-                      </h4>
-                      <p className="text-sm text-gray-500">
-                        {item.product.storage} • Quantity: {item.quantity}
-                      </p>
-                    </div>
-                    <div className="text-sm text-gray-900">
-                      ${item.price * item.quantity}
+            {order.order_items && order.order_items.length > 0 ? (
+              <div className="space-y-4">
+                {order.order_items.map((item) => (
+                  <div key={item.id} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        {/* Product Header */}
+                        <div className="flex items-center space-x-3 mb-3">
+                          <div className="flex-shrink-0">
+                            {item.products?.image_url ? (
+                              <img
+                                src={item.products.image_url}
+                                alt={`${item.products.brand} ${item.products.model}`}
+                                className="w-12 h-12 rounded-lg object-cover"
+                              />
+                            ) : (
+                              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                <Package className="h-6 w-6 text-indigo-600" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h4 className="text-base font-semibold text-gray-900 leading-tight mb-1">
+                              {item.products?.brand} {item.products?.model}
+                            </h4>
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                              Qty: {item.quantity}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Product Details */}
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-600 font-medium">Storage:</span>
+                            <span className="text-sm text-gray-900">{item.products?.storage}</span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-600 font-medium">Condition:</span>
+                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                              item.products?.condition === 'new' ? 'bg-blue-100 text-blue-800' :
+                              item.products?.condition === 'refurbished' ? 'bg-purple-100 text-purple-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {item.products?.condition}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-sm text-gray-600 font-medium">Category:</span>
+                            <span className="text-sm text-gray-900 capitalize">{item.products?.category}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Price */}
+                      <div className="flex-shrink-0 ml-4 text-right">
+                        <div className="text-lg font-semibold text-gray-900">
+                          ${item.price * item.quantity}
+                        </div>
+                        {item.quantity > 1 && (
+                          <div className="text-sm text-gray-500">
+                            ${item.price} each
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </li>
-              ))}
-            </ul>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500">No items found in this order.</p>
+              </div>
+            )}
 
             {/* Order Summary */}
             <div className="border-t border-gray-200 pt-4 mt-4">

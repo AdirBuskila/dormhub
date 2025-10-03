@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
     console.log('Orders API - userId:', userId);
     
     if (!userId) {
+      console.log('Orders API - No userId found');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -27,17 +28,28 @@ export async function POST(request: NextRequest) {
     // Verify client exists and belongs to the authenticated user
     const { data: client, error: clientError } = await supabaseAdmin
       .from('clients')
-      .select('id')
+      .select('id, clerk_user_id')
       .eq('id', clientId)
       .eq('clerk_user_id', userId)
       .single();
 
-    console.log('Orders API - client lookup result:', { client, clientError });
+    console.log('Orders API - client lookup result:', { 
+      clientId, 
+      userId, 
+      client, 
+      clientError: clientError?.message,
+      code: clientError?.code
+    });
 
     if (clientError || !client) {
       console.log('Orders API - Client not found or error:', clientError);
       return NextResponse.json(
-        { error: 'Client not found' },
+        { 
+          error: 'Client not found or access denied',
+          details: clientError?.message || 'Client does not exist or you do not have access',
+          clientId,
+          userId
+        },
         { status: 404 }
       );
     }

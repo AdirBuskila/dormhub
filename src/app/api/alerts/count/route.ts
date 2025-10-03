@@ -37,3 +37,4 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ unread: 0 }, { status: 200 });
   }
 }
+

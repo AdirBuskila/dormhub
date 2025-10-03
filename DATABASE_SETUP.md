@@ -103,3 +103,4 @@ ALERT_RESERVED_STALE_DAYS=3
 - Phone numbers must be in E.164 format (e.g., +972501234567)
 - Admin access is required for most API endpoints
 - Vercel cron jobs will automatically run alerts daily at 8 AM Jerusalem time
+

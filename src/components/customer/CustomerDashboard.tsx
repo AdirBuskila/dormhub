@@ -159,9 +159,12 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <div className="flex items-center justify-between">
-                            <p className="text-sm font-medium text-indigo-600 truncate">
+                            <Link 
+                              href={`/customer/orders/${order.id}`}
+                              className="text-sm font-medium text-indigo-600 hover:text-indigo-900 truncate"
+                            >
                               Order #{order.id.slice(0, 8)}
-                            </p>
+                            </Link>
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                               order.status === 'delivered' ? 'bg-green-100 text-green-800' :
                               order.status === 'reserved' ? 'bg-yellow-100 text-yellow-800' :

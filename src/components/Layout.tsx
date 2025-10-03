@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { UserButton, SignInButton } from '@clerk/nextjs';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import { useTranslations } from 'next-intl';
@@ -100,12 +101,9 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
           <div className="flex-1 px-4 flex justify-between">
             <div className="flex-1 flex">
               <div className="w-full flex md:ml-0">
-                <div className="relative w-full text-gray-400 focus-within:text-gray-600">
-                  <div className="absolute inset-y-0 left-0 flex items-center pointer-events-none">
-                    <Smartphone className="h-5 w-5" />
-                  </div>
-                  <h1 className="block w-full pl-8 pr-3 py-2 border-transparent rounded-md leading-5 bg-gray-50 text-gray-900 text-lg font-medium">
-                    Mobile For You {isAdmin ? t('auth.businessSystem') : t('auth.customerPortal')}
+                <div className="flex items-center">
+                  <h1 className="text-lg font-medium text-gray-900">
+                    {isAdmin ? t('auth.businessSystem') : t('auth.customerPortal')}
                   </h1>
                 </div>
               </div>
@@ -144,10 +142,16 @@ function SidebarContent({ pathname, navigation }: { pathname: string; navigation
     <div className="flex flex-col h-0 flex-1 border-r border-gray-200 bg-white">
       <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
         <div className="flex items-center flex-shrink-0 px-4">
-          <div className="flex items-center">
-            <Smartphone className="h-8 w-8 text-indigo-600" />
-            <span className="ml-2 text-xl font-bold text-gray-900">Mobile For You</span>
-          </div>
+          <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
+            <Image
+              src="/logo.png"
+              alt="Mobile For You Logo"
+              width={40}
+              height={40}
+              className="h-10 w-10"
+            />
+            <span className="ml-3 text-xl font-bold text-gray-900">Mobile For You</span>
+          </Link>
         </div>
         <nav className="mt-5 flex-1 px-2 space-y-1">
           {navigation.map((item) => {
