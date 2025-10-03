@@ -1,40 +1,27 @@
-import { auth, currentUser } from '@clerk/nextjs/server';
+/**
+ * Admin utility functions
+ */
 
 /**
- * Check if the current user is an admin
- * Admins are defined by email in the ADMIN_EMAILS environment variable
+ * Check if an email is in the admin emails list
+ * @param email - Email to check
+ * @returns true if email is admin, false otherwise
  */
-export async function isAdmin(): Promise<boolean> {
-  try {
-    const { userId } = await auth();
-    const user = await currentUser();
-    
-    if (!userId || !user) {
-      return false;
-    }
-
-    // Get admin emails from environment variable
-    const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim().toLowerCase()) || [];
-    
-    // Check if user's email is in the admin list
-    const userEmail = user.emailAddresses[0]?.emailAddress?.toLowerCase();
-    
-    if (!userEmail) {
-      return false;
-    }
-
-    return adminEmails.includes(userEmail);
-  } catch (error) {
-    console.error('Error checking admin status:', error);
-    return false;
-  }
+export function isAdminEmail(email?: string | null): boolean {
+  if (!email) return false;
+  
+  const adminEmails = process.env.ADMIN_EMAILS?.split(',')
+    .map(email => email.trim().toLowerCase()) || [];
+  
+  return adminEmails.includes(email.toLowerCase());
 }
 
 /**
- * Check if the current user is an admin (client-side version)
- * Returns the email for client-side admin check
+ * Get list of admin emails
+ * @returns Array of admin email addresses
  */
 export function getAdminEmails(): string[] {
-  const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',').map(email => email.trim().toLowerCase()) || [];
-  return adminEmails;
+  return process.env.ADMIN_EMAILS?.split(',')
+    .map(email => email.trim())
+    .filter(email => email.length > 0) || [];
 }

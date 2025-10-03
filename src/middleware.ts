@@ -22,6 +22,11 @@ const intlMiddleware = createIntlMiddleware({
 });
 
 export default clerkMiddleware((auth, req) => {
+  // Skip middleware for API routes
+  if (req.nextUrl.pathname.startsWith('/api/')) {
+    return;
+  }
+
   // Handle internationalization first
   const intlResponse = intlMiddleware(req);
   if (intlResponse) {
@@ -48,6 +53,7 @@ export const config = {
 
     // Enable redirects that add missing locales
     // (e.g. `/pathnames` -> `/en/pathnames`)
-    '/((?!_next|_vercel|.*\\..*).*)'
+    // Exclude API routes from internationalization
+    '/((?!api|_next|_vercel|.*\\..*).*)'
   ],
 };

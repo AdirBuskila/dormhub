@@ -23,6 +23,7 @@ import {
   Headphones,
   Wrench
 } from 'lucide-react';
+import AlertsBell from './AlertsBell';
 
 const categoryIcons = {
   phone: Smartphone,
@@ -111,6 +112,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
             </div>
             <div className="ml-4 flex items-center space-x-4 md:ml-6">
               <LanguageSwitcher />
+              {isAdmin && <AlertsBell />}
               {isSignedIn ? (
                 <UserButton afterSignOutUrl="/" />
               ) : (

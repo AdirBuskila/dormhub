@@ -1,26 +1,39 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { runDailyAlerts } from '@/lib/alerts';
+import { isAdminEmail } from '@/lib/admin';
 
-/**
- * Manual trigger for running daily alerts
- * For testing only - in production, use cron job
- */
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    const results = await runDailyAlerts();
+    // Check authentication
+    const { userId } = await auth();
+    const user = await currentUser();
+    
+    if (!userId || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Check if user is admin
+    const userEmail = user.emailAddresses[0]?.emailAddress;
+    if (!isAdminEmail(userEmail)) {
+      return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
+    }
+
+    // Run alerts
+    const result = await runDailyAlerts();
 
     return NextResponse.json({
       success: true,
-      results,
-      message: `Created ${results.total} new alerts`
+      ...result
     });
+
   } catch (error) {
-    console.error('Error running alerts:', error);
+    console.error('Error in run-alerts API:', error);
     return NextResponse.json(
       { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
-      },
+        error: 'Failed to run alerts',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      }, 
       { status: 500 }
     );
   }

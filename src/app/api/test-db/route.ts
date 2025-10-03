@@ -1,68 +1,54 @@
-import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { NextRequest, NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    // Test 1: Check if we can read from products table
-    const { data: products, error: readError } = await supabase
+    // Test basic tables
+    const { data: products, error: productsError } = await supabaseAdmin
       .from('products')
-      .select('*')
-      .limit(5);
+      .select('count')
+      .limit(1);
 
-    if (readError) {
-      return NextResponse.json({
-        status: 'error',
-        message: 'Cannot read from products table',
-        error: readError.message,
-        code: readError.code
-      });
-    }
+    const { data: clients, error: clientsError } = await supabaseAdmin
+      .from('clients')
+      .select('count')
+      .limit(1);
 
-    // Test 2: Try to insert a test product
-    const testProduct = {
-      brand: 'Test',
-      model: 'Test Model',
-      storage: '128GB',
-      condition: 'new' as const,
-      category: 'phone' as const,
-      stock: 1,
-      min_stock_alert: 5
-    };
+    const { data: orders, error: ordersError } = await supabaseAdmin
+      .from('orders')
+      .select('count')
+      .limit(1);
 
-    const { data: insertedProduct, error: insertError } = await supabase
-      .from('products')
-      .insert(testProduct)
-      .select()
-      .single();
+    // Test new tables (from migration)
+    const { data: alerts, error: alertsError } = await supabaseAdmin
+      .from('alerts')
+      .select('count')
+      .limit(1);
 
-    if (insertError) {
-      return NextResponse.json({
-        status: 'error',
-        message: 'Cannot insert into products table',
-        error: insertError.message,
-        code: insertError.code,
-        productsCount: products?.length || 0
-      });
-    }
-
-    // Test 3: Clean up the test product
-    await supabase
-      .from('products')
-      .delete()
-      .eq('id', insertedProduct.id);
+    const { data: outboundMessages, error: outboundError } = await supabaseAdmin
+      .from('outbound_messages')
+      .select('count')
+      .limit(1);
 
     return NextResponse.json({
-      status: 'success',
-      message: 'Database operations working correctly',
-      productsCount: products?.length || 0,
-      testInsert: 'successful'
+      success: true,
+      tables: {
+        products: { exists: !productsError, error: productsError?.message },
+        clients: { exists: !clientsError, error: clientsError?.message },
+        orders: { exists: !ordersError, error: ordersError?.message },
+        alerts: { exists: !alertsError, error: alertsError?.message },
+        outbound_messages: { exists: !outboundError, error: outboundError?.message }
+      }
     });
 
   } catch (error) {
-    return NextResponse.json({
-      status: 'error',
-      message: 'Database test failed',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    });
+    console.error('Database test error:', error);
+    return NextResponse.json(
+      { 
+        error: 'Database connection failed',
+        details: error instanceof Error ? error.message : 'Unknown error'
+      }, 
+      { status: 500 }
+    );
   }
 }

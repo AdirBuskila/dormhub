@@ -1,284 +1,194 @@
-import { supabaseAdmin } from './supabase';
-
 /**
- * WhatsApp Service Configuration
- * 
- * Environment variables needed for production:
- * - WHATSAPP_PROVIDER: 'meta' | 'twilio'
- * - WHATSAPP_API_KEY: Your API key from provider
- * - WHATSAPP_PHONE_NUMBER_ID: Your WhatsApp Business Phone Number ID (Meta) or From number (Twilio)
- * - WHATSAPP_API_URL: Provider API endpoint
+ * WhatsApp service with Twilio integration
+ * This module must be server-only - no client-side usage
  */
 
-export type WhatsAppTemplate = 
-  | 'order_confirmation'
-  | 'order_delivered'
-  | 'payment_reminder'
-  | 'low_stock_notification'
-  | 'return_approved';
+import { createClient } from '@supabase/supabase-js';
+import { OutboundMessage } from '@/types/database';
 
-export interface WhatsAppMessage {
-  to: string; // Phone number in E.164 format (+1234567890)
-  template: WhatsAppTemplate;
-  payload: Record<string, any>;
-}
-
-export interface OutboundMessage {
-  id: string;
-  channel: 'whatsapp';
-  to_client_id: string | null;
+export type WhatsAppPayload = {
+  to: string;
   template: string;
-  payload: Record<string, any>;
-  sent: boolean;
-  created_at: string;
+  variables?: Record<string, any>;
+  toClientId?: string;
+};
+
+/**
+ * Render a message template with variables
+ */
+export function renderTemplate(template: string, variables: Record<string, any>): string {
+  switch (template) {
+    case 'order_confirmation':
+      return `Order #${variables.orderId || ''} received: ${variables.summary || ''}`;
+    
+    case 'delivery_notice':
+      return `Order #${variables.orderId || ''} is on the way today.`;
+    
+    case 'payment_reminder':
+      return `Reminder: invoice #${variables.invoiceId || 'N/A'} amount ${variables.amount || '0'} due ${variables.dueDate || ''}.`;
+    
+    case 'reserved_nudge':
+      return `Order #${variables.orderId || ''} is waiting for pickup.`;
+    
+    default:
+      // Generic template rendering - replace {{var}} with variables
+      return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+        return variables[key] || '';
+      });
+  }
 }
 
 /**
- * Send WhatsApp message (stub implementation)
- * 
- * MVP: Records message in database and logs to console
- * Production: Uncomment the provider-specific HTTP call
- * 
- * @param message WhatsApp message details
- * @returns Success status
+ * Send WhatsApp message via Twilio or queue for later
  */
-export async function sendWhatsApp(message: WhatsAppMessage): Promise<boolean> {
-  try {
-    // Log message for development
-    console.log('📱 WhatsApp Message (STUB):', {
-      to: message.to,
-      template: message.template,
-      payload: message.payload,
-      timestamp: new Date().toISOString()
+export async function sendWhatsApp(payload: WhatsAppPayload) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const renderedMessage = renderTemplate(payload.template, payload.variables || {});
+
+  // Test mode - just log and queue
+  if (process.env.WHATSAPP_TEST_MODE === 'true') {
+    console.log('WhatsApp (TEST MODE):', {
+      to: payload.to,
+      template: payload.template,
+      message: renderedMessage,
+      variables: payload.variables
     });
 
-    // Record in outbound_messages table
-    const { error } = await supabaseAdmin
+    const { error } = await supabase
       .from('outbound_messages')
       .insert({
         channel: 'whatsapp',
-        to_client_id: message.payload.clientId || null,
-        template: message.template,
-        payload: message.payload,
-        sent: false // Mark as false for now; will be true when actual send happens
+        to_client_id: payload.toClientId || null,
+        to_phone: payload.to,
+        template: payload.template,
+        payload: { ...payload.variables, rendered_message: renderedMessage },
+        sent: false
       });
 
-    if (error) throw error;
-
-    // TODO: Uncomment and implement when ready for production
-    /*
-    const provider = process.env.WHATSAPP_PROVIDER;
-    
-    if (provider === 'meta') {
-      return await sendViaMeta(message);
-    } else if (provider === 'twilio') {
-      return await sendViaTwilio(message);
-    } else {
-      console.warn('WhatsApp provider not configured');
-      return false;
+    if (error) {
+      console.error('Failed to queue WhatsApp message:', error);
+      return { queued: false, error: error.message };
     }
-    */
 
-    return true;
-  } catch (error) {
-    console.error('Error sending WhatsApp message:', error);
-    return false;
-  }
-}
-
-/**
- * Send order confirmation via WhatsApp
- */
-export async function sendOrderConfirmation(params: {
-  clientId: string;
-  clientPhone: string;
-  orderId: string;
-  orderNumber: string;
-  items: Array<{ product: string; quantity: number }>;
-  total: number;
-}): Promise<boolean> {
-  return await sendWhatsApp({
-    to: params.clientPhone,
-    template: 'order_confirmation',
-    payload: {
-      clientId: params.clientId,
-      orderId: params.orderId,
-      orderNumber: params.orderNumber,
-      items: params.items,
-      total: params.total,
-      timestamp: new Date().toISOString()
-    }
-  });
-}
-
-/**
- * Send payment reminder via WhatsApp
- */
-export async function sendPaymentReminder(params: {
-  clientId: string;
-  clientPhone: string;
-  clientName: string;
-  outstandingBalance: number;
-  daysOverdue: number;
-}): Promise<boolean> {
-  return await sendWhatsApp({
-    to: params.clientPhone,
-    template: 'payment_reminder',
-    payload: {
-      clientId: params.clientId,
-      clientName: params.clientName,
-      outstandingBalance: params.outstandingBalance,
-      daysOverdue: params.daysOverdue,
-      timestamp: new Date().toISOString()
-    }
-  });
-}
-
-/**
- * Get pending outbound messages
- */
-export async function getPendingMessages(limit: number = 50): Promise<OutboundMessage[]> {
-  try {
-    const { data, error } = await supabaseAdmin
-      .from('outbound_messages')
-      .select('*')
-      .eq('sent', false)
-      .order('created_at', { ascending: true })
-      .limit(limit);
-
-    if (error) throw error;
-    return data || [];
-  } catch (error) {
-    console.error('Error fetching pending messages:', error);
-    return [];
-  }
-}
-
-/**
- * Mark message as sent
- */
-export async function markMessageSent(messageId: string): Promise<boolean> {
-  try {
-    const { error } = await supabaseAdmin
-      .from('outbound_messages')
-      .update({ sent: true })
-      .eq('id', messageId);
-
-    if (error) throw error;
-    return true;
-  } catch (error) {
-    console.error('Error marking message as sent:', error);
-    return false;
-  }
-}
-
-// ============================================================================
-// PRODUCTION IMPLEMENTATIONS (commented out for MVP)
-// ============================================================================
-
-/**
- * Send message via Meta (Facebook) WhatsApp Business API
- * Docs: https://developers.facebook.com/docs/whatsapp/cloud-api/
- */
-/*
-async function sendViaMeta(message: WhatsAppMessage): Promise<boolean> {
-  const apiUrl = process.env.WHATSAPP_API_URL || 'https://graph.facebook.com/v18.0';
-  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
-  const apiKey = process.env.WHATSAPP_API_KEY;
-
-  if (!phoneNumberId || !apiKey) {
-    throw new Error('Meta WhatsApp credentials not configured');
+    return { queued: true };
   }
 
-  const response = await fetch(
-    `${apiUrl}/${phoneNumberId}/messages`,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        messaging_product: 'whatsapp',
-        to: message.to,
-        type: 'template',
-        template: {
-          name: message.template,
-          language: { code: 'en' },
-          components: [
-            {
-              type: 'body',
-              parameters: Object.entries(message.payload).map(([key, value]) => ({
-                type: 'text',
-                text: String(value)
-              }))
-            }
-          ]
+  // Twilio provider
+  if (process.env.WHATSAPP_PROVIDER === 'twilio') {
+    try {
+      const accountSid = process.env.TWILIO_ACCOUNT_SID;
+      const authToken = process.env.TWILIO_AUTH_TOKEN;
+      const fromNumber = process.env.TWILIO_WHATSAPP_FROM;
+
+      if (!accountSid || !authToken || !fromNumber) {
+        throw new Error('Missing Twilio configuration');
+      }
+
+      // Send via Twilio API
+      const response = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Basic ${Buffer.from(`${accountSid}:${authToken}`).toString('base64')}`
+          },
+          body: new URLSearchParams({
+            From: fromNumber,
+            To: `whatsapp:${payload.to}`,
+            Body: renderedMessage
+          })
         }
-      })
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        // Success - mark as sent
+        const { error } = await supabase
+          .from('outbound_messages')
+          .insert({
+            channel: 'whatsapp',
+            to_client_id: payload.toClientId || null,
+            to_phone: payload.to,
+            template: payload.template,
+            payload: { ...payload.variables, rendered_message: renderedMessage, twilio_sid: result.sid },
+            sent: true,
+            sent_at: new Date().toISOString()
+          });
+
+        if (error) {
+          console.error('Failed to record sent WhatsApp message:', error);
+        }
+
+        return { sent: true };
+      } else {
+        // Error - record failure
+        const { error } = await supabase
+          .from('outbound_messages')
+          .insert({
+            channel: 'whatsapp',
+            to_client_id: payload.toClientId || null,
+            to_phone: payload.to,
+            template: payload.template,
+            payload: { ...payload.variables, rendered_message: renderedMessage },
+            sent: false,
+            error: result.message || 'Unknown Twilio error'
+          });
+
+        if (error) {
+          console.error('Failed to record failed WhatsApp message:', error);
+        }
+
+        return { sent: false, error: result.message || 'Unknown Twilio error' };
+      }
+    } catch (error) {
+      console.error('WhatsApp send error:', error);
+      
+      // Record the failure
+      const { error: dbError } = await supabase
+        .from('outbound_messages')
+        .insert({
+          channel: 'whatsapp',
+          to_client_id: payload.toClientId || null,
+          to_phone: payload.to,
+          template: payload.template,
+          payload: { ...payload.variables, rendered_message: renderedMessage },
+          sent: false,
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+
+      if (dbError) {
+        console.error('Failed to record failed WhatsApp message:', dbError);
+      }
+
+      return { 
+        sent: false, 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      };
     }
-  );
-
-  if (!response.ok) {
-    const error = await response.json();
-    console.error('Meta WhatsApp API error:', error);
-    return false;
   }
 
-  return true;
+  // Default: queue only
+  const { error } = await supabase
+    .from('outbound_messages')
+    .insert({
+      channel: 'whatsapp',
+      to_client_id: payload.toClientId || null,
+      to_phone: payload.to,
+      template: payload.template,
+      payload: { ...payload.variables, rendered_message: renderedMessage },
+      sent: false
+    });
+
+  if (error) {
+    console.error('Failed to queue WhatsApp message:', error);
+    return { queued: false, error: error.message };
+  }
+
+  return { queued: true };
 }
-*/
-
-/**
- * Send message via Twilio WhatsApp API
- * Docs: https://www.twilio.com/docs/whatsapp/api
- */
-/*
-async function sendViaTwilio(message: WhatsAppMessage): Promise<boolean> {
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
-  const fromNumber = process.env.WHATSAPP_PHONE_NUMBER_ID; // Twilio WhatsApp number
-
-  if (!accountSid || !authToken || !fromNumber) {
-    throw new Error('Twilio WhatsApp credentials not configured');
-  }
-
-  const auth = Buffer.from(`${accountSid}:${authToken}`).toString('base64');
-  
-  const response = await fetch(
-    `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-    {
-      method: 'POST',
-      headers: {
-        'Authorization': `Basic ${auth}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        From: `whatsapp:${fromNumber}`,
-        To: `whatsapp:${message.to}`,
-        Body: formatMessageBody(message.template, message.payload)
-      })
-    }
-  );
-
-  if (!response.ok) {
-    const error = await response.json();
-    console.error('Twilio WhatsApp API error:', error);
-    return false;
-  }
-
-  return true;
-}
-
-function formatMessageBody(template: WhatsAppTemplate, payload: Record<string, any>): string {
-  // Format message based on template
-  switch (template) {
-    case 'order_confirmation':
-      return `Order confirmed! #${payload.orderNumber}. Total: $${payload.total}. We'll deliver soon!`;
-    case 'payment_reminder':
-      return `Hi ${payload.clientName}, you have an outstanding balance of $${payload.outstandingBalance}. Please settle at your earliest convenience.`;
-    default:
-      return JSON.stringify(payload);
-  }
-}
-*/

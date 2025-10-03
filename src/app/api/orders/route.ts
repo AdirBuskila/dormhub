@@ -121,6 +121,46 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Send WhatsApp order confirmation if client has phone (optional)
+    try {
+      // Check if WhatsApp service is available
+      const { sendWhatsApp } = await import('@/lib/whatsapp');
+      
+      const { data: clientData } = await supabaseAdmin
+        .from('clients')
+        .select('phone')
+        .eq('id', clientId)
+        .single();
+
+      if (clientData?.phone) {
+        // Get products for summary
+        const { data: orderProducts } = await supabaseAdmin
+          .from('order_items')
+          .select(`
+            quantity,
+            products!inner(brand, model)
+          `)
+          .eq('order_id', order.id);
+
+        const summary = orderProducts?.map(item => 
+          `${item.quantity}× ${item.products.brand} ${item.products.model}`
+        ).join(', ') || 'Items ordered';
+
+        await sendWhatsApp({
+          to: clientData.phone,
+          template: 'order_confirmation',
+          variables: {
+            orderId: order.id.slice(0, 8),
+            summary
+          },
+          toClientId: clientId
+        });
+      }
+    } catch (whatsappError) {
+      console.error('Failed to send order confirmation WhatsApp:', whatsappError);
+      // Don't fail the order creation if WhatsApp fails
+    }
+
     return NextResponse.json({
       success: true,
       orderId: order.id
@@ -128,8 +168,13 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Order creation error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Internal server error',
+        details: errorMessage,
+        timestamp: new Date().toISOString()
+      },
       { status: 500 }
     );
   }

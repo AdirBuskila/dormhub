@@ -1,0 +1,14 @@
+{
+  "crons": [
+    {
+      "path": "/api/run-alerts",
+      "schedule": "0 8 * * *",
+      "timezone": "Asia/Jerusalem"
+    },
+    {
+      "path": "/api/dispatch-messages",
+      "schedule": "*/5 * * * *",
+      "timezone": "Asia/Jerusalem"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ export type OrderSource = 'whatsapp' | 'phone' | 'portal';
 export type ReturnStatus = 'pending' | 'inspected' | 'restocked' | 'refurbish' | 'scrap';
 export type AlertType = 'low_stock' | 'undelivered' | 'overdue_payment' | 'reserved_stale';
 export type AlertSeverity = 'info' | 'warning' | 'danger';
+export type OutboundChannel = 'whatsapp';
 export type ReturnReason = 'defective' | 'unsold' | 'trade_in';
 export type ReturnCondition = 'returned' | 'refurbish' | 'restocked';
 
@@ -145,12 +146,25 @@ export interface Alert {
   created_at: string;
 }
 
+export interface Alert {
+  id: string;
+  type: AlertType;
+  ref_id: string | null;
+  message: string;
+  severity: AlertSeverity;
+  delivered: boolean;
+  created_at: string;
+}
+
 export interface OutboundMessage {
   id: string;
-  channel: 'whatsapp';
+  channel: OutboundChannel;
   to_client_id: string | null;
+  to_phone: string;
   template: string;
   payload: Record<string, any>;
   sent: boolean;
+  sent_at: string | null;
+  error: string | null;
   created_at: string;
 }
