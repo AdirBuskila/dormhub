@@ -411,3 +411,4 @@ export default function AlertsClient({ initialAlerts, totalAlerts, unreadAlerts 
   );
 }
 
+

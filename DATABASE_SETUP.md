@@ -104,3 +104,4 @@ ALERT_RESERVED_STALE_DAYS=3
 - Admin access is required for most API endpoints
 - Vercel cron jobs will automatically run alerts daily at 8 AM Jerusalem time
 
+
