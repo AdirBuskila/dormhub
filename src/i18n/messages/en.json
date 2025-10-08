@@ -92,7 +92,12 @@
     "gettingStarted": "Getting Started",
     "myOrders": "My Orders",
     "pendingOrders": "Pending Orders",
-    "totalSpent": "Total Spent"
+    "totalSpent": "Total Spent",
+    "toDeliver": "To Deliver",
+    "lowStockSkus": "Low-Stock SKUs",
+    "receivables": "Receivables",
+    "newOrdersToday": "New Orders Today",
+    "paymentsYesterday": "Payments Yesterday"
   },
   "inventory": {
     "inventoryManagement": "Inventory Management",

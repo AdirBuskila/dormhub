@@ -31,7 +31,8 @@ export function renderTemplate(template: string, variables: Record<string, any>)
       return `Order #${variables.orderId || ''} is waiting for pickup.`;
     
     case 'admin_new_order':
-      return `🆕 New Order Alert!\nOrder #${variables.orderId || ''} from ${variables.clientName || 'Unknown Client'}\nItems: ${variables.itemCount || 0}\nPlease check the admin dashboard.`;
+      const itemsList = variables.itemsSummary ? `\n\nItems:\n${variables.itemsSummary}` : `\nItems: ${variables.itemCount || 0}`;
+      return `🆕 New Order Alert!\n\nOrder #${variables.orderId || ''}\nFrom: ${variables.clientName || 'Unknown Client'}${itemsList}\n\n👉 Check admin dashboard for details.`;
     
     case 'admin_low_stock':
       return `⚠️ Low Stock Alert!\n${variables.productName || 'Product'} is running low\nCurrent stock: ${variables.currentStock || 0}\nMinimum alert: ${variables.minAlert || 0}\nPlease restock soon!`;

@@ -5,14 +5,15 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🧪 Testing WhatsApp sending...');
     
-    // Test new order notification
+    // Test new order notification with detailed items
     const newOrderResult = await sendWhatsApp({
       to: '+972546093624',
       template: 'admin_new_order',
       variables: {
         orderId: 'TEST123',
         clientName: 'Test Client',
-        itemCount: 2
+        itemCount: 3,
+        itemsSummary: '2× Apple iPhone 15 Pro 256GB\n1× Samsung Galaxy S24 128GB'
       }
     });
 

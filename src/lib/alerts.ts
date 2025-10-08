@@ -349,9 +349,13 @@ export async function createReservedStaleAlerts(days: number = parseInt(process.
 /**
  * Create new order alert for admin
  */
-export async function createNewOrderAlert(orderId: string, clientName: string, itemCount: number): Promise<boolean> {
+export async function createNewOrderAlert(orderId: string, clientName: string, itemCount: number, itemsSummary?: string): Promise<boolean> {
   try {
     const adminPhone = process.env.ADMIN_PHONE || '+972546093624';
+    
+    const message = itemsSummary 
+      ? `New order #${orderId.slice(0, 8)} from ${clientName} with ${itemCount} items:\n${itemsSummary}`
+      : `New order #${orderId.slice(0, 8)} from ${clientName} with ${itemCount} items`;
     
     // Create alert in database
     const { error: alertError } = await supabase
@@ -359,7 +363,7 @@ export async function createNewOrderAlert(orderId: string, clientName: string, i
       .insert({
         type: 'new_order',
         ref_id: orderId,
-        message: `New order #${orderId.slice(0, 8)} from ${clientName} with ${itemCount} items`,
+        message,
         severity: 'info'
       });
 
@@ -375,7 +379,8 @@ export async function createNewOrderAlert(orderId: string, clientName: string, i
       variables: {
         orderId: orderId.slice(0, 8),
         clientName,
-        itemCount
+        itemCount,
+        itemsSummary: itemsSummary || 'No items specified'
       }
     });
 

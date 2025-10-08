@@ -8,6 +8,7 @@ interface KpiCardProps {
   href?: string;
   loading?: boolean;
   formatter?: (value: number) => string;
+  iconColor?: string;
 }
 
 export default function KpiCard({ 
@@ -16,14 +17,15 @@ export default function KpiCard({
   icon: Icon, 
   href, 
   loading = false,
-  formatter = (val) => val.toString()
+  formatter = (val) => val.toString(),
+  iconColor = "text-gray-400"
 }: KpiCardProps) {
   const content = (
     <div className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow">
       <div className="p-5">
         <div className="flex items-center">
           <div className="flex-shrink-0">
-            <Icon className="h-6 w-6 text-gray-400" />
+            <Icon className={`h-6 w-6 ${iconColor}`} />
           </div>
           <div className="ml-5 w-0 flex-1">
             <dl>

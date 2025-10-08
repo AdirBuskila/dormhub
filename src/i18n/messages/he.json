@@ -92,7 +92,12 @@
     "gettingStarted": "מתחילים",
     "myOrders": "ההזמנות שלי",
     "pendingOrders": "הזמנות ממתינות",
-    "totalSpent": "סה\"כ הוצאות"
+    "totalSpent": "סה\"כ הוצאות",
+    "toDeliver": "למשלוח",
+    "lowStockSkus": "פריטים עם מלאי נמוך",
+    "receivables": "חובות לקוחות",
+    "newOrdersToday": "הזמנות חדשות היום",
+    "paymentsYesterday": "תשלומים אתמול"
   },
   "inventory": {
     "inventoryManagement": "ניהול מלאי",

@@ -173,12 +173,20 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Send admin notification for new order
+      // Send admin notification for new order with product details
       const { createNewOrderAlert } = await import('@/lib/alerts');
+      
+      // Get product details for the alert
+      const itemsSummary = orderProducts?.map(item => {
+        const product = Array.isArray(item.products) ? item.products[0] : item.products;
+        return `${item.quantity}× ${product?.brand || 'Unknown'} ${product?.model || ''} ${product?.storage || ''}`.trim();
+      }).join('\n') || 'No items';
+      
       await createNewOrderAlert(
         order.id,
         clientData?.name || 'Unknown Client',
-        items.length
+        items.length,
+        itemsSummary
       );
     } catch (whatsappError) {
       console.error('Failed to send order confirmation WhatsApp:', whatsappError);

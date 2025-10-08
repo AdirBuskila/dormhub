@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { Calendar, Truck, AlertTriangle, DollarSign, TrendingUp } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 import Layout from '@/components/Layout';
 import KpiCard from '@/components/KpiCard';
 import OrdersToDeliverTable from '@/components/OrdersToDeliverTable';
@@ -117,6 +118,7 @@ async function AdminDashboard() {
             icon={Truck}
             href="/orders"
             formatter={(val) => val.toString()}
+            iconColor="text-blue-600"
           />
           <KpiCard
             title="Low-Stock SKUs"
@@ -124,12 +126,14 @@ async function AdminDashboard() {
             icon={AlertTriangle}
             href="/inventory"
             formatter={(val) => val.toString()}
+            iconColor="text-orange-500"
           />
           <KpiCard
             title="Receivables"
             value={kpis.receivables}
             icon={DollarSign}
             formatter={formatCurrency}
+            iconColor="text-red-600"
           />
           <KpiCard
             title="New Orders Today"
@@ -137,6 +141,7 @@ async function AdminDashboard() {
             icon={TrendingUp}
             href="/orders"
             formatter={(val) => val.toString()}
+            iconColor="text-green-600"
           />
           <KpiCard
             title="Payments Yesterday"
@@ -144,6 +149,7 @@ async function AdminDashboard() {
             icon={DollarSign}
             href="/payments"
             formatter={formatCurrency}
+            iconColor="text-emerald-600"
           />
         </div>
 
