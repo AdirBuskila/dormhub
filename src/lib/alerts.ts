@@ -334,6 +334,46 @@ export async function createReservedStaleAlerts(days: number = parseInt(process.
 }
 
 /**
+ * Create new order alert for admin
+ */
+export async function createNewOrderAlert(orderId: string, clientName: string, itemCount: number): Promise<boolean> {
+  try {
+    const adminPhone = process.env.ADMIN_PHONE || '+972546093624';
+    
+    // Create alert in database
+    const { error: alertError } = await supabase
+      .from('alerts')
+      .insert({
+        type: 'new_order',
+        ref_id: orderId,
+        message: `New order #${orderId.slice(0, 8)} from ${clientName} with ${itemCount} items`,
+        severity: 'info'
+      });
+
+    if (alertError) {
+      console.error('Error creating new order alert:', alertError);
+      return false;
+    }
+
+    // Send WhatsApp notification to admin
+    await sendWhatsApp({
+      to: adminPhone,
+      template: 'admin_new_order',
+      variables: {
+        orderId: orderId.slice(0, 8),
+        clientName,
+        itemCount
+      }
+    });
+
+    return true;
+  } catch (error) {
+    console.error('Error in createNewOrderAlert:', error);
+    return false;
+  }
+}
+
+/**
  * Run all daily alerts
  */
 export async function runDailyAlerts() {

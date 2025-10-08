@@ -89,7 +89,8 @@ export default function PaymentManagement({ isAdmin = true }: PaymentManagementP
   const methodCounts = {
     cash: payments.filter(p => p.method === 'cash').length,
     transfer: payments.filter(p => p.method === 'transfer').length,
-    check: payments.filter(p => p.method === 'check').length
+    check: payments.filter(p => p.method === 'check').length,
+    credit: payments.filter(p => p.method === 'credit').length
   };
 
   if (loading) {
@@ -125,7 +126,7 @@ export default function PaymentManagement({ isAdmin = true }: PaymentManagementP
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-5">
               <div className="flex items-center">
@@ -189,6 +190,22 @@ export default function PaymentManagement({ isAdmin = true }: PaymentManagementP
               </div>
             </div>
           </div>
+
+          <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="p-5">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <CreditCard className="h-6 w-6 text-pink-400" />
+                </div>
+                <div className="ml-5 w-0 flex-1">
+                  <dl>
+                    <dt className="text-sm font-medium text-gray-500 truncate">Credit Cards</dt>
+                    <dd className="text-lg font-medium text-gray-900">{methodCounts.credit}</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Filters */}
@@ -220,6 +237,7 @@ export default function PaymentManagement({ isAdmin = true }: PaymentManagementP
                   <option value="cash">Cash</option>
                   <option value="transfer">Transfer</option>
                   <option value="check">Check</option>
+                  <option value="credit">Credit Card</option>
                 </select>
               </div>
             </div>

@@ -95,7 +95,7 @@ Before you begin, ensure you have the following installed and configured:
 ### 1. **Clone & Install**
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/mobileforyou.git
+git clone https://github.com/AdirBuskila/mobileforyou.git
 cd mobileforyou
 
 # Install dependencies
@@ -130,6 +130,9 @@ TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
 ALERT_UNDELIVERED_DAYS=3
 ALERT_OVERDUE_DAYS=14
 ALERT_RESERVED_STALE_DAYS=3
+
+# Admin Notifications (Optional)
+ADMIN_PHONE=+972546093624
 ```
 
 ### 3. **Database Setup**
@@ -295,6 +298,9 @@ curl -X POST http://localhost:3000/api/dispatch-messages
 curl -X POST http://localhost:3000/api/test-whatsapp \
   -H "Content-Type: application/json" \
   -d '{"to":"+972501234567","template":"order_confirmation","variables":{"orderId":"123","summary":"iPhone 15 Pro"}}'
+
+# Test new order alert system
+node scripts/test-new-order-alert.js
 ```
 
 ### Twilio Setup

@@ -1,10 +1,10 @@
 export type ProductCondition = 'new' | 'refurbished' | 'used' | 'activated' | 'open_box';
-export type ProductCategory = 'phone' | 'tablet' | 'earphones' | 'accessories';
+export type ProductCategory = 'iphone' | 'samsung' | 'android_phone' | 'tablet' | 'smartwatch' | 'earphones' | 'chargers' | 'cases' | 'accessories';
 export type OrderStatus = 'draft' | 'reserved' | 'delivered' | 'closed';
 export type PaymentMethod = 'cash' | 'transfer' | 'check' | 'credit';
 export type OrderSource = 'whatsapp' | 'phone' | 'portal';
 export type ReturnStatus = 'pending' | 'inspected' | 'restocked' | 'refurbish' | 'scrap';
-export type AlertType = 'low_stock' | 'undelivered' | 'overdue_payment' | 'reserved_stale';
+export type AlertType = 'low_stock' | 'undelivered' | 'overdue_payment' | 'reserved_stale' | 'new_order';
 export type AlertSeverity = 'info' | 'warning' | 'danger';
 export type OutboundChannel = 'whatsapp';
 export type ReturnReason = 'defective' | 'unsold' | 'trade_in';
@@ -104,7 +104,7 @@ export interface CreateProductData {
   storage: string;
   condition: ProductCondition;
   category: ProductCategory;
-  stock: number;
+  stock: number; // This is used for form data, will be mapped to total_stock in database
   min_stock_alert: number;
   image_url?: string;
 }

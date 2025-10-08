@@ -47,9 +47,13 @@ export async function getProduct(id: string): Promise<Product | null> {
 
 export async function createProduct(product: CreateProductData): Promise<Product> {
   try {
+    // Map stock to total_stock for database
+    const { stock, ...rest } = product;
+    const dbProduct = { ...rest, total_stock: stock };
+    
     const { data, error } = await supabase
       .from('products')
-      .insert(product)
+      .insert(dbProduct)
       .select()
       .single();
     
@@ -61,6 +65,7 @@ export async function createProduct(product: CreateProductData): Promise<Product
     return {
       id: Math.random().toString(36).substr(2, 9),
       ...product,
+      total_stock: product.stock,
       reserved_stock: 0,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -69,9 +74,16 @@ export async function createProduct(product: CreateProductData): Promise<Product
 }
 
 export async function updateProduct(id: string, updates: Partial<CreateProductData>): Promise<Product> {
+  // Map stock to total_stock for database if present
+  let dbUpdates = updates;
+  if (updates.stock !== undefined) {
+    const { stock, ...rest } = updates;
+    dbUpdates = { ...rest, total_stock: stock };
+  }
+  
   const { data, error } = await supabase
     .from('products')
-    .update(updates)
+    .update(dbUpdates)
     .eq('id', id)
     .select()
     .single();
@@ -93,8 +105,8 @@ export async function getLowStockProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
     .select('*')
-    .lte('stock', supabase.raw('min_stock_alert'))
-    .order('stock', { ascending: true });
+    .lte('total_stock', supabase.raw('min_stock_alert'))
+    .order('total_stock', { ascending: true });
   
   if (error) throw error;
   return data || [];
@@ -204,13 +216,17 @@ export async function createOrder(orderData: CreateOrderData): Promise<Order> {
   try {
     const { client_id, notes, items } = orderData;
     
+    // Calculate total price
+    const total_price = items.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+    
     // Create the order
     const { data: order, error: orderError } = await supabase
       .from('orders')
       .insert({
         client_id,
         notes,
-        status: 'draft'
+        status: 'draft',
+        total_price
       })
       .select()
       .single();

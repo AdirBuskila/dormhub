@@ -30,6 +30,9 @@ export function renderTemplate(template: string, variables: Record<string, any>)
     case 'reserved_nudge':
       return `Order #${variables.orderId || ''} is waiting for pickup.`;
     
+    case 'admin_new_order':
+      return `🆕 New Order Alert!\nOrder #${variables.orderId || ''} from ${variables.clientName || 'Unknown Client'}\nItems: ${variables.itemCount || 0}\nPlease check the admin dashboard.`;
+    
     default:
       // Generic template rendering - replace {{var}} with variables
       return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {

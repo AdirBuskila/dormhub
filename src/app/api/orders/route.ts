@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
       
       const { data: clientData } = await supabaseAdmin
         .from('clients')
-        .select('phone')
+        .select('phone, name')
         .eq('id', clientId)
         .single();
 
@@ -168,6 +168,14 @@ export async function POST(request: NextRequest) {
           toClientId: clientId
         });
       }
+
+      // Send admin notification for new order
+      const { createNewOrderAlert } = await import('@/lib/alerts');
+      await createNewOrderAlert(
+        order.id,
+        clientData?.name || 'Unknown Client',
+        items.length
+      );
     } catch (whatsappError) {
       console.error('Failed to send order confirmation WhatsApp:', whatsappError);
       // Don't fail the order creation if WhatsApp fails

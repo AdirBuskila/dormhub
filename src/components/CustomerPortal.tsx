@@ -51,7 +51,7 @@ export default function CustomerPortal() {
       const matchesCategory = filterCategory === 'all' || product.category === filterCategory;
       const matchesBrand = filterBrand === 'all' || product.brand.toLowerCase() === filterBrand.toLowerCase();
       
-      return matchesSearch && matchesCategory && matchesBrand && product.stock > 0;
+      return matchesSearch && matchesCategory && matchesBrand && product.total_stock > 0;
     });
   };
 
@@ -66,7 +66,7 @@ export default function CustomerPortal() {
       if (existingItem) {
         return prev.map(item =>
           item.product.id === product.id
-            ? { ...item, quantity: Math.min(item.quantity + 1, product.stock) }
+            ? { ...item, quantity: Math.min(item.quantity + 1, product.total_stock) }
             : item
         );
       } else {
@@ -87,7 +87,7 @@ export default function CustomerPortal() {
     
     setCart(prev => prev.map(item =>
       item.product.id === productId
-        ? { ...item, quantity: Math.min(quantity, item.product.stock) }
+        ? { ...item, quantity: Math.min(quantity, item.product.total_stock) }
         : item
     ));
   };
@@ -95,9 +95,22 @@ export default function CustomerPortal() {
   const getCartTotal = () => {
     // Mock pricing - in real app, you'd have actual prices
     return cart.reduce((total, item) => {
-      const basePrice = item.product.category === 'phone' ? 500 : 
-                       item.product.category === 'tablet' ? 400 :
-                       item.product.category === 'earphones' ? 100 : 50;
+      let basePrice = 50; // default for accessories
+      
+      if (['iphone', 'samsung', 'android_phone'].includes(item.product.category)) {
+        basePrice = 500;
+      } else if (item.product.category === 'tablet') {
+        basePrice = 400;
+      } else if (item.product.category === 'smartwatch') {
+        basePrice = 300;
+      } else if (item.product.category === 'earphones') {
+        basePrice = 100;
+      } else if (item.product.category === 'chargers') {
+        basePrice = 30;
+      } else if (item.product.category === 'cases') {
+        basePrice = 40;
+      }
+      
       return total + (basePrice * item.quantity);
     }, 0);
   };
@@ -222,11 +235,11 @@ export default function CustomerPortal() {
                   {product.brand} {product.model}
                 </h3>
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  product.stock > 10 ? 'bg-green-100 text-green-800' :
-                  product.stock > 5 ? 'bg-yellow-100 text-yellow-800' :
+                  product.total_stock > 10 ? 'bg-green-100 text-green-800' :
+                  product.total_stock > 5 ? 'bg-yellow-100 text-yellow-800' :
                   'bg-red-100 text-red-800'
                 }`}>
-                  {product.stock} in stock
+                  {product.total_stock} in stock
                 </span>
               </div>
               
@@ -256,14 +269,17 @@ export default function CustomerPortal() {
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
                 <div className="text-lg font-bold text-indigo-600">
                   {/* Mock pricing */}
-                  {product.category === 'phone' && formatCurrency(500)}
+                  {['iphone', 'samsung', 'android_phone'].includes(product.category) && formatCurrency(500)}
                   {product.category === 'tablet' && formatCurrency(400)}
+                  {product.category === 'smartwatch' && formatCurrency(300)}
                   {product.category === 'earphones' && formatCurrency(100)}
+                  {product.category === 'chargers' && formatCurrency(30)}
+                  {product.category === 'cases' && formatCurrency(40)}
                   {product.category === 'accessories' && formatCurrency(50)}
                 </div>
                 <button
                   onClick={() => addToCart(product)}
-                  disabled={product.stock === 0}
+                  disabled={product.total_stock === 0}
                   className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
                   <ShoppingCart className="h-4 w-4 mr-2" />

@@ -89,7 +89,7 @@ export default function CartSidebar({
                       <span className="w-8 text-center text-sm">{item.quantity}</span>
                       <button
                         onClick={() => onQuantityChange(item.product.id, item.quantity + 1)}
-                        disabled={item.quantity >= item.product.stock}
+                        disabled={item.quantity >= item.product.total_stock}
                         className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Plus className="h-3 w-3" />

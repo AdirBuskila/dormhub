@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Create custom types
 CREATE TYPE product_condition AS ENUM ('new', 'refurbished', 'used', 'activated', 'open_box');
-CREATE TYPE product_category AS ENUM ('phone', 'tablet', 'earphones', 'accessories');
+CREATE TYPE product_category AS ENUM ('iphone', 'samsung', 'android_phone', 'tablet', 'smartwatch', 'earphones', 'chargers', 'cases', 'accessories');
 CREATE TYPE order_status AS ENUM ('draft', 'reserved', 'delivered', 'closed');
 CREATE TYPE payment_method AS ENUM ('cash', 'transfer', 'check', 'credit');
 CREATE TYPE return_reason AS ENUM ('defective', 'unsold', 'trade_in');

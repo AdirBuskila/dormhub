@@ -1,5 +1,6 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
+import OrderManagement from '@/components/OrderManagement';
 
 export default async function OrdersPage() {
   const { userId } = await auth();
@@ -18,12 +19,5 @@ export default async function OrdersPage() {
     redirect('/customer');
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Orders Management</h1>
-        <p className="mt-2 text-gray-600">This page is under development.</p>
-      </div>
-    </div>
-  );
+  return <OrderManagement isAdmin={true} />;
 }

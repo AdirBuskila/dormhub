@@ -431,7 +431,7 @@ export default function Dashboard({ isAdmin = true, showSignInPrompt = false }: 
                           </div>
                           <div className="flex-shrink-0">
                             <span className="text-sm font-medium text-red-600">
-                              {product.stock} left
+                              {product.total_stock} left
                             </span>
                           </div>
                         </div>

@@ -99,8 +99,24 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
     if (field === 'product_id') {
       const product = products.find(p => p.id === value);
       if (product) {
-        // You might want to implement custom pricing logic here
-        newItems[index].price = 0; // Placeholder - implement your pricing logic
+        // Implement pricing logic based on category
+        let basePrice = 50; // default for accessories
+        
+        if (['iphone', 'samsung', 'android_phone'].includes(product.category)) {
+          basePrice = 500;
+        } else if (product.category === 'tablet') {
+          basePrice = 400;
+        } else if (product.category === 'smartwatch') {
+          basePrice = 300;
+        } else if (product.category === 'earphones') {
+          basePrice = 100;
+        } else if (product.category === 'chargers') {
+          basePrice = 30;
+        } else if (product.category === 'cases') {
+          basePrice = 40;
+        }
+        
+        newItems[index].price = basePrice;
       }
     }
     

@@ -72,7 +72,7 @@ export default function AlertsManagement({ isAdmin = true }: AlertsManagementPro
       items: stats.lowStockProducts.map(product => ({
         id: product.id,
         title: `${product.brand} ${product.model}`,
-        description: `Only ${product.stock} left (min: ${product.min_stock_alert})`,
+        description: `Only ${product.total_stock} left (min: ${product.min_stock_alert})`,
         severity: 'warning'
       }))
     },

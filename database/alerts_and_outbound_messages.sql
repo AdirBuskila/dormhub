@@ -4,7 +4,7 @@
 -- Create alerts table
 CREATE TABLE IF NOT EXISTS alerts (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
-    type text NOT NULL CHECK (type IN ('low_stock', 'undelivered', 'overdue_payment', 'reserved_stale')),
+    type text NOT NULL CHECK (type IN ('low_stock', 'undelivered', 'overdue_payment', 'reserved_stale', 'new_order')),
     ref_id uuid NULL,
     message text NOT NULL,
     severity text NOT NULL DEFAULT 'warning' CHECK (severity IN ('info', 'warning', 'danger')),

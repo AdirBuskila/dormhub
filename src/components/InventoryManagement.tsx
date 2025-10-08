@@ -27,6 +27,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [filterBrand, setFilterBrand] = useState<string>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showBulkStockModal, setShowBulkStockModal] = useState(false);
@@ -38,7 +39,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
     model: '',
     storage: '',
     condition: 'new',
-    category: 'phone',
+    category: 'iphone',
     stock: 0,
     min_stock_alert: 5
   });
@@ -68,7 +69,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
         model: '',
         storage: '',
         condition: 'new',
-        category: 'phone',
+        category: 'iphone',
         stock: 0,
         min_stock_alert: 5
       });
@@ -89,7 +90,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
         model: '',
         storage: '',
         condition: 'new',
-        category: 'phone',
+        category: 'iphone',
         stock: 0,
         min_stock_alert: 5
       });
@@ -118,13 +119,13 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
         const product = products.find(p => p.id === productId);
         if (!product) continue;
         
-        let newStock = product.stock;
+        let newStock = product.total_stock;
         switch (bulkStockAction) {
           case 'add':
-            newStock = product.stock + bulkStockValue;
+            newStock = product.total_stock + bulkStockValue;
             break;
           case 'subtract':
-            newStock = Math.max(0, product.stock - bulkStockValue);
+            newStock = Math.max(0, product.total_stock - bulkStockValue);
             break;
           case 'set':
             newStock = Math.max(0, bulkStockValue);
@@ -152,11 +153,11 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
   };
 
   const handleSelectAll = () => {
-    const filteredProducts = getFilteredProducts();
-    if (selectedProducts.length === filteredProducts.length) {
+    const filtered = getFilteredProducts();
+    if (selectedProducts.length === filtered.length) {
       setSelectedProducts([]);
     } else {
-      setSelectedProducts(filteredProducts.map(p => p.id));
+      setSelectedProducts(filtered.map(p => p.id));
     }
   };
 
@@ -168,7 +169,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
       storage: product.storage,
       condition: product.condition,
       category: product.category,
-      stock: product.stock,
+      stock: product.total_stock,
       min_stock_alert: product.min_stock_alert
     });
   }
@@ -181,20 +182,39 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
       model: '',
       storage: '',
       condition: 'new',
-      category: 'phone',
+      category: 'iphone',
       stock: 0,
       min_stock_alert: 5
     });
   }
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.model.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = filterCategory === 'all' || product.category === filterCategory;
-    return matchesSearch && matchesCategory;
-  });
+  function getFilteredProducts() {
+    return products.filter(product => {
+      const searchLower = searchTerm.toLowerCase().trim();
+      const brandLower = product.brand.toLowerCase();
+      const modelLower = product.model.toLowerCase();
+      
+      const matchesSearch = searchLower === '' || 
+                           brandLower.includes(searchLower) ||
+                           modelLower.includes(searchLower);
+      
+      const matchesCategory = filterCategory === 'all' || product.category === filterCategory;
+      
+      const brandFilterLower = filterBrand.toLowerCase().trim();
+      const matchesBrand = filterBrand === 'all' || 
+                          brandLower === brandFilterLower ||
+                          brandLower.includes(brandFilterLower);
+      
+      return matchesSearch && matchesCategory && matchesBrand;
+    });
+  }
 
-  const lowStockProducts = products.filter(product => product.stock <= product.min_stock_alert);
+  const filteredProducts = getFilteredProducts();
+
+  // Get unique brands for the brand filter
+  const uniqueBrands = Array.from(new Set(products.map(p => p.brand))).sort();
+
+  const lowStockProducts = products.filter(product => product.total_stock <= product.min_stock_alert);
 
   if (loading) {
     return (
@@ -297,7 +317,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                   <dl>
                     <dt className="text-sm font-medium text-gray-500 truncate">{t('inventory.inStockItems')}</dt>
                     <dd className="text-lg font-medium text-gray-900">
-                      {products.filter(p => p.stock > p.min_stock_alert).length}
+                      {products.filter(p => p.total_stock > p.min_stock_alert).length}
                     </dd>
                   </dl>
                 </div>
@@ -331,11 +351,28 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                   onChange={(e) => setFilterCategory(e.target.value)}
                   className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                 >
-                  <option value="all">{t('inventory.allCategories')}</option>
-                  <option value="phone">{t('inventory.phones')}</option>
-                  <option value="tablet">{t('inventory.tablets')}</option>
-                  <option value="earphones">{t('inventory.earphones')}</option>
-                  <option value="accessories">{t('inventory.accessories')}</option>
+                  <option value="all">All Categories</option>
+                  <option value="iphone">iPhone</option>
+                  <option value="samsung">Samsung</option>
+                  <option value="android_phone">Android Phones</option>
+                  <option value="tablet">Tablets</option>
+                  <option value="smartwatch">Smartwatches</option>
+                  <option value="earphones">Earphones</option>
+                  <option value="chargers">Chargers</option>
+                  <option value="cases">Cases</option>
+                  <option value="accessories">Accessories</option>
+                </select>
+              </div>
+              <div className="flex items-center">
+                <select
+                  value={filterBrand}
+                  onChange={(e) => setFilterBrand(e.target.value)}
+                  className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                >
+                  <option value="all">All Brands</option>
+                  {uniqueBrands.map(brand => (
+                    <option key={brand} value={brand}>{brand}</option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -402,7 +439,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getConditionColor(product.condition)}`}>
                           {product.condition}
                         </span>
-                        {product.stock <= product.min_stock_alert && (
+                        {product.total_stock <= product.min_stock_alert && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
                             Low Stock
                           </span>
@@ -420,7 +457,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Stock:</span>
-                          <span className="text-sm text-gray-900">{product.stock}</span>
+                          <span className="text-sm text-gray-900">{product.total_stock}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Reserved:</span>
@@ -497,7 +534,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                           <p className="text-sm text-gray-500">
                             {product.storage} • {product.category}
                           </p>
-                          {product.stock <= product.min_stock_alert && (
+                          {product.total_stock <= product.min_stock_alert && (
                             <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                               Low Stock
                             </span>
@@ -508,7 +545,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                     <div className="flex items-center space-x-4">
                       <div className="text-right">
                         <p className="text-sm font-medium text-gray-900">
-                          Stock: {product.stock}
+                          Stock: {product.total_stock}
                         </p>
                         <p className="text-sm text-gray-500">
                           Reserved: {product.reserved_stock}
@@ -594,10 +631,15 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                         onChange={(e) => setFormData({ ...formData, category: e.target.value as ProductCategory })}
                         className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       >
-                        <option value="phone">Phone</option>
-                        <option value="tablet">{t('inventory.tablets')}</option>
-                        <option value="earphones">{t('inventory.earphones')}</option>
-                        <option value="accessories">{t('inventory.accessories')}</option>
+                        <option value="iphone">iPhone</option>
+                        <option value="samsung">Samsung</option>
+                        <option value="android_phone">Android Phones</option>
+                        <option value="tablet">Tablets</option>
+                        <option value="smartwatch">Smartwatches</option>
+                        <option value="earphones">Earphones</option>
+                        <option value="chargers">Chargers</option>
+                        <option value="cases">Cases</option>
+                        <option value="accessories">Accessories</option>
                       </select>
                     </div>
                   </div>
