@@ -41,7 +41,7 @@ export default async function OrderPage({ params }: OrderPageProps) {
       notFound();
     }
 
-    return <OrderConfirmation order={order} />;
+    return <OrderConfirmation order={order as any} />;
   } catch (error) {
     console.error('Order page error:', error);
     return (

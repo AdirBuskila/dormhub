@@ -146,7 +146,7 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
                         {/* Product Header */}
                         <div className="flex items-center space-x-3 mb-3">
                           <div className="flex-shrink-0">
-                            {item.product?.image_url ? (
+                            {(item.product as any)?.image_url ? (
                               <img
                                 src={(item.product as any).image_url}
                                 alt={`${item.product.brand} ${item.product.model}`}

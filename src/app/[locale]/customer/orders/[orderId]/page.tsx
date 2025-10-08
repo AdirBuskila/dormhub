@@ -59,7 +59,7 @@ export default async function OrderDetailsPage({ params }: OrderDetailsPageProps
           .single();
         
         console.log(`Fetching product ${item.product_id}:`, { product, productError });
-        item.product = product;
+        (item as any).product = product;
       }
     }
 
@@ -85,8 +85,8 @@ export default async function OrderDetailsPage({ params }: OrderDetailsPageProps
 
     console.log('Order query result:', { order, orderError });
     
-    if (order?.order_items) {
-      console.log('Order items details:', order.order_items.map(item => ({
+    if ((order as any)?.order_items) {
+      console.log('Order items details:', (order as any).order_items.map((item: any) => ({
         id: item.id,
         quantity: item.quantity,
         price: item.price,
@@ -118,7 +118,7 @@ export default async function OrderDetailsPage({ params }: OrderDetailsPageProps
     }
 
     console.log('Rendering OrderConfirmation with order:', order);
-    return <OrderConfirmation order={order} />;
+    return <OrderConfirmation order={order as any} />;
 
   } catch (error) {
     console.error('Order details page error:', error);

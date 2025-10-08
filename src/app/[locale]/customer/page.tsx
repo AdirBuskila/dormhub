@@ -70,7 +70,7 @@ export default async function CustomerPage() {
     const client = await upsertClientFromClerkUser(clerkUser);
     const orders = await getClientOrders(client.id);
 
-    return <CustomerDashboard client={client} orders={orders} />;
+    return <CustomerDashboard client={client} orders={orders as any} />;
   } catch (error) {
     console.error('Customer page error:', error);
     
