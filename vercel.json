@@ -2,13 +2,11 @@
   "crons": [
     {
       "path": "/api/run-alerts",
-      "schedule": "0 8 * * *",
-      "timezone": "Asia/Jerusalem"
+      "schedule": "0 8 * * *"
     },
     {
       "path": "/api/dispatch-messages",
-      "schedule": "0 9 * * *",
-      "timezone": "Asia/Jerusalem"
+      "schedule": "0 9 * * *"
     }
   ]
 }
