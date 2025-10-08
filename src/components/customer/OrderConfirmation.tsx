@@ -177,16 +177,16 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-gray-600 font-medium">Condition:</span>
                             <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                              item.product?.condition === 'new' ? 'bg-blue-100 text-blue-800' :
-                              item.product?.condition === 'refurbished' ? 'bg-purple-100 text-purple-800' :
+                              (item.product as any)?.condition === 'new' ? 'bg-blue-100 text-blue-800' :
+                              (item.product as any)?.condition === 'refurbished' ? 'bg-purple-100 text-purple-800' :
                               'bg-gray-100 text-gray-800'
                             }`}>
-                              {item.product?.condition}
+                              {(item.product as any)?.condition}
                             </span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-gray-600 font-medium">Category:</span>
-                            <span className="text-sm text-gray-900 capitalize">{item.product?.category}</span>
+                            <span className="text-sm text-gray-900 capitalize">{(item.product as any)?.category}</span>
                           </div>
                         </div>
                       </div>
