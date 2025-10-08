@@ -146,10 +146,10 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
                         {/* Product Header */}
                         <div className="flex items-center space-x-3 mb-3">
                           <div className="flex-shrink-0">
-                            {item.products?.image_url ? (
+                            {item.product?.image_url ? (
                               <img
-                                src={item.products.image_url}
-                                alt={`${item.products.brand} ${item.products.model}`}
+                                src={item.product.image_url}
+                                alt={`${item.product.brand} ${item.product.model}`}
                                 className="w-12 h-12 rounded-lg object-cover"
                               />
                             ) : (
@@ -160,7 +160,7 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
                           </div>
                           <div className="flex-1 min-w-0">
                             <h4 className="text-base font-semibold text-gray-900 leading-tight mb-1">
-                              {item.products?.brand} {item.products?.model}
+                              {item.product?.brand} {item.product?.model}
                             </h4>
                             <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
                               Qty: {item.quantity}
@@ -172,21 +172,21 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
                         <div className="space-y-2">
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-gray-600 font-medium">Storage:</span>
-                            <span className="text-sm text-gray-900">{item.products?.storage}</span>
+                            <span className="text-sm text-gray-900">{item.product?.storage}</span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-gray-600 font-medium">Condition:</span>
                             <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                              item.products?.condition === 'new' ? 'bg-blue-100 text-blue-800' :
-                              item.products?.condition === 'refurbished' ? 'bg-purple-100 text-purple-800' :
+                              item.product?.condition === 'new' ? 'bg-blue-100 text-blue-800' :
+                              item.product?.condition === 'refurbished' ? 'bg-purple-100 text-purple-800' :
                               'bg-gray-100 text-gray-800'
                             }`}>
-                              {item.products?.condition}
+                              {item.product?.condition}
                             </span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span className="text-sm text-gray-600 font-medium">Category:</span>
-                            <span className="text-sm text-gray-900 capitalize">{item.products?.category}</span>
+                            <span className="text-sm text-gray-900 capitalize">{item.product?.category}</span>
                           </div>
                         </div>
                       </div>

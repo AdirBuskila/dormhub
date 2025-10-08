@@ -9,7 +9,7 @@ import NewOrderProductList from './NewOrderProductList';
 import CartSidebar from './CartSidebar';
 import { useTranslations } from 'next-intl';
 
-interface CartItem {
+export interface CartItem {
   product: Product;
   quantity: number;
 }

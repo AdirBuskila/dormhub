@@ -75,7 +75,7 @@ export async function createProduct(product: CreateProductData): Promise<Product
 
 export async function updateProduct(id: string, updates: Partial<CreateProductData>): Promise<Product> {
   // Map stock to total_stock for database if present
-  let dbUpdates = updates;
+  let dbUpdates: any = updates;
   if (updates.stock !== undefined) {
     const { stock, ...rest } = updates;
     dbUpdates = { ...rest, total_stock: stock };

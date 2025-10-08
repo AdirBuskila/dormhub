@@ -10,7 +10,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Get the current user to check if they're admin
-    const user = await clerkClient.users.getUser(userId);
+    const clerk = await clerkClient();
+    const user = await clerk.users.getUser(userId);
     const userEmail = user.emailAddresses[0]?.emailAddress?.toLowerCase();
     const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim().toLowerCase()) || [];
     
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch all users from Clerk
-    const users = await clerkClient.users.getUserList({
+    const users = await clerk.users.getUserList({
       limit: 100,
       orderBy: '-created_at'
     });

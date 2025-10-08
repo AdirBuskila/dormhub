@@ -157,9 +157,10 @@ export async function POST(request: NextRequest) {
           `)
           .eq('order_id', order.id);
 
-        const summary = orderProducts?.map(item => 
-          `${item.quantity}× ${item.products.brand} ${item.products.model}`
-        ).join(', ') || 'Items ordered';
+        const summary = orderProducts?.map(item => {
+          const product = Array.isArray(item.products) ? item.products[0] : item.products;
+          return `${item.quantity}× ${product?.brand || 'Unknown'} ${product?.model || 'Product'}`;
+        }).join(', ') || 'Items ordered';
 
         await sendWhatsApp({
           to: clientData.phone,

@@ -158,7 +158,7 @@ export async function getOrdersToDeliver({
     if (error) throw error;
 
     // Get payments for each client to calculate balance due
-    const clientIds = data?.map(order => order.client?.id).filter(Boolean) || [];
+    const clientIds = data?.map(order => order.client_id).filter(Boolean) || [];
     const { data: paymentsData } = await supabaseAdmin
       .from('payments')
       .select('client_id, amount')
@@ -172,13 +172,13 @@ export async function getOrdersToDeliver({
       .in('order_id', orderIds);
 
     return data?.map(order => {
-      const clientPayments = paymentsData?.filter(p => p.client_id === order.client?.id) || [];
+      const clientPayments = paymentsData?.filter(p => p.client_id === order.client_id) || [];
       const totalPayments = clientPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
       const itemsCount = orderItemsData?.filter(oi => oi.order_id === order.id).length || 0;
       
       return {
         order_id: order.id,
-        client_name: order.client?.name || 'Unknown Client',
+        client_name: 'Unknown Client', // TODO: Get client name from separate query
         items_count: itemsCount,
         promised_date: order.promised_date,
         status: order.status,
@@ -340,7 +340,7 @@ export async function getRecentPayments({
 
     return data.map(payment => ({
       payment_id: payment.id,
-      client_name: payment.client?.name || 'Unknown Client',
+      client_name: Array.isArray(payment.client) ? payment.client[0]?.name || 'Unknown Client' : 'Unknown Client',
       amount: payment.amount,
       method: payment.method,
       date: payment.date,

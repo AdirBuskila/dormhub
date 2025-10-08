@@ -310,9 +310,10 @@ export async function createReservedStaleAlerts(days: number = parseInt(process.
           alertCount++;
           
           // Send WhatsApp nudge if client has phone
-          if (order.clients?.phone) {
+          const client = Array.isArray(order.clients) ? order.clients[0] : order.clients;
+          if (client?.phone) {
             await sendWhatsApp({
-              to: order.clients.phone,
+              to: client.phone,
               template: 'reserved_nudge',
               variables: {
                 orderId: order.id.slice(0, 8)

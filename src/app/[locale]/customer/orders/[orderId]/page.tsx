@@ -59,7 +59,7 @@ export default async function OrderDetailsPage({ params }: OrderDetailsPageProps
           .single();
         
         console.log(`Fetching product ${item.product_id}:`, { product, productError });
-        item.products = product;
+        item.product = product;
       }
     }
 
@@ -80,7 +80,7 @@ export default async function OrderDetailsPage({ params }: OrderDetailsPageProps
 
     // Combine the data
     if (order && orderItems) {
-      order.order_items = orderItems;
+      (order as any).order_items = orderItems;
     }
 
     console.log('Order query result:', { order, orderError });
