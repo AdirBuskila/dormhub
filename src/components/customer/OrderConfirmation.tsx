@@ -148,7 +148,7 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
                           <div className="flex-shrink-0">
                             {item.product?.image_url ? (
                               <img
-                                src={item.product.image_url}
+                                src={(item.product as any).image_url}
                                 alt={`${item.product.brand} ${item.product.model}`}
                                 className="w-12 h-12 rounded-lg object-cover"
                               />

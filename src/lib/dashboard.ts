@@ -158,7 +158,7 @@ export async function getOrdersToDeliver({
     if (error) throw error;
 
     // Get payments for each client to calculate balance due
-    const clientIds = data?.map(order => order.client_id).filter(Boolean) || [];
+    const clientIds = data?.map(order => (order as any).client_id).filter(Boolean) || [];
     const { data: paymentsData } = await supabaseAdmin
       .from('payments')
       .select('client_id, amount')
@@ -172,7 +172,7 @@ export async function getOrdersToDeliver({
       .in('order_id', orderIds);
 
     return data?.map(order => {
-      const clientPayments = paymentsData?.filter(p => p.client_id === order.client_id) || [];
+      const clientPayments = paymentsData?.filter(p => p.client_id === (order as any).client_id) || [];
       const totalPayments = clientPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
       const itemsCount = orderItemsData?.filter(oi => oi.order_id === order.id).length || 0;
       

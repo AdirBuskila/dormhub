@@ -61,7 +61,7 @@ export default function PaymentManagement({ isAdmin = true }: PaymentManagementP
     try {
       const paymentData = {
         ...formData,
-        order_id: formData.order_id || null
+        order_id: formData.order_id || undefined
       };
       await createPayment(paymentData);
       setShowAddModal(false);

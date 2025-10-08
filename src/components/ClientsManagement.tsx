@@ -57,11 +57,11 @@ export default function ClientsManagement() {
       if (user) {
         const fallbackUser: ClerkUser = {
           id: user.id,
-          emailAddresses: user.emailAddresses || [],
+          emailAddresses: (user.emailAddresses || []) as any,
           firstName: user.firstName,
           lastName: user.lastName,
-          createdAt: user.createdAt,
-          lastSignInAt: user.lastSignInAt,
+          createdAt: user.createdAt?.getTime() || 0,
+          lastSignInAt: user.lastSignInAt?.getTime() || null,
           publicMetadata: user.publicMetadata,
           privateMetadata: {},
           unsafeMetadata: {},

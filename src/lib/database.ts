@@ -105,7 +105,6 @@ export async function getLowStockProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from('products')
     .select('*')
-    .lte('total_stock', supabase.raw('min_stock_alert'))
     .order('total_stock', { ascending: true });
   
   if (error) throw error;

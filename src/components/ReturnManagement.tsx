@@ -61,7 +61,7 @@ export default function ReturnManagement({ isAdmin = true }: ReturnManagementPro
     try {
       const returnData = {
         ...formData,
-        client_id: formData.client_id || null
+        client_id: formData.client_id || undefined
       };
       await createReturn(returnData);
       setShowAddModal(false);

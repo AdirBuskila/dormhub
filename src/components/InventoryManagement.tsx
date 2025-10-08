@@ -420,7 +420,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                           className="h-16 w-16 rounded-lg object-cover border border-gray-200"
                           onError={(e) => {
                             e.currentTarget.style.display = 'none';
-                            e.currentTarget.nextElementSibling.style.display = 'flex';
+                            (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
                           }}
                         />
                       ) : null}
@@ -512,7 +512,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                             onError={(e) => {
                               // Fallback to icon if image fails to load
                               e.currentTarget.style.display = 'none';
-                              e.currentTarget.nextElementSibling.style.display = 'flex';
+                              (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
                             }}
                           />
                         ) : null}

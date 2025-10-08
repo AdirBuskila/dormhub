@@ -58,7 +58,7 @@ export default function CartSidebar({
                         className="h-12 w-12 rounded-lg object-cover border border-gray-200"
                         onError={(e) => {
                           e.currentTarget.style.display = 'none';
-                          e.currentTarget.nextElementSibling.style.display = 'flex';
+                          (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
                         }}
                       />
                     ) : null}
