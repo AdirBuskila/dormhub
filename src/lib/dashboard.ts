@@ -176,9 +176,13 @@ export async function getOrdersToDeliver({
       const totalPayments = clientPayments.reduce((sum, p) => sum + (p.amount || 0), 0);
       const itemsCount = orderItemsData?.filter(oi => oi.order_id === order.id).length || 0;
       
+      // Extract client name from the joined data
+      const client = (order as any).client;
+      const clientName = Array.isArray(client) ? client[0]?.name : client?.name;
+      
       return {
         order_id: order.id,
-        client_name: 'Unknown Client', // TODO: Get client name from separate query
+        client_name: clientName || 'Unknown Client',
         items_count: itemsCount,
         promised_date: order.promised_date,
         status: order.status,
@@ -338,13 +342,18 @@ export async function getRecentPayments({
 
     if (error) throw error;
 
-    return data.map(payment => ({
-      payment_id: payment.id,
-      client_name: Array.isArray(payment.client) ? payment.client[0]?.name || 'Unknown Client' : 'Unknown Client',
-      amount: payment.amount,
-      method: payment.method,
-      date: payment.date,
-    }));
+    return data.map(payment => {
+      const client = (payment as any).client;
+      const clientName = Array.isArray(client) ? client[0]?.name : client?.name;
+      
+      return {
+        payment_id: payment.id,
+        client_name: clientName || 'Unknown Client',
+        amount: payment.amount,
+        method: payment.method,
+        date: payment.date,
+      };
+    });
   } catch (error) {
     console.error('Error fetching recent payments:', error);
     return [];
