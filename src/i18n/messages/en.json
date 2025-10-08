@@ -28,6 +28,11 @@
     "price": "Price",
     "quantity": "Quantity",
     "status": "Status",
+    "storage": "Storage",
+    "condition": "Condition",
+    "category": "Category",
+    "checkout": "Checkout",
+    "submitting": "Submitting...",
     "date": "Date",
     "name": "Name",
     "email": "Email",
@@ -153,10 +158,8 @@
     "finalPricing": "Final pricing will be set by our team",
     "checkout": "Checkout",
     "submitting": "Submitting...",
-    "createdOn": "Created on"
-    "backToDashboard": "Back to Dashboard",
-    "viewDetails": "View Details",
-    "viewAllOrders": "View all orders"
+    "createdOn": "Created on",
+    "backToDashboard": "Back to Dashboard"
   },
   "clients": {
     "manageClients": "Manage your registered users and clients",
