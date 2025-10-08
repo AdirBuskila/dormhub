@@ -50,10 +50,8 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
     { name: t('navigation.inventory'), href: '/inventory', icon: Package },
     { name: t('navigation.clients'), href: '/clients', icon: Users },
     { name: t('navigation.orders'), href: '/orders', icon: ShoppingCart },
-    { name: t('navigation.payments'), href: '/payments', icon: CreditCard },
     { name: t('navigation.returns'), href: '/returns', icon: RotateCcw },
     { name: t('navigation.alerts'), href: '/alerts', icon: Bell },
-    { name: t('navigation.customerPortal'), href: '/customer', icon: Users },
   ] : [
     { name: t('navigation.newOrder'), href: '/customer/new-order', icon: ShoppingCart },
     { name: t('navigation.myOrders'), href: '/customer', icon: Package },

@@ -29,8 +29,10 @@ export default function NewOrderProductList({
 
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
-      const matchesSearch = product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           product.model.toLowerCase().includes(searchTerm.toLowerCase());
+      const searchLower = searchTerm.toLowerCase().trim();
+      const matchesSearch = searchLower === '' || 
+                           product.brand.toLowerCase().includes(searchLower) ||
+                           product.model.toLowerCase().includes(searchLower);
       const matchesBrand = filterBrand === 'all' || product.brand === filterBrand;
       const matchesCategory = filterCategory === 'all' || product.category === filterCategory;
       const matchesCondition = filterCondition === 'all' || product.condition === filterCondition;
@@ -92,10 +94,15 @@ export default function NewOrderProductList({
               className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             >
               <option value="all">{t('inventory.allCategories')}</option>
-              <option value="phone">{t('inventory.phones')}</option>
-              <option value="tablet">{t('inventory.tablets')}</option>
-              <option value="earphones">{t('inventory.earphones')}</option>
-              <option value="accessories">{t('inventory.accessories')}</option>
+              <option value="iphone">iPhone</option>
+              <option value="samsung">Samsung</option>
+              <option value="android_phone">Android Phones</option>
+              <option value="tablet">Tablets</option>
+              <option value="smartwatch">Smartwatches</option>
+              <option value="earphones">Earphones</option>
+              <option value="chargers">Chargers</option>
+              <option value="cases">Cases</option>
+              <option value="accessories">Accessories</option>
             </select>
           </div>
 

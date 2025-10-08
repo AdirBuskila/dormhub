@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase';
+import { updateOrderStatus } from '@/lib/database';
 
 export async function POST(request: NextRequest) {
   try {
     // Get authenticated user
     const { userId } = await auth();
     console.log('Orders API - userId:', userId);
+    console.log('Orders API - Environment:', process.env.NODE_ENV);
+    console.log('Orders API - Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL ? 'Set' : 'Not set');
     
     if (!userId) {
       console.log('Orders API - No userId found');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized - Please sign in to create orders' }, { status: 401 });
     }
 
     // Parse request body
@@ -188,6 +191,98 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Order creation error:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json(
+      { 
+        error: 'Internal server error',
+        details: errorMessage,
+        timestamp: new Date().toISOString()
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    // Get authenticated user
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Parse request body
+    const { orderId, status } = await request.json();
+    console.log('Orders API PATCH - orderId:', orderId, 'status:', status);
+
+    if (!orderId || !status) {
+      return NextResponse.json(
+        { error: 'Missing orderId or status' },
+        { status: 400 }
+      );
+    }
+
+    // Validate status
+    const validStatuses = ['draft', 'reserved', 'delivered', 'closed'];
+    if (!validStatuses.includes(status)) {
+      return NextResponse.json(
+        { error: 'Invalid status. Must be one of: draft, reserved, delivered, closed' },
+        { status: 400 }
+      );
+    }
+
+    // Check if order exists and user has access (for admin orders)
+    const { data: order, error: orderError } = await supabaseAdmin
+      .from('orders')
+      .select('id, client_id')
+      .eq('id', orderId)
+      .single();
+
+    if (orderError || !order) {
+      return NextResponse.json(
+        { error: 'Order not found' },
+        { status: 404 }
+      );
+    }
+
+    // For customer orders, verify the client belongs to the authenticated user
+    const { data: client, error: clientError } = await supabaseAdmin
+      .from('clients')
+      .select('id, clerk_user_id')
+      .eq('id', order.client_id)
+      .eq('clerk_user_id', userId)
+      .single();
+
+    // If client not found or doesn't belong to user, check if user is admin
+    const adminEmails = process.env.ADMIN_EMAILS?.split(',').map(email => email.trim().toLowerCase()) || [];
+    const { data: userData } = await supabaseAdmin
+      .from('clients')
+      .select('email')
+      .eq('clerk_user_id', userId)
+      .single();
+
+    const isAdmin = userData?.email && adminEmails.includes(userData.email.toLowerCase());
+
+    if (clientError && !isAdmin) {
+      return NextResponse.json(
+        { error: 'Access denied' },
+        { status: 403 }
+      );
+    }
+
+    // Update order status with stock management
+    const updatedOrder = await updateOrderStatus(orderId, status);
+
+    console.log('Orders API PATCH - Order status updated successfully');
+
+    return NextResponse.json({
+      success: true,
+      order: updatedOrder
+    });
+
+  } catch (error) {
+    console.error('Order status update error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     return NextResponse.json(
       { 

@@ -128,6 +128,30 @@ export default function AlertsClient({ initialAlerts, totalAlerts, unreadAlerts 
     }
   };
 
+  const markAllAsDelivered = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/alerts/mark-all-delivered', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      const result = await response.json();
+      
+      if (response.ok) {
+        alert(`Successfully marked ${result.updatedCount} alerts as delivered`);
+        // Update all undelivered alerts in the state
+        setAlerts(alerts.map(alert => ({ ...alert, delivered: true })));
+      } else {
+        alert(`Error: ${result.error}`);
+      }
+    } catch (error) {
+      alert(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const refreshAlerts = async () => {
     setLoading(true);
     try {
@@ -275,6 +299,15 @@ export default function AlertsClient({ initialAlerts, totalAlerts, unreadAlerts 
             >
               <Send className="h-4 w-4 mr-2" />
               Dispatch Queued Messages
+            </button>
+
+            <button
+              onClick={markAllAsDelivered}
+              disabled={loading || unreadAlerts === 0}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Check className="h-4 w-4 mr-2" />
+              Mark All as Delivered
             </button>
           </div>
         </div>

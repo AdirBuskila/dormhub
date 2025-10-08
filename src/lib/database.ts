@@ -273,15 +273,102 @@ export async function createOrder(orderData: CreateOrderData): Promise<Order> {
 }
 
 export async function updateOrderStatus(id: string, status: string): Promise<Order> {
-  const { data, error } = await supabase
-    .from('orders')
-    .update({ status })
-    .eq('id', id)
-    .select()
-    .single();
-  
-  if (error) throw error;
-  return data;
+  try {
+    // Get the current order with items to understand stock changes
+    const currentOrder = await getOrder(id);
+    if (!currentOrder) {
+      throw new Error('Order not found');
+    }
+
+    // Start a transaction-like operation
+    // First, get the current order items
+    const { data: orderItems, error: itemsError } = await supabase
+      .from('order_items')
+      .select('product_id, quantity')
+      .eq('order_id', id);
+
+    if (itemsError) throw itemsError;
+
+    // Handle stock changes based on status transitions
+    if (currentOrder.status !== status) {
+      for (const item of orderItems || []) {
+        // Get current product stock
+        const { data: product, error: productError } = await supabase
+          .from('products')
+          .select('total_stock, reserved_stock')
+          .eq('id', item.product_id)
+          .single();
+
+        if (productError) throw productError;
+
+        let newTotalStock = product.total_stock;
+        let newReservedStock = product.reserved_stock;
+
+        // Status transition logic
+        if (currentOrder.status === 'draft' && status === 'reserved') {
+          // Reserve stock: move from total to reserved
+          newReservedStock += item.quantity;
+        } else if (currentOrder.status === 'reserved' && status === 'delivered') {
+          // Deliver order: remove from both total and reserved
+          newTotalStock -= item.quantity;
+          newReservedStock -= item.quantity;
+        } else if (currentOrder.status === 'delivered' && status === 'reserved') {
+          // Reverse delivery: add back to total and reserve
+          newTotalStock += item.quantity;
+          newReservedStock += item.quantity;
+        } else if (currentOrder.status === 'reserved' && status === 'draft') {
+          // Unreserve: move from reserved back to total (no change to total)
+          newReservedStock -= item.quantity;
+        } else if (currentOrder.status === 'draft' && status === 'delivered') {
+          // Direct delivery from draft: remove from total only
+          newTotalStock -= item.quantity;
+        } else if (currentOrder.status === 'delivered' && status === 'draft') {
+          // Reverse direct delivery: add back to total
+          newTotalStock += item.quantity;
+        } else if (currentOrder.status === 'delivered' && status === 'closed') {
+          // Close order: no stock changes, just status change
+          // Stock was already deducted when delivered
+        } else if (currentOrder.status === 'closed' && status === 'delivered') {
+          // Reopen closed order: no stock changes
+          // Stock should already be deducted from when it was delivered
+        }
+
+        // Ensure stock doesn't go negative
+        newTotalStock = Math.max(0, newTotalStock);
+        newReservedStock = Math.max(0, newReservedStock);
+
+        // Update product stock
+        const { error: updateError } = await supabase
+          .from('products')
+          .update({
+            total_stock: newTotalStock,
+            reserved_stock: newReservedStock
+          })
+          .eq('id', item.product_id);
+
+        if (updateError) throw updateError;
+      }
+    }
+
+    // Update the order status
+    const { data, error } = await supabase
+      .from('orders')
+      .update({ 
+        status,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    
+    // Return the complete updated order
+    return getOrder(id) as Promise<Order>;
+  } catch (error) {
+    console.error('Error updating order status:', error);
+    throw error;
+  }
 }
 
 export async function getOrdersToDeliverToday(): Promise<Order[]> {

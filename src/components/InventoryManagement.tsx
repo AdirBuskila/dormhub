@@ -170,7 +170,8 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
       condition: product.condition,
       category: product.category,
       stock: product.total_stock,
-      min_stock_alert: product.min_stock_alert
+      min_stock_alert: product.min_stock_alert,
+      image_url: product.image_url || ''
     });
   }
 

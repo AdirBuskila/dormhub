@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Layout from '@/components/Layout';
 import { Product } from '@/types/database';
-import { supabase } from '@/lib/supabase';
+// import { getProducts } from '@/lib/database';
 import NewOrderProductList from './NewOrderProductList';
 import CartSidebar from './CartSidebar';
 import { useTranslations } from 'next-intl';
@@ -33,15 +33,16 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
 
   const loadProducts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('brand', { ascending: true });
-
-      if (error) throw error;
-      setProducts(data || []);
+      const response = await fetch('/api/products');
+      if (!response.ok) {
+        throw new Error('Failed to fetch products');
+      }
+      const { products } = await response.json();
+      console.log('Loaded products:', products?.length || 0, 'products');
+      setProducts(products || []);
     } catch (error) {
       console.error('Failed to load products:', error);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -105,7 +106,17 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
         console.error('Order creation failed:', errorData);
         const errorMessage = errorData.error || 'Unknown error';
         const errorDetails = errorData.details ? ` (${errorData.details})` : '';
-        throw new Error(`Failed to create order: ${errorMessage}${errorDetails}`);
+        
+        // Handle specific error cases
+        if (response.status === 401) {
+          throw new Error('Please sign in to create orders. Your session may have expired.');
+        } else if (response.status === 404) {
+          throw new Error('Account not found. Please try refreshing the page or contact support.');
+        } else if (response.status === 400) {
+          throw new Error(errorData.error || 'Invalid request. Please check your selections.');
+        } else {
+          throw new Error(`Failed to create order: ${errorMessage}${errorDetails}`);
+        }
       }
 
       const { orderId } = await response.json();
@@ -192,6 +203,24 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
             />
           </div>
         </div>
+
+        {/* Floating Checkout Button - Mobile Only */}
+        {cart.length > 0 && (
+          <div className="fixed bottom-6 right-6 lg:hidden z-50">
+            <button
+              onClick={submitOrder}
+              disabled={submitting}
+              className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white rounded-full p-4 shadow-lg transition-colors duration-200 flex items-center space-x-2"
+            >
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+              </svg>
+              <span className="font-medium">
+                {submitting ? t('common.submitting') : `${t('common.checkout')} (${cart.reduce((sum, item) => sum + item.quantity, 0)})`}
+              </span>
+            </button>
+          </div>
+        )}
       </div>
     </Layout>
   );
