@@ -5,22 +5,39 @@ export async function POST(request: NextRequest) {
   try {
     console.log('🧪 Testing WhatsApp sending...');
     
-    const result = await sendWhatsApp({
+    // Test new order notification
+    const newOrderResult = await sendWhatsApp({
       to: '+972546093624',
       template: 'admin_new_order',
       variables: {
         orderId: 'TEST123',
         clientName: 'Test Client',
-        itemCount: 1
+        itemCount: 2
       }
     });
 
-    console.log('📤 WhatsApp send result:', result);
+    console.log('📤 New Order WhatsApp result:', newOrderResult);
+
+    // Test low stock notification
+    const lowStockResult = await sendWhatsApp({
+      to: '+972546093624',
+      template: 'admin_low_stock',
+      variables: {
+        productName: 'iPhone 15 Pro 256GB',
+        currentStock: 2,
+        minAlert: 5
+      }
+    });
+
+    console.log('📤 Low Stock WhatsApp result:', lowStockResult);
 
     return NextResponse.json({
       success: true,
-      result,
-      message: 'WhatsApp test completed - check console logs'
+      results: {
+        newOrder: newOrderResult,
+        lowStock: lowStockResult
+      },
+      message: 'WhatsApp tests completed - check console logs and your phone!'
     });
 
   } catch (error) {

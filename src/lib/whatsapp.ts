@@ -33,6 +33,9 @@ export function renderTemplate(template: string, variables: Record<string, any>)
     case 'admin_new_order':
       return `🆕 New Order Alert!\nOrder #${variables.orderId || ''} from ${variables.clientName || 'Unknown Client'}\nItems: ${variables.itemCount || 0}\nPlease check the admin dashboard.`;
     
+    case 'admin_low_stock':
+      return `⚠️ Low Stock Alert!\n${variables.productName || 'Product'} is running low\nCurrent stock: ${variables.currentStock || 0}\nMinimum alert: ${variables.minAlert || 0}\nPlease restock soon!`;
+    
     default:
       // Generic template rendering - replace {{var}} with variables
       return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {

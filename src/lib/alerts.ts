@@ -68,6 +68,18 @@ export async function createLowStockAlerts(): Promise<number> {
 
           if (!insertError) {
             alertCount++;
+            
+            // Send WhatsApp notification to admin
+            const adminPhone = process.env.ADMIN_PHONE || '+972546093624';
+            await sendWhatsApp({
+              to: adminPhone,
+              template: 'admin_low_stock',
+              variables: {
+                productName: `${product.brand} ${product.model} ${product.storage}`,
+                currentStock: stock,
+                minAlert: product.min_stock_alert
+              }
+            });
           } else {
             console.error('Error creating low stock alert:', insertError);
           }
