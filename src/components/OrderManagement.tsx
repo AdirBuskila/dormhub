@@ -5,6 +5,7 @@ import Layout from './Layout';
 import { Order, CreateOrderData, Product, Client } from '@/types/database';
 import { getOrders, createOrder, updateOrderStatus, getProducts, getClients } from '@/lib/database';
 import { formatCurrency, formatDate, getStatusColor } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 import {
   Plus,
   Search,
@@ -21,6 +22,7 @@ interface OrderManagementProps {
 }
 
 export default function OrderManagement({ isAdmin = true }: OrderManagementProps) {
+  const t = useTranslations('orders');
   const [orders, setOrders] = useState<Order[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [clients, setClients] = useState<Client[]>([]);
@@ -158,9 +160,9 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
         {/* Header */}
         <div className="sm:flex sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Order Management</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{t('orderManagement')}</h1>
             <p className="mt-1 text-sm text-gray-500">
-              Create, track, and manage orders for your clients.
+              {t('orderManagementDesc')}
             </p>
           </div>
           <div className="mt-4 sm:mt-0">
@@ -169,7 +171,7 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <Plus className="h-4 w-4 mr-2" />
-              Create Order
+              {t('createOrder')}
             </button>
           </div>
         </div>
@@ -184,7 +186,7 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Draft</dt>
+                    <dt className="text-sm font-medium text-gray-500 truncate">{t('draft')}</dt>
                     <dd className="text-lg font-medium text-gray-900">{statusCounts.draft}</dd>
                   </dl>
                 </div>
@@ -200,7 +202,7 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Reserved</dt>
+                    <dt className="text-sm font-medium text-gray-500 truncate">{t('reserved')}</dt>
                     <dd className="text-lg font-medium text-gray-900">{statusCounts.reserved}</dd>
                   </dl>
                 </div>
@@ -216,7 +218,7 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Delivered</dt>
+                    <dt className="text-sm font-medium text-gray-500 truncate">{t('delivered')}</dt>
                     <dd className="text-lg font-medium text-gray-900">{statusCounts.delivered}</dd>
                   </dl>
                 </div>
@@ -232,7 +234,7 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
                 </div>
                 <div className="ml-5 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">Closed</dt>
+                    <dt className="text-sm font-medium text-gray-500 truncate">{t('closed')}</dt>
                     <dd className="text-lg font-medium text-gray-900">{statusCounts.closed}</dd>
                   </dl>
                 </div>
@@ -251,7 +253,7 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
                 </div>
                 <input
                   type="text"
-                  placeholder="Search orders..."
+                  placeholder={t('searchOrders')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
@@ -266,11 +268,11 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
                   onChange={(e) => setFilterStatus(e.target.value)}
                   className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                 >
-                  <option value="all">All Status</option>
-                  <option value="draft">Draft</option>
-                  <option value="reserved">Reserved</option>
-                  <option value="delivered">Delivered</option>
-                  <option value="closed">Closed</option>
+                  <option value="all">{t('allStatus')}</option>
+                  <option value="draft">{t('draft')}</option>
+                  <option value="reserved">{t('reserved')}</option>
+                  <option value="delivered">{t('delivered')}</option>
+                  <option value="closed">{t('closed')}</option>
                 </select>
               </div>
             </div>
@@ -331,7 +333,7 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
                           onClick={() => handleUpdateStatus(order.id, 'reserved')}
                           className="text-yellow-600 hover:text-yellow-900"
                         >
-                          Reserve
+{t('reserve')}
                         </button>
                       )}
                       {order.status === 'reserved' && (
@@ -461,7 +463,7 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
                       onClick={handleCreateOrder}
                       className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     >
-                      Create Order
+{t('createOrder')}
                     </button>
                   </div>
                 </form>

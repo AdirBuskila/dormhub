@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
+import Link from 'next/link';
 import Layout from './Layout';
+import KpiCard from './KpiCard';
 import { 
   DailyKpis, 
   ProfitByClient, 
@@ -10,12 +12,29 @@ import {
   LowStockItemType 
 } from '@/types/database';
 import { 
-  getDailyKpis, 
-  getProfitByClient, 
-  getBestSellers, 
-  getLowStockItems 
+  getSalesSummary,
+  getTopProducts,
+  getTopClients,
+  getLowStockAlerts,
+  getSalesTrend,
+  getProfitByBrand,
+  getRecentAlerts
 } from '@/lib/dashboard';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line
+} from 'recharts';
 import {
   Package,
   Users,
@@ -27,7 +46,13 @@ import {
   CheckCircle,
   BarChart3,
   Star,
-  Eye
+  Eye,
+  Plus,
+  Settings,
+  Bell,
+  MessageCircle,
+  ArrowUpRight,
+  ArrowDownRight
 } from 'lucide-react';
 
 interface EnhancedDashboardProps {
@@ -35,40 +60,77 @@ interface EnhancedDashboardProps {
   showSignInPrompt?: boolean;
 }
 
+interface SalesSummary {
+  today: { revenue: number; cost: number; profit: number; orders: number };
+  month: { revenue: number; cost: number; profit: number; orders: number };
+}
+
+interface SalesTrendData {
+  date: string;
+  revenue: number;
+  orders: number;
+}
+
+interface ProfitByBrandData {
+  brand: string;
+  profit: number;
+  percentage: number;
+}
+
+interface RecentAlert {
+  id: string;
+  type: string;
+  message: string;
+  severity: string;
+  created_at: string;
+  delivered: boolean;
+}
+
+const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4'];
+
 export default function EnhancedDashboard({ isAdmin = true, showSignInPrompt = false }: EnhancedDashboardProps) {
-  const [dailyKpis, setDailyKpis] = useState<DailyKpis | null>(null);
-  const [profitByClient, setProfitByClient] = useState<ProfitByClient[]>([]);
-  const [bestSellers, setBestSellers] = useState<BestSeller[]>([]);
-  const [lowStockItems, setLowStockItems] = useState<LowStockItemType[]>([]);
+  const [salesSummary, setSalesSummary] = useState<SalesSummary | null>(null);
+  const [topProducts, setTopProducts] = useState<BestSeller[]>([]);
+  const [topClients, setTopClients] = useState<ProfitByClient[]>([]);
+  const [lowStockAlerts, setLowStockAlerts] = useState<LowStockItemType[]>([]);
+  const [salesTrend, setSalesTrend] = useState<SalesTrendData[]>([]);
+  const [profitByBrand, setProfitByBrand] = useState<ProfitByBrandData[]>([]);
+  const [recentAlerts, setRecentAlerts] = useState<RecentAlert[]>([]);
   const [loading, setLoading] = useState(true);
-  const [dateRange, setDateRange] = useState({ from: '', to: '' });
-  const t = useTranslations();
+  const t = useTranslations('dashboard');
+  const tAuth = useTranslations('auth');
   const locale = useLocale();
 
   useEffect(() => {
     async function loadDashboardData() {
       try {
         if (isAdmin) {
-          // Load daily KPIs
-          const kpis = await getDailyKpis();
-          setDailyKpis(kpis);
+          // Load all dashboard data in parallel
+          const [
+            summary,
+            products,
+            clients,
+            alerts,
+            trend,
+            brandProfit,
+            alertsData
+          ] = await Promise.all([
+            getSalesSummary(),
+            getTopProducts({ limit: 10 }),
+            getTopClients({ limit: 10 }),
+            getLowStockAlerts({ limit: 10 }),
+            getSalesTrend(),
+            getProfitByBrand(),
+            getRecentAlerts({ limit: 5 })
+          ]);
 
-          // Set default date range (last 30 days)
-          const to = new Date().toISOString().split('T')[0];
-          const from = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-          setDateRange({ from, to });
-
-          // Load profit by client
-          const profitData = await getProfitByClient({ from, to });
-          setProfitByClient(profitData);
-
-          // Load best sellers
-          const sellers = await getBestSellers({ sinceDays: 60 });
-          setBestSellers(sellers);
-
-          // Load low stock items
-          const lowStock = await getLowStockItems();
-          setLowStockItems(lowStock);
+          setSalesSummary(summary);
+          setTopProducts(products);
+          setTopClients(clients);
+          setLowStockAlerts(alerts);
+          setSalesTrend(trend);
+          setProfitByBrand(brandProfit);
+          setRecentAlerts(alertsData);
         }
       } catch (error) {
         console.error('Failed to load dashboard data:', error);
@@ -79,16 +141,6 @@ export default function EnhancedDashboard({ isAdmin = true, showSignInPrompt = f
 
     loadDashboardData();
   }, [isAdmin]);
-
-  const handleDateRangeChange = async (newFrom: string, newTo: string) => {
-    setDateRange({ from: newFrom, to: newTo });
-    try {
-      const profitData = await getProfitByClient({ from: newFrom, to: newTo });
-      setProfitByClient(profitData);
-    } catch (error) {
-      console.error('Failed to load profit data:', error);
-    }
-  };
 
   if (loading) {
     return (
@@ -106,23 +158,23 @@ export default function EnhancedDashboard({ isAdmin = true, showSignInPrompt = f
         <div className="space-y-6">
           <div className="text-center py-12">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">
-              {t('auth.welcome')}
+              {tAuth('welcome')}
             </h1>
             <p className="text-lg text-gray-600 mb-8">
-              {t('auth.signInPrompt')}
+              {tAuth('signInPrompt')}
             </p>
             <div className="flex justify-center space-x-4">
               <a
                 href={`/${locale}/sign-in`}
                 className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                {t('auth.signIn')}
+                {tAuth('signIn')}
               </a>
               <a
                 href={`/${locale}/sign-up`}
                 className="inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                {t('auth.signUp')}
+                {tAuth('signUp')}
               </a>
             </div>
           </div>
@@ -133,120 +185,161 @@ export default function EnhancedDashboard({ isAdmin = true, showSignInPrompt = f
 
   return (
     <Layout isAdmin={isAdmin}>
-      <div className="space-y-6">
+      <div className="space-y-6" dir={locale === 'he' ? 'rtl' : 'ltr'}>
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            {isAdmin ? t('dashboard.businessDashboard') : t('dashboard.myDashboard')}
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            {isAdmin 
-              ? t('dashboard.businessWelcome')
-              : t('dashboard.customerWelcome')
-            }
-          </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {isAdmin ? t('businessDashboard') : t('myDashboard')}
+            </h1>
+            <p className="mt-1 text-sm text-gray-500">
+              {isAdmin 
+                ? t('businessWelcome')
+                : t('customerWelcome')
+              }
+            </p>
+          </div>
+          <div className="flex items-center space-x-3">
+            <div className="text-sm text-gray-500">
+              {new Date().toLocaleDateString('he-IL', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </div>
+          </div>
         </div>
 
-        {isAdmin && dailyKpis && (
+        {isAdmin && salesSummary && (
           <>
-            {/* Daily KPIs */}
-            <div className="bg-white shadow rounded-lg">
-              <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                  {t('dashboard.dailyKpis')}
+            {/* KPI Summary Cards */}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              <KpiCard
+                title={t('revenueToday')}
+                value={salesSummary.today.revenue}
+                icon={DollarSign}
+                formatter={formatCurrency}
+                iconColor="text-blue-600"
+                bgColor="bg-blue-50"
+                textColor="text-blue-900"
+                href="/orders"
+              />
+              <KpiCard
+                title={t('costToday')}
+                value={salesSummary.today.cost}
+                icon={TrendingUp}
+                formatter={formatCurrency}
+                iconColor="text-yellow-600"
+                bgColor="bg-yellow-50"
+                textColor="text-yellow-900"
+                href="/inventory"
+              />
+              <KpiCard
+                title={t('profitToday')}
+                value={salesSummary.today.profit}
+                icon={BarChart3}
+                formatter={formatCurrency}
+                iconColor="text-green-600"
+                bgColor="bg-green-50"
+                textColor="text-green-900"
+                href="/orders"
+              />
+              <KpiCard
+                title={t('ordersToday')}
+                value={salesSummary.today.orders}
+                icon={ShoppingCart}
+                formatter={(val) => val.toString()}
+                iconColor="text-gray-600"
+                bgColor="bg-gray-50"
+                textColor="text-gray-900"
+                href="/orders"
+              />
+            </div>
+
+            {/* Charts Section */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              {/* 7-Day Sales Trend */}
+              <div className="bg-white shadow rounded-lg p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  {t('salesTrend7Days')}
                 </h3>
-                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <Package className="h-8 w-8 text-blue-600" />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-blue-600">
-                          {t('dashboard.unitsSoldToday')}
-                        </p>
-                        <p className="text-2xl font-bold text-blue-900">
-                          {dailyKpis.unitsSold}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={salesTrend}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="date" />
+                      <YAxis />
+                      <Tooltip 
+                        formatter={(value: any, name: string) => [
+                          name === 'revenue' ? formatCurrency(value) : value,
+                          name === 'revenue' ? t('revenue') : t('orders')
+                        ]}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="revenue" 
+                        stroke="#3B82F6" 
+                        strokeWidth={2}
+                        name="revenue"
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="orders" 
+                        stroke="#10B981" 
+                        strokeWidth={2}
+                        name="orders"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
 
-                  <div className="bg-green-50 rounded-lg p-4">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <DollarSign className="h-8 w-8 text-green-600" />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-green-600">
-                          {t('dashboard.costOfGoodsSoldToday')}
-                        </p>
-                        <p className="text-2xl font-bold text-green-900">
-                          {formatCurrency(dailyKpis.cost)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-purple-50 rounded-lg p-4">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <TrendingUp className="h-8 w-8 text-purple-600" />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-purple-600">
-                          {t('dashboard.totalProfitToday')}
-                        </p>
-                        <p className="text-2xl font-bold text-purple-900">
-                          {formatCurrency(dailyKpis.profit)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-orange-50 rounded-lg p-4">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <BarChart3 className="h-8 w-8 text-orange-600" />
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-orange-600">
-                          הכנסות היום
-                        </p>
-                        <p className="text-2xl font-bold text-orange-900">
-                          {formatCurrency(dailyKpis.revenue)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+              {/* Profit Distribution by Brand */}
+              <div className="bg-white shadow rounded-lg p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  {t('profitByBrand')}
+                </h3>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={profitByBrand}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ brand, percentage }) => `${brand} (${percentage.toFixed(1)}%)`}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="profit"
+                      >
+                        {profitByBrand.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value: any) => [formatCurrency(value), t('profit')]} />
+                    </PieChart>
+                  </ResponsiveContainer>
                 </div>
               </div>
             </div>
 
-            {/* Main Content Grid */}
+            {/* Tables Section */}
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {/* Profit by Client */}
+              {/* Top Products */}
               <div className="bg-white shadow rounded-lg">
                 <div className="px-4 py-5 sm:p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">
-                      {t('dashboard.profitByClient')}
+                    <h3 className="text-lg font-medium text-gray-900">
+                      {t('topProducts')}
                     </h3>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="date"
-                        value={dateRange.from}
-                        onChange={(e) => handleDateRangeChange(e.target.value, dateRange.to)}
-                        className="text-sm border border-gray-300 rounded-md px-2 py-1"
-                      />
-                      <span className="text-sm text-gray-500">עד</span>
-                      <input
-                        type="date"
-                        value={dateRange.to}
-                        onChange={(e) => handleDateRangeChange(dateRange.from, e.target.value)}
-                        className="text-sm border border-gray-300 rounded-md px-2 py-1"
-                      />
-                    </div>
+                    <Link
+                      href="/inventory"
+                      className="text-sm text-indigo-600 hover:text-indigo-500 flex items-center"
+                    >
+                      {t('viewAll')}
+                      <ArrowUpRight className="h-4 w-4 mr-1" />
+                    </Link>
                   </div>
                   
                   <div className="overflow-hidden">
@@ -254,25 +347,95 @@ export default function EnhancedDashboard({ isAdmin = true, showSignInPrompt = f
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            {t('dashboard.client')}
+                            {t('product')}
                           </th>
                           <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            {t('dashboard.orders')}
+                            {t('sold')}
                           </th>
                           <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            {t('dashboard.revenue')}
+                            {t('revenue')}
                           </th>
                           <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            {t('dashboard.profit')}
-                          </th>
-                          <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            {t('dashboard.profitPercentage')}
+                            {t('profit')}
                           </th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {profitByClient.slice(0, 10).map((client) => (
-                          <tr key={client.client_id}>
+                        {topProducts.map((product, index) => (
+                          <tr key={product.product_id} className="hover:bg-gray-50 cursor-pointer">
+                            <td className="px-3 py-4 whitespace-nowrap">
+                              <div className="flex items-center">
+                                <div className="flex-shrink-0">
+                                  <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                                    <span className="text-sm font-medium text-indigo-600">
+                                      {index + 1}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="mr-3">
+                                  <div className="text-sm font-medium text-gray-900">
+                                    {product.brand} {product.model}
+                                  </div>
+                                  <div className="text-sm text-gray-500">
+                                    {product.storage}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {product.quantity_sold}
+                            </td>
+                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {formatCurrency(product.revenue)}
+                            </td>
+                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {formatCurrency(product.revenue * 0.2)} {/* Estimated 20% profit */}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              {/* Top Clients */}
+              <div className="bg-white shadow rounded-lg">
+                <div className="px-4 py-5 sm:p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-medium text-gray-900">
+                      {t('topClients')}
+                    </h3>
+                    <Link
+                      href="/clients"
+                      className="text-sm text-indigo-600 hover:text-indigo-500 flex items-center"
+                    >
+                      {t('viewAll')}
+                      <ArrowUpRight className="h-4 w-4 mr-1" />
+                    </Link>
+                  </div>
+                  
+                  <div className="overflow-hidden">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {t('client')}
+                          </th>
+                          <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {t('orders')}
+                          </th>
+                          <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {t('totalSpent')}
+                          </th>
+                          <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            {t('profit')}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {topClients.map((client) => (
+                          <tr key={client.client_id} className="hover:bg-gray-50 cursor-pointer">
                             <td className="px-3 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                               {client.client_name}
                             </td>
@@ -285,9 +448,6 @@ export default function EnhancedDashboard({ isAdmin = true, showSignInPrompt = f
                             <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                               {formatCurrency(client.profit)}
                             </td>
-                            <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {client.profit_percentage.toFixed(1)}%
-                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -295,65 +455,72 @@ export default function EnhancedDashboard({ isAdmin = true, showSignInPrompt = f
                   </div>
                 </div>
               </div>
-
-              {/* Best Sellers */}
-              <div className="bg-white shadow rounded-lg">
-                <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                    {t('dashboard.bestSellers')}
-                  </h3>
-                  
-                  <div className="space-y-3">
-                    {bestSellers.map((item, index) => (
-                      <div key={item.product_id} className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex-shrink-0">
-                            <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
-                              <span className="text-sm font-medium text-indigo-600">
-                                {index + 1}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">
-                              {item.brand} {item.model}
-                            </p>
-                            <p className="text-sm text-gray-500">
-                              {item.storage}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium text-gray-900">
-                            {item.quantity_sold} יחידות
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {formatCurrency(item.revenue)}
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
             </div>
 
-            {/* Low Stock and Open Orders */}
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {/* Low Stock List */}
+            {/* Alerts and Quick Actions */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              {/* Alerts Summary */}
               <div className="bg-white shadow rounded-lg">
                 <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                    {t('dashboard.lowStockList')}
-                  </h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-medium text-gray-900">
+                      {t('alerts')}
+                    </h3>
+                    <Bell className="h-5 w-5 text-gray-400" />
+                  </div>
                   
                   <div className="space-y-3">
-                    {lowStockItems.slice(0, 10).map((item) => (
-                      <div key={item.product_id} className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
+                    {recentAlerts.length > 0 ? (
+                      recentAlerts.map((alert) => (
+                        <div key={alert.id} className="flex items-start space-x-3">
                           <div className="flex-shrink-0">
-                            <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                            {alert.severity === 'danger' ? (
+                              <AlertTriangle className="h-5 w-5 text-red-500" />
+                            ) : alert.severity === 'warning' ? (
+                              <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                            ) : (
+                              <CheckCircle className="h-5 w-5 text-blue-500" />
+                            )}
                           </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm text-gray-900">
+                              {alert.message}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {new Date(alert.created_at).toLocaleDateString('he-IL')}
+                            </p>
+                          </div>
+                          {alert.delivered && (
+                            <MessageCircle className="h-4 w-4 text-green-500" />
+                          )}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4">
+                        <CheckCircle className="mx-auto h-8 w-8 text-gray-400" />
+                        <p className="mt-2 text-sm text-gray-500">
+                          {t('noAlerts')}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Low Stock Alerts */}
+              <div className="bg-white shadow rounded-lg">
+                <div className="px-4 py-5 sm:p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-medium text-gray-900">
+                      {t('lowStockAlerts')}
+                    </h3>
+                    <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {lowStockAlerts.length > 0 ? (
+                      lowStockAlerts.map((item) => (
+                        <div key={item.product_id} className="flex items-center justify-between">
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-gray-900 truncate">
                               {item.brand} {item.model}
@@ -362,36 +529,75 @@ export default function EnhancedDashboard({ isAdmin = true, showSignInPrompt = f
                               {item.storage}
                             </p>
                           </div>
+                          <div className="text-right">
+                            <p className="text-sm font-medium text-red-600">
+                              {item.available_stock} זמין
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              סף: {item.alert_threshold}
+                            </p>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium text-red-600">
-                            {item.available_stock} זמין
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            סף: {item.alert_threshold}
-                          </p>
-                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-4">
+                        <CheckCircle className="mx-auto h-8 w-8 text-gray-400" />
+                        <p className="mt-2 text-sm text-gray-500">
+                          {t('noLowStock')}
+                        </p>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Open Orders */}
+              {/* Quick Actions */}
               <div className="bg-white shadow rounded-lg">
                 <div className="px-4 py-5 sm:p-6">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                    {t('dashboard.openOrders')}
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    {t('quickActions')}
                   </h3>
                   
-                  <div className="text-center py-8">
-                    <Clock className="mx-auto h-12 w-12 text-gray-400" />
-                    <h3 className="mt-2 text-sm font-medium text-gray-900">
-                      אין הזמנות פתוחות
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500">
-                      כל ההזמנות נמסרו או נסגרו
-                    </p>
+                  <div className="space-y-3">
+                    <Link
+                      href="/inventory"
+                      className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
+                      <Plus className="h-5 w-5 text-indigo-600 mr-3" />
+                      <span className="text-sm font-medium text-gray-900">
+                        {t('addProduct')}
+                      </span>
+                    </Link>
+                    
+                    <Link
+                      href="/inventory"
+                      className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
+                      <Settings className="h-5 w-5 text-indigo-600 mr-3" />
+                      <span className="text-sm font-medium text-gray-900">
+                        {t('manageInventory')}
+                      </span>
+                    </Link>
+                    
+                    <Link
+                      href="/orders"
+                      className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
+                      <ShoppingCart className="h-5 w-5 text-indigo-600 mr-3" />
+                      <span className="text-sm font-medium text-gray-900">
+                        {t('viewOrders')}
+                      </span>
+                    </Link>
+                    
+                    <Link
+                      href="/clients"
+                      className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
+                      <Users className="h-5 w-5 text-indigo-600 mr-3" />
+                      <span className="text-sm font-medium text-gray-900">
+                        {t('viewClients')}
+                      </span>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -404,15 +610,15 @@ export default function EnhancedDashboard({ isAdmin = true, showSignInPrompt = f
           <div className="bg-white shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
               <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                {t('dashboard.gettingStarted')}
+                {t('gettingStarted')}
               </h3>
               <div className="text-center py-8">
                 <ShoppingCart className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  {t('dashboard.welcomeTitle')}
+                  {t('welcomeTitle')}
                 </h3>
                 <p className="mt-1 text-sm text-gray-500">
-                  {t('dashboard.welcomeDesc')}
+                  {t('welcomeDesc')}
                 </p>
                 <div className="mt-6">
                   <a
@@ -420,7 +626,7 @@ export default function EnhancedDashboard({ isAdmin = true, showSignInPrompt = f
                     className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
                     <ShoppingCart className="h-4 w-4 mr-2" />
-                    {t('dashboard.createFirstOrder')}
+                    {t('createFirstOrder')}
                   </a>
                 </div>
               </div>

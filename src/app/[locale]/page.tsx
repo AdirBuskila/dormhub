@@ -1,23 +1,10 @@
 import { redirect } from 'next/navigation';
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { Calendar, Truck, AlertTriangle, DollarSign, TrendingUp } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import Layout from '@/components/Layout';
-import KpiCard from '@/components/KpiCard';
-import OrdersToDeliverTable from '@/components/OrdersToDeliverTable';
-import LowStockTable from '@/components/LowStockTable';
-import ReceivablesAndPayments from '@/components/ReceivablesAndPayments';
-import AlertsSidebar from '@/components/AlertsSidebar';
+import EnhancedDashboard from '@/components/EnhancedDashboard';
 import ClientRedirect from '@/components/ClientRedirect';
-import { 
-  getKpis, 
-  getOrdersToDeliver, 
-  getLowStock, 
-  getTopDebtors, 
-  getRecentPayments, 
-  getRecentAlerts 
-} from '@/lib/dashboard';
 
 export default async function Home() {
   const { userId } = await auth();
@@ -68,122 +55,7 @@ export default async function Home() {
     );
   }
   
-  // If authenticated and is admin, show the new admin dashboard
-  return <AdminDashboard />;
+  // If authenticated and is admin, show the enhanced dashboard
+  return <EnhancedDashboard isAdmin={true} />;
 }
 
-async function AdminDashboard() {
-  const t = await getTranslations('customer');
-  
-  // Fetch all dashboard data in parallel
-  const [kpis, ordersToDeliver, lowStock, topDebtors, recentPayments, recentAlerts] = await Promise.all([
-    getKpis(),
-    getOrdersToDeliver({ limit: 15 }),
-    getLowStock({ limit: 15 }),
-    getTopDebtors({ limit: 10 }),
-    getRecentPayments({ limit: 10 }),
-    getRecentAlerts({ limit: 20 }),
-  ]);
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(value);
-  };
-
-  return (
-    <Layout isAdmin={true}>
-      <div className="space-y-6">
-        {/* Header Bar */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{t('adminDashboard')}</h1>
-              <p className="text-gray-600">
-                {new Date().toLocaleDateString('he-IL', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
-              </p>
-            </div>
-            <div className="flex items-center space-x-3">
-              <button className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                <Calendar className="h-4 w-4 mr-2" />
-                {t('today')}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* KPI Strip */}
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
-          <KpiCard
-            title={t('toDeliver')}
-            value={kpis.toDeliver}
-            icon={Truck}
-            href="/orders"
-            formatter={(val) => val.toString()}
-            iconColor="text-blue-600"
-          />
-          <KpiCard
-            title={t('lowStockSkus')}
-            value={kpis.lowStock}
-            icon={AlertTriangle}
-            href="/inventory"
-            formatter={(val) => val.toString()}
-            iconColor="text-orange-500"
-          />
-          <KpiCard
-            title={t('receivables')}
-            value={kpis.receivables}
-            icon={DollarSign}
-            formatter={formatCurrency}
-            iconColor="text-red-600"
-          />
-          <KpiCard
-            title={t('newOrdersToday')}
-            value={kpis.newOrders}
-            icon={TrendingUp}
-            href="/orders"
-            formatter={(val) => val.toString()}
-            iconColor="text-green-600"
-          />
-          <KpiCard
-            title={t('paymentsYesterday')}
-            value={kpis.paymentsYesterday}
-            icon={DollarSign}
-            href="/payments"
-            formatter={formatCurrency}
-            iconColor="text-emerald-600"
-          />
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Left Side - Orders and Low Stock */}
-          <div className="lg:col-span-3 space-y-6">
-            {/* Orders to Deliver and Low Stock */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <OrdersToDeliverTable orders={ordersToDeliver} />
-              <LowStockTable items={lowStock} />
-            </div>
-
-            {/* Money Panel */}
-            <ReceivablesAndPayments 
-              debtors={topDebtors} 
-              payments={recentPayments} 
-            />
-          </div>
-
-          {/* Right Sidebar - Recent Alerts */}
-          <div className="lg:col-span-1">
-            <AlertsSidebar alerts={recentAlerts} />
-          </div>
-        </div>
-      </div>
-    </Layout>
-  );
-}

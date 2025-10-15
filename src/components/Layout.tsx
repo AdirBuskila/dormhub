@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { cn } from '@/lib/utils';
 import LanguageSwitcher from './LanguageSwitcher';
 import {
@@ -44,6 +44,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
   const pathname = usePathname();
   const { isSignedIn } = useUser();
   const t = useTranslations();
+  const locale = useLocale();
 
   // Define navigation based on admin status
   const navigation = isAdmin ? [
@@ -74,7 +75,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
                 <X className="h-6 w-6 text-white" />
               </button>
             </div>
-            <SidebarContent pathname={pathname} navigation={navigation} />
+            <SidebarContent pathname={pathname} navigation={navigation} locale={locale} />
           </div>
         </div>
       )}
@@ -84,7 +85,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
         {/* Desktop sidebar */}
         <div className="hidden md:flex md:flex-shrink-0">
           <div className="flex flex-col w-64">
-            <SidebarContent pathname={pathname} navigation={navigation} />
+            <SidebarContent pathname={pathname} navigation={navigation} locale={locale} />
           </div>
         </div>
 
@@ -142,7 +143,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
   );
 }
 
-function SidebarContent({ pathname, navigation }: { pathname: string; navigation: Array<{ name: string; href: string; icon: any }> }) {
+function SidebarContent({ pathname, navigation, locale }: { pathname: string; navigation: Array<{ name: string; href: string; icon: any }>; locale: string }) {
   return (
     <div className="flex flex-col h-0 flex-1 border-r border-gray-200 bg-white">
       <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
@@ -161,7 +162,14 @@ function SidebarContent({ pathname, navigation }: { pathname: string; navigation
         <nav className="mt-5 flex-1 px-2 space-y-1">
           {navigation.map((item) => {
             // Handle locale prefixes in pathname comparison
-            const isActive = pathname === item.href || pathname.endsWith(item.href);
+            let isActive = false;
+            if (item.href === '/') {
+              // For dashboard (root), check if we're on the exact root or locale root
+              isActive = pathname === '/' || pathname === `/${locale}` || pathname.endsWith('/');
+            } else {
+              // For other items, check exact match or ends with
+              isActive = pathname === item.href || pathname.endsWith(item.href);
+            }
             return (
               <Link
                 key={item.name}

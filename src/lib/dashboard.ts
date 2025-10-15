@@ -603,3 +603,209 @@ export async function getLowStockItems(): Promise<LowStockItemType[]> {
     return [];
   }
 }
+
+/**
+ * Get sales summary for today and month
+ */
+export async function getSalesSummary(): Promise<{
+  today: { revenue: number; cost: number; profit: number; orders: number };
+  month: { revenue: number; cost: number; profit: number; orders: number };
+}> {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    const monthStartStr = monthStart.toISOString().split('T')[0];
+
+    // Today's data
+    const { data: todayOrders } = await supabaseAdmin
+      .from('orders')
+      .select(`
+        id,
+        total_price,
+        order_items!inner(
+          quantity,
+          price,
+          product:products(purchase_price)
+        )
+      `)
+      .gte('created_at', today)
+      .lt('created_at', new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0])
+      .in('status', ['delivered', 'closed']);
+
+    // Month's data
+    const { data: monthOrders } = await supabaseAdmin
+      .from('orders')
+      .select(`
+        id,
+        total_price,
+        order_items!inner(
+          quantity,
+          price,
+          product:products(purchase_price)
+        )
+      `)
+      .gte('created_at', monthStartStr)
+      .in('status', ['delivered', 'closed']);
+
+    const calculateMetrics = (orders: any[]) => {
+      let revenue = 0;
+      let cost = 0;
+      let ordersCount = orders.length;
+
+      orders.forEach(order => {
+        revenue += order.total_price || 0;
+        (order as any).order_items?.forEach((item: any) => {
+          const purchasePrice = item.product?.purchase_price || 0;
+          cost += (item.quantity || 0) * purchasePrice;
+        });
+      });
+
+      return {
+        revenue,
+        cost,
+        profit: revenue - cost,
+        orders: ordersCount,
+      };
+    };
+
+    return {
+      today: calculateMetrics(todayOrders || []),
+      month: calculateMetrics(monthOrders || []),
+    };
+  } catch (error) {
+    console.error('Error fetching sales summary:', error);
+    return {
+      today: { revenue: 0, cost: 0, profit: 0, orders: 0 },
+      month: { revenue: 0, cost: 0, profit: 0, orders: 0 },
+    };
+  }
+}
+
+/**
+ * Get top products by quantity sold
+ */
+export async function getTopProducts({ limit = 10 }: { limit?: number } = {}): Promise<BestSeller[]> {
+  return getBestSellers({ sinceDays: 30 }).then(sellers => sellers.slice(0, limit));
+}
+
+/**
+ * Get top clients by revenue/profit
+ */
+export async function getTopClients({ limit = 10 }: { limit?: number } = {}): Promise<ProfitByClient[]> {
+  const to = new Date().toISOString().split('T')[0];
+  const from = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  return getProfitByClient({ from, to }).then(clients => clients.slice(0, limit));
+}
+
+/**
+ * Get low stock alerts
+ */
+export async function getLowStockAlerts({ limit = 10 }: { limit?: number } = {}): Promise<LowStockItemType[]> {
+  return getLowStockItems().then(items => items.slice(0, limit));
+}
+
+/**
+ * Get 7-day sales trend
+ */
+export async function getSalesTrend(): Promise<Array<{ date: string; revenue: number; orders: number }>> {
+  try {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 6);
+
+    const { data: ordersData } = await supabaseAdmin
+      .from('orders')
+      .select('id, total_price, created_at')
+      .gte('created_at', startDate.toISOString().split('T')[0])
+      .lte('created_at', endDate.toISOString().split('T')[0])
+      .in('status', ['delivered', 'closed']);
+
+    // Group by date
+    const dailyData = new Map<string, { revenue: number; orders: number }>();
+
+    // Initialize all 7 days
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+      dailyData.set(dateStr, { revenue: 0, orders: 0 });
+    }
+
+    // Aggregate data
+    ordersData?.forEach(order => {
+      const date = order.created_at.split('T')[0];
+      if (dailyData.has(date)) {
+        const dayData = dailyData.get(date)!;
+        dayData.revenue += order.total_price || 0;
+        dayData.orders += 1;
+      }
+    });
+
+    // Convert to array and format
+    return Array.from(dailyData.entries())
+      .map(([date, data]) => ({
+        date: new Date(date).toLocaleDateString('he-IL', { month: 'short', day: 'numeric' }),
+        revenue: data.revenue,
+        orders: data.orders,
+      }))
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  } catch (error) {
+    console.error('Error fetching sales trend:', error);
+    return [];
+  }
+}
+
+/**
+ * Get profit distribution by brand
+ */
+export async function getProfitByBrand(): Promise<Array<{ brand: string; profit: number; percentage: number }>> {
+  try {
+    const to = new Date().toISOString().split('T')[0];
+    const from = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+    const { data: orderItemsData } = await supabaseAdmin
+      .from('order_items')
+      .select(`
+        quantity,
+        price,
+        product:products(brand, purchase_price),
+        order:orders(created_at, status)
+      `)
+      .gte('order.created_at', from)
+      .lte('order.created_at', to)
+      .in('order.status', ['delivered', 'closed']);
+
+    // Group by brand
+    const brandMap = new Map<string, { revenue: number; cost: number; profit: number }>();
+
+    orderItemsData?.forEach(item => {
+      const brand = (item as any).product?.brand || 'Unknown';
+      const quantity = item.quantity || 0;
+      const price = item.price || 0;
+      const purchasePrice = (item as any).product?.purchase_price || 0;
+
+      if (!brandMap.has(brand)) {
+        brandMap.set(brand, { revenue: 0, cost: 0, profit: 0 });
+      }
+
+      const brandData = brandMap.get(brand)!;
+      brandData.revenue += quantity * price;
+      brandData.cost += quantity * purchasePrice;
+      brandData.profit = brandData.revenue - brandData.cost;
+    });
+
+    const totalProfit = Array.from(brandMap.values()).reduce((sum, brand) => sum + brand.profit, 0);
+
+    return Array.from(brandMap.entries())
+      .map(([brand, data]) => ({
+        brand,
+        profit: data.profit,
+        percentage: totalProfit > 0 ? (data.profit / totalProfit) * 100 : 0,
+      }))
+      .sort((a, b) => b.profit - a.profit);
+  } catch (error) {
+    console.error('Error fetching profit by brand:', error);
+    return [];
+  }
+}
