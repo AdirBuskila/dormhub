@@ -1,62 +1,119 @@
-# Mobile For You Business Management System
+# Mobile For You - מובייל פור יו
 
-A comprehensive, modern business management system designed specifically for mobile device distribution companies. Built with Next.js 15, TypeScript, and Supabase, this system streamlines inventory management, order processing, client relationships, and automated notifications.
+A comprehensive, modern business management system designed specifically for mobile device distribution companies. Built with Next.js 15, TypeScript, and Supabase, this system streamlines inventory management, order processing, client relationships, and automated notifications with full Hebrew/English bilingual support.
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-Database-green?style=flat-square&logo=supabase)](https://supabase.com/)
 [![Clerk](https://img.shields.io/badge/Clerk-Authentication-purple?style=flat-square)](https://clerk.com/)
 [![Twilio](https://img.shields.io/badge/Twilio-WhatsApp-red?style=flat-square&logo=twilio)](https://www.twilio.com/)
+[![Next-Intl](https://img.shields.io/badge/Next--Intl-i18n-orange?style=flat-square)](https://next-intl-docs.vercel.app/)
+
+## 🌟 What's New - Latest Updates
+
+### 🎨 **Enhanced Admin Dashboard**
+- **Modern KPI Cards**: Real-time business metrics with beautiful visual indicators
+- **Interactive Charts**: 7-day sales trends and profit distribution by brand using Recharts
+- **Top Performers**: Best-selling products and top clients with detailed analytics
+- **Smart Alerts**: Low stock alerts and system notifications with WhatsApp integration
+- **Quick Actions**: One-click access to inventory, orders, and client management
+
+### 🌍 **Complete Internationalization (i18n)**
+- **Hebrew-First Design**: Right-to-left (RTL) layout optimized for Hebrew users
+- **Bilingual Support**: Full English and Hebrew translations throughout the app
+- **Dynamic Language Switching**: Seamless language switching with persistent preferences
+- **Localized Content**: All UI elements, messages, and data formatted for each locale
+
+### 📱 **Advanced Product Management**
+- **Enhanced Product Model**: Extended with B2B features including purchase prices, profit margins, and supplier information
+- **Product Images**: Full image support with local storage and fallback handling
+- **Promotional Products**: Special promotion highlighting and filtering
+- **Smart Filtering**: Quick filter chips for promotions, best sellers, and runner models
+- **Availability Badges**: Customer-friendly stock indicators instead of exact counts
+
+### 👥 **Client Onboarding & Profile Management**
+- **Smart Onboarding**: Automatic profile completion prompts for new clients
+- **Enhanced Client Profiles**: Extended with phone, city, and shop name fields
+- **Self-Service Updates**: Clients can update their own profile information
+- **Admin Oversight**: Complete client management with detailed analytics
+
+### 🔍 **Global Search System**
+- **Unified Search**: Search across products and clients with Hebrew-friendly matching
+- **Smart Results**: Grouped search results with relevance scoring
+- **Real-time Search**: Instant search suggestions and results
+- **Multi-language Support**: Search works in both Hebrew and English
+
+### 📊 **Business Intelligence & Analytics**
+- **Daily KPIs**: Revenue, cost, profit, and order metrics for today
+- **Sales Trends**: 7-day sales visualization with interactive charts
+- **Profit Analysis**: Brand-wise profit distribution and client profitability
+- **Performance Metrics**: Top products and clients with detailed breakdowns
+
+### 🛒 **Enhanced Order Management**
+- **Multi-language Order Interface**: Fully translated order management in Hebrew and English
+- **Status Tracking**: Visual status progression with Hebrew labels
+- **Advanced Filtering**: Search and filter orders with localized interface
+- **Order Analytics**: Detailed order history and performance tracking
+
+### 🎯 **Promotions & Marketing**
+- **Promotions Page**: Dedicated page for promotional products
+- **Promotion Highlighting**: Special visual indicators for promotional items
+- **Marketing Tools**: Quick access to promotional products and best sellers
 
 ## 🚀 Key Features
 
 ### 📊 **Advanced Admin Dashboard**
-- **Real-time KPIs**: Live business metrics including orders to deliver, low stock alerts, receivables, and daily sales
-- **Actionable Tables**: Orders to deliver with quick actions (mark delivered, log payment, view order)
-- **Inventory Alerts**: Low stock management with inline editing of minimum stock thresholds
-- **Financial Overview**: Top debtors tracking with WhatsApp payment reminders
-- **Recent Activity**: Live alerts sidebar with acknowledgment system
-- **Quick Actions**: One-click alert running and message dispatch
+- **Real-time KPIs**: Live business metrics including revenue, cost, profit, and orders
+- **Interactive Charts**: Sales trends and profit distribution with Recharts
+- **Top Performers**: Best-selling products and top clients with detailed analytics
+- **Smart Alerts**: Low stock alerts and system notifications
+- **Quick Actions**: One-click access to all major functions
+- **Responsive Design**: Optimized for desktop and mobile viewing
 
 ### 📱 **Comprehensive Inventory Management**
+- **Enhanced Product Model**: B2B features with purchase prices, profit margins, and supplier info
+- **Product Images**: Full image support with local storage and optimization
 - **Multi-Category Support**: iPhone, Samsung, Android phones, tablets, smartwatches, earphones, chargers, cases, accessories
 - **Condition Tracking**: New, refurbished, used, activated, and open-box items
-- **Advanced Stock Management**: Real-time stock levels with reservation system for orders
+- **Advanced Stock Management**: Real-time stock levels with reservation system
 - **Smart Filtering**: Search by brand, model, category, condition, and stock levels
-- **Bulk Operations**: Efficient inventory updates, bulk stock adjustments, and category management
-- **Automated Alerts**: Low stock notifications with configurable thresholds per product
-- **Image Support**: Product images with fallback icons
+- **Bulk Operations**: Efficient inventory updates and mass operations
+- **Automated Alerts**: Low stock notifications with configurable thresholds
+- **Promotional Products**: Special handling and highlighting for promotional items
 
 ### 👥 **Complete Client Management**
+- **Smart Onboarding**: Automatic profile completion for new clients
+- **Enhanced Profiles**: Extended client information with business details
+- **Self-Service Updates**: Clients can manage their own profile information
 - **Integrated Authentication**: Seamless Clerk integration for client accounts
-- **Client Database**: Complete contact information, business details, and payment terms
 - **Purchase History**: Detailed transaction records with order analytics
-- **Debt Management**: Outstanding balance tracking with automated payment reminders
+- **Debt Management**: Outstanding balance tracking with automated reminders
 - **Performance Metrics**: Client profitability analysis and engagement tracking
-- **Auto-Sync**: Automatic client creation from customer portal orders
 
 ### 🛒 **Streamlined Order Processing**
+- **Multi-language Interface**: Fully translated order management in Hebrew and English
 - **Multi-Step Workflow**: Draft → Reserved → Delivered → Closed status progression
 - **Real-time Updates**: Live order status tracking with instant notifications
-- **Multi-Item Orders**: Complex order management with item-specific pricing and quantities
+- **Multi-Item Orders**: Complex order management with item-specific pricing
 - **Stock Reservation**: Automatic stock reservation during order processing
 - **Order History**: Complete audit trail with detailed item breakdowns
-- **Admin Actions**: Quick order status updates, payment logging, and order management
+- **Admin Actions**: Quick order status updates and management
 
-### 🛍️ **Customer Portal**
+### 🛍️ **Enhanced Customer Portal**
 - **Self-Service Ordering**: Customers can browse inventory and place orders independently
-- **Product Catalog**: Full inventory browsing with advanced filtering (brand, category, condition)
+- **Product Catalog**: Full inventory browsing with advanced filtering
+- **Product Images**: Visual product display with image optimization
+- **Availability Badges**: Customer-friendly stock indicators (In Stock, Last Few, Out of Stock)
 - **Shopping Cart**: Add/remove items with quantity management and stock validation
 - **Order Tracking**: View order history, status updates, and order details
-- **Mobile-Optimized**: Floating checkout button and responsive design
-- **Real-time Stock**: Live stock levels with availability indicators
-- **Order Confirmation**: WhatsApp notifications for order confirmations
+- **Mobile-Optimized**: Responsive design with floating actions
+- **Promotional Highlighting**: Special visual indicators for promotional products
 
 ### 💰 **Financial Management**
-- **Payment Tracking**: Multiple payment methods (cash, credit card, bank transfer, check)
+- **Enhanced Profit Tracking**: Detailed cost and profit analysis per product and client
+- **Payment Tracking**: Multiple payment methods with comprehensive records
 - **Debt Monitoring**: Automated overdue payment detection with configurable thresholds
 - **Receivables Dashboard**: Top debtors with outstanding amounts and days overdue
-- **Payment History**: Comprehensive payment records with client associations
 - **Financial Reports**: Revenue tracking and profit analysis
 - **WhatsApp Reminders**: Automated payment reminder messages
 
@@ -65,14 +122,21 @@ A comprehensive, modern business management system designed specifically for mob
 - **Multi-Channel Alerts**: Low stock, overdue payments, pending deliveries, new orders
 - **Scheduled Automation**: Daily alerts and message dispatch via Vercel cron jobs
 - **Template System**: Customizable message templates for different scenarios
-- **Real-time Monitoring**: Live alert dashboard with severity levels and acknowledgment
+- **Real-time Monitoring**: Live alert dashboard with severity levels
 - **Alert Management**: Manual alert running and message dispatch controls
 
-### 🔄 **Returns Management**
-- **Return Processing**: Handle product returns and trade-ins
-- **Status Tracking**: Return workflow with approval and processing steps
-- **Inventory Integration**: Automatic stock adjustments for returned items
-- **Client Communication**: Automated notifications for return status updates
+### 🔍 **Global Search System**
+- **Unified Search**: Search across products and clients with intelligent matching
+- **Hebrew-Friendly**: Optimized search for Hebrew text and transliterations
+- **Smart Results**: Grouped search results with relevance scoring
+- **Real-time Search**: Instant search suggestions and results
+- **Multi-language Support**: Search works in both Hebrew and English
+
+### 🎯 **Promotions & Marketing**
+- **Promotions Page**: Dedicated page for promotional products
+- **Promotion Highlighting**: Special visual indicators for promotional items
+- **Marketing Tools**: Quick access to promotional products and best sellers
+- **Filter Integration**: Easy filtering for promotional products
 
 ## 🛠️ Technology Stack
 
@@ -81,7 +145,8 @@ A comprehensive, modern business management system designed specifically for mob
 - **TypeScript 5.0** - Full type safety throughout the application
 - **Tailwind CSS** - Utility-first CSS framework for responsive design
 - **Lucide React** - Beautiful, customizable icons
-- **Next-Intl** - Internationalization support for multiple languages
+- **Next-Intl** - Complete internationalization support for Hebrew/English
+- **Recharts** - Interactive charts and data visualization
 
 ### **Backend & Database**
 - **Supabase** - PostgreSQL database with real-time subscriptions and RLS
@@ -163,14 +228,9 @@ ADMIN_PHONE=+972546093624
 ```
 
 ### 3. **Database Setup**
-Run the database migrations in your Supabase SQL editor in this order:
+Run the database schema in your Supabase SQL editor:
 
-1. **Main Schema**: Copy and paste `database/alerts_and_outbound_messages.sql`
-2. **Additional Features**: Run `database/migrations/001_add_business_features.sql`
-3. **Enum Updates**: Run `database/migrations/003_update_enums_and_features.sql`
-4. **Alert Types**: Run `database/migrations/004_add_new_order_alert_type.sql`
-5. **Product Categories**: Run `database/migrations/005_add_new_product_categories.sql`
-6. **Dashboard Functions**: Run `database/migrations/006_add_dashboard_functions.sql`
+1. **Main Schema**: Copy and paste `database/schema.sql` (includes all tables, triggers, and RLS policies)
 
 ### 4. **Start Development Server**
 ```bash
@@ -178,37 +238,37 @@ npm run dev
 ```
 
 ### 5. **Access the Application**
-Open your browser and navigate to [http://localhost:3001](http://localhost:3001)
+- **English**: [http://localhost:3001/en](http://localhost:3001/en)
+- **Hebrew**: [http://localhost:3001/he](http://localhost:3001/he)
 
-## 🔧 Detailed Setup Guide
+## 🌍 Internationalization (i18n)
 
-### **Supabase Configuration**
-1. Create a new Supabase project at [supabase.com](https://supabase.com)
-2. Navigate to **Settings → API** to get your project URL and keys
-3. Run the database migrations in **SQL Editor** in the order listed above
-4. Enable Row Level Security (RLS) policies (included in migrations)
+The application provides complete bilingual support:
 
-### **Clerk Authentication Setup**
-1. Create a new Clerk application at [clerk.com](https://clerk.com)
-2. Configure authentication providers (Google, email, etc.)
-3. Add your domain to allowed origins
-4. Copy your publishable and secret keys
-5. Set up admin emails in the `ADMIN_EMAILS` environment variable
+### **Supported Languages**
+- **English** (en) - Default language
+- **Hebrew** (he) - Right-to-left (RTL) layout optimized
 
-### **Twilio WhatsApp Setup** (Optional)
-1. Create a Twilio account at [twilio.com](https://twilio.com)
-2. Enable WhatsApp sandbox in the Twilio console
-3. Join the sandbox by sending "join <sandbox-code>" to the Twilio WhatsApp number
-4. Use E.164 phone format (e.g., +972501234567)
-5. Set `WHATSAPP_TEST_MODE=true` for development
+### **Language Features**
+- **Dynamic Switching**: Seamless language switching with persistent preferences
+- **RTL Support**: Complete right-to-left layout for Hebrew
+- **Localized Content**: All UI elements, messages, and data formatted for each locale
+- **Search Optimization**: Hebrew-friendly search with transliteration support
+- **Date/Time Formatting**: Locale-specific date and time formatting
+
+### **Adding New Languages**
+To add a new language:
+1. Create a new translation file in `src/i18n/messages/`
+2. Add the locale to `src/i18n/config.ts`
+3. Update the `LanguageSwitcher` component
 
 ## 📊 Database Schema
 
-The application uses the following main tables:
+The application uses a comprehensive database schema with the following main tables:
 
 ### **Core Tables**
-- **products**: Product inventory with stock levels, categories, and conditions
-- **clients**: Client information, payment terms, and contact details
+- **products**: Enhanced product inventory with B2B features, images, and promotional flags
+- **clients**: Client information with extended profile fields and business details
 - **orders**: Order management with status tracking and total pricing
 - **order_items**: Individual items within orders with quantities and pricing
 - **payments**: Payment records and debt tracking by client
@@ -224,6 +284,7 @@ The application uses the following main tables:
 - **Foreign Key Constraints**: Data integrity and referential consistency
 - **Row Level Security**: Database-level access control
 - **Enum Types**: Controlled vocabularies for statuses, categories, and conditions
+- **B2B Enhancements**: Extended product model with business features
 
 ## 📁 Project Structure
 
@@ -236,6 +297,8 @@ src/
 │   │   ├── orders/                # Order management page
 │   │   ├── returns/               # Returns management page
 │   │   ├── alerts/                # Alerts and notifications page
+│   │   ├── promotions/            # Promotions page
+│   │   ├── search/                # Global search page
 │   │   ├── customer/              # Customer portal pages
 │   │   │   ├── new-order/         # New order creation
 │   │   │   └── orders/            # Order history and tracking
@@ -244,21 +307,24 @@ src/
 │   │   ├── orders/                # Order CRUD operations
 │   │   ├── products/              # Product management
 │   │   ├── alerts/                # Alert management
+│   │   ├── search/                # Global search API
+│   │   ├── clients/               # Client management API
+│   │   ├── consignments/          # Consignment tracking API
 │   │   ├── run-alerts/            # Manual alert execution
 │   │   └── dispatch-messages/     # WhatsApp message dispatch
 │   └── globals.css                # Global styles
 ├── components/                    # React components
 │   ├── Layout.tsx                 # App layout with sidebar
+│   ├── EnhancedDashboard.tsx      # Modern admin dashboard
 │   ├── KpiCard.tsx                # Dashboard KPI cards
-│   ├── OrdersToDeliverTable.tsx   # Orders management table
-│   ├── LowStockTable.tsx          # Low stock inventory table
-│   ├── ReceivablesAndPayments.tsx # Financial overview panel
-│   ├── AlertsSidebar.tsx          # Recent alerts sidebar
 │   ├── InventoryManagement.tsx    # Inventory CRUD operations
-│   ├── ClientManagement.tsx       # Client management
 │   ├── OrderManagement.tsx        # Order processing
-│   ├── ReturnManagement.tsx       # Returns handling
-│   ├── AlertsManagement.tsx       # Alert management
+│   ├── ClientsManagement.tsx      # Client management
+│   ├── AlertsBell.tsx             # Alerts notification bell
+│   ├── ClientOnboardingModal.tsx  # Client profile completion
+│   ├── ClientRedirect.tsx         # Client routing logic
+│   ├── Footer.tsx                 # App footer
+│   ├── LanguageSwitcher.tsx       # Language switching
 │   └── customer/                  # Customer portal components
 │       ├── CustomerDashboard.tsx  # Customer home page
 │       ├── NewOrderPage.tsx       # Order creation interface
@@ -276,54 +342,54 @@ src/
 │   └── database.ts                # Database schema types
 └── i18n/                          # Internationalization
     ├── messages/                  # Translation files
+    │   ├── en.json                # English translations
+    │   └── he.json                # Hebrew translations
     └── config.ts                  # i18n configuration
 ```
 
 ## 🎯 Key Features Implementation
 
-### **Admin Dashboard**
-- **Real-time KPIs**: Orders to deliver, low stock count, receivables, new orders today, payments yesterday
-- **Interactive Tables**: Orders with quick actions, low stock with inline editing
-- **Financial Overview**: Top debtors with WhatsApp reminders, recent payments
-- **Alert Management**: Recent alerts with acknowledgment, manual alert running
-- **Server-side Rendering**: All data fetched server-side for optimal performance
+### **Enhanced Admin Dashboard**
+- **Modern KPI Cards**: Revenue, cost, profit, and orders with visual indicators
+- **Interactive Charts**: 7-day sales trends and profit distribution using Recharts
+- **Top Performers**: Best-selling products and top clients with detailed analytics
+- **Smart Alerts**: Low stock alerts and system notifications
+- **Quick Actions**: One-click access to inventory, orders, and client management
+- **Responsive Design**: Optimized for desktop and mobile viewing
 
-### **Inventory Management**
-- **CRUD Operations**: Full product lifecycle management
-- **Advanced Filtering**: Multi-criteria search and filtering
-- **Stock Management**: Real-time stock tracking with reservations
-- **Category System**: Hierarchical product categorization
-- **Bulk Operations**: Efficient mass updates and imports
+### **Advanced Inventory Management**
+- **Enhanced Product Model**: B2B features with purchase prices, profit margins, and supplier info
+- **Product Images**: Full image support with local storage and optimization
+- **Promotional Products**: Special handling and highlighting for promotional items
+- **Smart Filtering**: Advanced search and filtering with Hebrew support
+- **Bulk Operations**: Efficient mass updates and operations
 - **Low Stock Alerts**: Configurable thresholds with automated notifications
 
-### **Order Processing**
-- **Multi-step Workflow**: Status progression with validation
+### **Multi-language Order Processing**
+- **Fully Translated Interface**: Complete Hebrew and English support
+- **Status Tracking**: Visual status progression with localized labels
+- **Advanced Filtering**: Search and filter orders with localized interface
+- **Order Analytics**: Detailed order history and performance tracking
 - **Stock Reservation**: Automatic inventory allocation
-- **Client Integration**: Seamless customer portal integration
-- **Payment Tracking**: Integrated payment logging and debt management
-- **Order History**: Complete audit trail and analytics
 
-### **Customer Portal**
-- **Self-Service**: Independent order placement and tracking
-- **Product Catalog**: Full inventory browsing with real-time stock
-- **Shopping Cart**: Advanced cart management with stock validation
-- **Order Tracking**: Real-time status updates and history
+### **Enhanced Customer Portal**
+- **Product Images**: Visual product display with image optimization
+- **Availability Badges**: Customer-friendly stock indicators
+- **Promotional Highlighting**: Special visual indicators for promotional products
+- **Self-Service Ordering**: Independent order placement and tracking
 - **Mobile Optimization**: Responsive design with floating actions
-- **WhatsApp Integration**: Order confirmations and updates
 
-### **Financial Management**
-- **Payment Processing**: Multiple payment methods and tracking
-- **Debt Management**: Automated overdue detection and reminders
-- **Receivables Dashboard**: Top debtors with outstanding amounts
-- **Financial Reports**: Revenue and profit analytics
-- **WhatsApp Reminders**: Automated payment reminder messages
+### **Global Search System**
+- **Unified Search**: Search across products and clients
+- **Hebrew-Friendly**: Optimized search for Hebrew text
+- **Smart Results**: Grouped search results with relevance scoring
+- **Real-time Search**: Instant search suggestions and results
 
-### **Alert System**
-- **Multi-Channel Alerts**: Low stock, overdue payments, pending deliveries
-- **WhatsApp Integration**: Automated customer notifications
-- **Scheduled Automation**: Daily alerts via Vercel cron jobs
-- **Manual Controls**: On-demand alert running and message dispatch
-- **Alert Management**: Acknowledgment system and severity tracking
+### **Business Intelligence**
+- **Daily KPIs**: Real-time business metrics
+- **Sales Trends**: Interactive charts and visualizations
+- **Profit Analysis**: Brand-wise and client-wise profit tracking
+- **Performance Metrics**: Top products and clients analytics
 
 ## 🚀 Deployment
 
@@ -331,7 +397,7 @@ src/
 
 1. **Connect Repository**: Link your GitHub repository to Vercel
 2. **Environment Variables**: Add all required environment variables in Vercel dashboard
-3. **Database Setup**: Run all database migrations in Supabase
+3. **Database Setup**: Run the database schema in Supabase
 4. **Deploy**: Vercel will automatically build and deploy
 
 ### **Environment Variables for Production**
@@ -354,14 +420,6 @@ TWILIO_AUTH_TOKEN=your_auth_token
 TWILIO_WHATSAPP_FROM=whatsapp:+14155238886
 ```
 
-### **Other Platforms**
-
-The application can be deployed to any platform that supports Next.js:
-- Netlify
-- Railway
-- DigitalOcean App Platform
-- AWS Amplify
-
 ## 📱 API Endpoints
 
 ### **Core Operations**
@@ -370,14 +428,24 @@ The application can be deployed to any platform that supports Next.js:
 - `GET /api/products` - Fetch product catalog
 - `PATCH /api/products` - Update product information
 
+### **Search & Discovery**
+- `GET /api/search` - Global search across products and clients
+
+### **Client Management**
+- `POST /api/clients/upsert-self` - Update client profile
+- `GET /api/clients/[id]` - Fetch client information
+
+### **Consignment Tracking**
+- `GET /api/consignments` - Fetch consignment items
+- `POST /api/consignments` - Create consignment item
+- `PATCH /api/consignments/[id]` - Update consignment item
+- `DELETE /api/consignments/[id]` - Delete consignment item
+
 ### **Alert System**
 - `POST /api/run-alerts` - Execute alert checks
 - `POST /api/dispatch-messages` - Send queued WhatsApp messages
 - `POST /api/alerts/mark-delivered` - Acknowledge alert
-
-### **Testing & Debug**
-- `POST /api/test-whatsapp` - Test WhatsApp message sending
-- `GET /api/health` - System health check
+- `GET /api/alerts/count` - Get unread alert count
 
 ## 🧪 Testing
 
@@ -385,28 +453,18 @@ The application can be deployed to any platform that supports Next.js:
 
 ```bash
 # Test alert system
-curl -X POST http://localhost:3000/api/run-alerts
+curl -X POST http://localhost:3001/api/run-alerts
 
 # Test message dispatch
-curl -X POST http://localhost:3000/api/dispatch-messages
+curl -X POST http://localhost:3001/api/dispatch-messages
 
-# Test WhatsApp message
-curl -X POST http://localhost:3000/api/test-whatsapp \
+# Test global search
+curl "http://localhost:3001/api/search?q=iPhone"
+
+# Test client profile update
+curl -X POST http://localhost:3001/api/clients/upsert-self \
   -H "Content-Type: application/json" \
-  -d '{"to":"+972501234567","template":"order_confirmation","variables":{"orderId":"123","summary":"iPhone 15 Pro"}}'
-```
-
-### **Database Testing Scripts**
-
-```bash
-# Test database connection
-node scripts/check-db-structure.js
-
-# Test order creation
-node scripts/test-db-insert.js
-
-# Test alert system
-node scripts/test-new-order-alert.js
+  -d '{"phone":"+972501234567","city":"Tel Aviv","shop_name":"My Shop"}'
 ```
 
 ## 🔧 Configuration
@@ -424,13 +482,6 @@ WHATSAPP_PROVIDER=twilio      # Currently only Twilio supported
 WHATSAPP_TEST_MODE=true       # Use sandbox for testing
 ```
 
-## 🌍 Internationalization
-
-The application supports multiple languages through Next-Intl:
-- English (default)
-- Hebrew (עברית)
-- Additional languages can be added by extending the translation files
-
 ## 🔒 Security Features
 
 - **Row Level Security (RLS)**: Database-level access control
@@ -446,6 +497,7 @@ The application supports multiple languages through Next-Intl:
 - **Edge Runtime**: Global performance optimization
 - **Image Optimization**: Next.js automatic image optimization
 - **Database Indexing**: Optimized queries with proper indexes
+- **Code Splitting**: Automatic code splitting for optimal loading
 
 ## 🤝 Contributing
 
@@ -491,3 +543,5 @@ For support and questions:
 ---
 
 **Built with ❤️ for mobile device distribution businesses**
+
+*Mobile For You - מובייל פור יו* - Your complete business management solution
