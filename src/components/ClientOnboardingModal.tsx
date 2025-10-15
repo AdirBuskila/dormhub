@@ -39,7 +39,16 @@ export default function ClientOnboardingModal({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save profile');
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          errorData = { error: `HTTP ${response.status}: ${response.statusText}` };
+        }
+        console.error('API Error:', errorData);
+        console.error('Response status:', response.status);
+        console.error('Response headers:', Object.fromEntries(response.headers.entries()));
+        throw new Error(errorData.error || `Failed to save profile (${response.status})`);
       }
 
       onComplete();

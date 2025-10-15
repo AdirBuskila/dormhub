@@ -25,6 +25,7 @@ import {
   Wrench
 } from 'lucide-react';
 import AlertsBell from './AlertsBell';
+import Footer from './Footer';
 
 const categoryIcons = {
   phone: Smartphone,
@@ -58,7 +59,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
   ];
 
   return (
-    <div className="h-screen flex overflow-hidden bg-gray-100">
+    <div className="min-h-screen flex flex-col bg-gray-100">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 flex z-40 md:hidden">
@@ -78,59 +79,65 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
         </div>
       )}
 
-      {/* Desktop sidebar */}
-      <div className="hidden md:flex md:flex-shrink-0">
-        <div className="flex flex-col w-64">
-          <SidebarContent pathname={pathname} navigation={navigation} />
+      {/* Main content area with sidebar */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Desktop sidebar */}
+        <div className="hidden md:flex md:flex-shrink-0">
+          <div className="flex flex-col w-64">
+            <SidebarContent pathname={pathname} navigation={navigation} />
+          </div>
         </div>
-      </div>
 
-      {/* Main content */}
-      <div className="flex flex-col w-0 flex-1 overflow-hidden">
-        {/* Top navigation */}
-        <div className="relative z-10 flex-shrink-0 flex h-16 bg-white shadow">
-          <button
-            type="button"
-            className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu className="h-6 w-6" />
-          </button>
-          <div className="flex-1 px-4 flex justify-between">
-            <div className="flex-1 flex">
-              <div className="w-full flex md:ml-0">
-                <div className="flex items-center">
-                  <h1 className="text-lg font-medium text-gray-900">
-                    {isAdmin ? t('auth.businessSystem') : t('auth.customerPortal')}
-                  </h1>
+        {/* Main content */}
+        <div className="flex flex-col w-0 flex-1 overflow-hidden">
+          {/* Top navigation */}
+          <div className="relative z-10 flex-shrink-0 flex h-16 bg-white shadow">
+            <button
+              type="button"
+              className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
+              onClick={() => setSidebarOpen(true)}
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+            <div className="flex-1 px-4 flex justify-between">
+              <div className="flex-1 flex">
+                <div className="w-full flex md:ml-0">
+                  <div className="flex items-center">
+                    <h1 className="text-lg font-medium text-gray-900">
+                      {isAdmin ? t('auth.businessSystem') : t('auth.customerPortal')}
+                    </h1>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="ml-4 flex items-center space-x-4 md:ml-6">
-              <LanguageSwitcher />
-              {isAdmin && <AlertsBell />}
-              {isSignedIn ? (
-                <UserButton afterSignOutUrl="/" />
-              ) : (
-                <SignInButton mode="modal">
-                  <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
-                    {t('auth.signIn')}
-                  </button>
-                </SignInButton>
-              )}
+              <div className="ml-4 flex items-center space-x-4 md:ml-6">
+                <LanguageSwitcher />
+                {isAdmin && <AlertsBell />}
+                {isSignedIn ? (
+                  <UserButton afterSignOutUrl="/" />
+                ) : (
+                  <SignInButton mode="modal">
+                    <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">
+                      {t('auth.signIn')}
+                    </button>
+                  </SignInButton>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Page content */}
-        <main className="flex-1 relative overflow-y-auto focus:outline-none">
-          <div className="py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-              {children}
+          {/* Page content */}
+          <main className="flex-1 relative overflow-y-auto focus:outline-none">
+            <div className="py-6">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+                {children}
+              </div>
             </div>
-          </div>
-        </main>
+          </main>
+        </div>
       </div>
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }

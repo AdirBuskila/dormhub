@@ -9,6 +9,7 @@ import LowStockTable from '@/components/LowStockTable';
 import ReceivablesAndPayments from '@/components/ReceivablesAndPayments';
 import AlertsSidebar from '@/components/AlertsSidebar';
 import ClientRedirect from '@/components/ClientRedirect';
+import OnboardingDebug from '@/components/OnboardingDebug';
 import { 
   getKpis, 
   getOrdersToDeliver, 
@@ -44,18 +45,26 @@ export default async function Home() {
     // If user is authenticated and NOT admin, use client-side redirect
     if (!isAdmin) {
       console.log('Non-admin user, showing client redirect to customer portal');
-      return <ClientRedirect redirectTo="/customer" />;
+      return (
+        <>
+          <ClientRedirect redirectTo="/customer" />
+          <OnboardingDebug />
+        </>
+      );
     }
   }
   
-  // If not authenticated, show sign-in prompt
+  // If not authenticated, show guide image
   if (!userId || !user) {
     return (
       <Layout isAdmin={false}>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-gray-50 flex items-start justify-center pt-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900">Please Sign In</h2>
-            <p className="mt-2 text-gray-600">Sign in to access the dashboard.</p>
+            <img 
+              src="/guide.png" 
+              alt="Mobile For You Guide" 
+              className="mx-auto max-w-sm h-auto rounded-lg shadow-lg"
+            />
           </div>
         </div>
       </Layout>
@@ -67,6 +76,8 @@ export default async function Home() {
 }
 
 async function AdminDashboard() {
+  const t = await getTranslations('customer');
+  
   // Fetch all dashboard data in parallel
   const [kpis, ordersToDeliver, lowStock, topDebtors, recentPayments, recentAlerts] = await Promise.all([
     getKpis(),
@@ -91,9 +102,9 @@ async function AdminDashboard() {
         <div className="bg-white shadow rounded-lg p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{t('adminDashboard')}</h1>
               <p className="text-gray-600">
-                {new Date().toLocaleDateString('en-US', {
+                {new Date().toLocaleDateString('he-IL', {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',
@@ -104,7 +115,7 @@ async function AdminDashboard() {
             <div className="flex items-center space-x-3">
               <button className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 <Calendar className="h-4 w-4 mr-2" />
-                Today
+                {t('today')}
               </button>
             </div>
           </div>
@@ -113,7 +124,7 @@ async function AdminDashboard() {
         {/* KPI Strip */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-5">
           <KpiCard
-            title="To Deliver"
+            title={t('toDeliver')}
             value={kpis.toDeliver}
             icon={Truck}
             href="/orders"
@@ -121,7 +132,7 @@ async function AdminDashboard() {
             iconColor="text-blue-600"
           />
           <KpiCard
-            title="Low-Stock SKUs"
+            title={t('lowStockSkus')}
             value={kpis.lowStock}
             icon={AlertTriangle}
             href="/inventory"
@@ -129,14 +140,14 @@ async function AdminDashboard() {
             iconColor="text-orange-500"
           />
           <KpiCard
-            title="Receivables"
+            title={t('receivables')}
             value={kpis.receivables}
             icon={DollarSign}
             formatter={formatCurrency}
             iconColor="text-red-600"
           />
           <KpiCard
-            title="New Orders Today"
+            title={t('newOrdersToday')}
             value={kpis.newOrders}
             icon={TrendingUp}
             href="/orders"
@@ -144,7 +155,7 @@ async function AdminDashboard() {
             iconColor="text-green-600"
           />
           <KpiCard
-            title="Payments Yesterday"
+            title={t('paymentsYesterday')}
             value={kpis.paymentsYesterday}
             icon={DollarSign}
             href="/payments"

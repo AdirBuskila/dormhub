@@ -15,3 +15,5 @@ COMMENT ON COLUMN alerts.type IS 'Type of alert: low_stock, undelivered, overdue
 
 
 
+
+

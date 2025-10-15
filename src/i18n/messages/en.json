@@ -186,5 +186,17 @@
       "delivered": "Delivered",
       "closed": "Closed"
     }
+  },
+  "clientOnboarding": {
+    "completeProfile": "Complete Your Profile",
+    "profileIncomplete": "Your profile is incomplete. Please fill in the following details:",
+    "phone": "Phone",
+    "city": "City",
+    "shopName": "Shop Name",
+    "saveProfile": "Save Profile",
+    "profileSaved": "Profile saved successfully"
+  },
+  "footer": {
+    "forFurtherInfo": "For further information please contact:"
   }
 }

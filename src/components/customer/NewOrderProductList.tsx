@@ -96,7 +96,7 @@ export default function NewOrderProductList({
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            כל המוצרים
+{t('products.allProducts')}
           </button>
           <button
             onClick={() => setFilterPromotion(true)}
@@ -151,7 +151,7 @@ export default function NewOrderProductList({
               onChange={(e) => setFilterBrand(e.target.value)}
               className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             >
-              <option value="all">כל המותגים</option>
+              <option value="all">{t('products.allBrands')}</option>
               {availableBrands.map(brand => (
                 <option key={brand} value={brand}>{brand}</option>
               ))}
@@ -198,7 +198,7 @@ export default function NewOrderProductList({
               onChange={(e) => setFilterTag(e.target.value)}
               className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             >
-              <option value="all">כל התגיות</option>
+              <option value="all">{t('products.allTags')}</option>
               {availableTags.map(tag => (
                 <option key={tag} value={tag}>{tag}</option>
               ))}
@@ -256,7 +256,7 @@ export default function NewOrderProductList({
                       </span>
                       {isAdmin && (
                         <span className="ml-2 text-xs text-gray-500">
-                          ({availableStock} זמין)
+                          ({availableStock} {t('products.available')})
                         </span>
                       )}
                     </div>
@@ -301,7 +301,7 @@ export default function NewOrderProductList({
                       }`}
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      Add to Cart
+                      {t('products.addToCart')}
                     </button>
                   </div>
                 </div>
@@ -355,10 +355,10 @@ export default function NewOrderProductList({
                     
                     <div className="mt-1 space-y-1">
                       <p className="text-sm text-gray-600">
-                        <span className="font-medium">Storage:</span> {product.storage}
+                        <span className="font-medium">{t('products.storage')}:</span> {product.storage}
                       </p>
                       <p className="text-sm text-gray-600">
-                        <span className="font-medium">Condition:</span> 
+                        <span className="font-medium">{t('products.condition')}:</span> 
                         <span className={`ml-1 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                           product.condition === 'new' ? 'bg-blue-100 text-blue-800' :
                           product.condition === 'refurbished' ? 'bg-purple-100 text-purple-800' :
@@ -368,7 +368,7 @@ export default function NewOrderProductList({
                         </span>
                       </p>
                       <p className="text-sm text-gray-600 capitalize">
-                        <span className="font-medium">Category:</span> {product.category}
+                        <span className="font-medium">{t('products.category')}:</span> {product.category}
                       </p>
                     </div>
                   </div>
@@ -402,9 +402,9 @@ export default function NewOrderProductList({
         {filteredProducts.length === 0 && (
           <div className="text-center py-8">
             <Package className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No products found</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('products.noProductsFound')}</h3>
             <p className="mt-1 text-sm text-gray-500">
-              Try adjusting your search or filter criteria.
+              {t('products.tryAdjustingSearch')}
             </p>
           </div>
         )}

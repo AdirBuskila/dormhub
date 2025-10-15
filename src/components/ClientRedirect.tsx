@@ -24,19 +24,36 @@ export default function ClientRedirect({ redirectTo, isAdmin = false }: ClientRe
       if (isLoaded && isSignedIn && !isAdmin) {
         try {
           // Check if client profile is complete
+          console.log('Checking client profile for user:', user?.id);
           const response = await fetch(`/api/clients/${user?.id}`);
+          console.log('Client API response status:', response.status);
+          
           if (response.ok) {
-            const client = await response.json();
-            const isProfileComplete = client.phone && client.address && client.name;
+            const data = await response.json();
+            console.log('Client data:', data);
+            // Check if profile is complete - use the new fields
+            const isProfileComplete = data.phone && data.city && data.shop_name;
             
             if (!isProfileComplete) {
+              console.log('Profile incomplete, showing onboarding modal');
               setShowOnboarding(true);
               setCheckingProfile(false);
               return;
+            } else {
+              console.log('Profile complete, proceeding with redirect');
             }
+          } else {
+            console.log('Client not found, showing onboarding modal');
+            setShowOnboarding(true);
+            setCheckingProfile(false);
+            return;
           }
         } catch (error) {
           console.error('Error checking client profile:', error);
+          // If there's an error, show onboarding to be safe
+          setShowOnboarding(true);
+          setCheckingProfile(false);
+          return;
         }
       }
       

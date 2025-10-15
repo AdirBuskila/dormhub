@@ -54,7 +54,7 @@ export default function SearchPage() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">{t('search.searchResults')}</h1>
           <p className="mt-2 text-lg text-gray-600">
-            תוצאות חיפוש עבור: "{query}"
+            {t('search.searchResultsFor')}: "{query}"
           </p>
         </div>
 

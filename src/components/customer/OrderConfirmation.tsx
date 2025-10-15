@@ -39,8 +39,8 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
       <Layout isAdmin={false}>
         <div className="max-w-3xl mx-auto">
           <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <h2 className="text-xl font-bold text-red-900">Invalid Order Data</h2>
-            <p className="mt-2 text-red-700">The order information is missing or invalid.</p>
+            <h2 className="text-xl font-bold text-red-900">{t('customer.invalidOrderData')}</h2>
+            <p className="mt-2 text-red-700">{t('customer.orderInfoMissing')}</p>
           </div>
         </div>
       </Layout>
@@ -101,7 +101,7 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
                   {t('customer.orderConfirmation')}
                 </h1>
                 <p className="text-gray-600">
-                  Order #{order.id.slice(0, 8)}
+                  {t('customer.orderNumber')}{order.id.slice(0, 8)}
                 </p>
               </div>
             </div>
@@ -125,7 +125,7 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
                 {getStatusMessage(order.status)}
               </h3>
               <p className="text-sm text-gray-500">
-                Created on {formatDate(order.created_at)}
+                {t('customer.createdOn')} {formatDate(order.created_at)}
               </p>
             </div>
           </div>
