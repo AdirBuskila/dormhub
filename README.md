@@ -171,6 +171,174 @@ A comprehensive, modern business management system designed specifically for mob
 - **Environment Management** - Secure configuration handling
 - **Database Migrations** - Version-controlled database schema updates
 
+## 🏗️ System Architecture
+
+The following diagram illustrates the complete system architecture and data flow of Mobile For You:
+
+```mermaid
+%%{init: {
+  "theme": "default",
+  "securityLevel": "loose",
+  "flowchart": {
+    "defaultRenderer": "elk",
+    "htmlLabels": true,
+    "useMaxWidth": false,
+    "padding": 16,
+    "curve": "basis",
+    "elk": {
+      "elk.algorithm": "layered",
+      "elk.direction": "DOWN",
+      "elk.layered.spacing.nodeNodeBetweenLayers": 100,
+      "elk.spacing.nodeNode": 70,
+      "elk.spacing.edgeNode": 40,
+      "elk.layered.nodePlacement.strategy": "NETWORK_SIMPLEX",
+      "elk.hierarchyHandling": "INCLUDE_CHILDREN"
+    }
+  },
+  "themeVariables": {
+    "fontSize": "20px",
+    "fontFamily": "Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif",
+    "lineColor": "#8AA0B4",
+    "clusterBkg": "#FFFBEA",
+    "clusterBorder": "#F0D98C",
+    "edgeLabelBackground": "#ffffff",
+    "tertiaryBorderColor": "#E5E7EB"
+  },
+  "themeCSS": ".cluster > rect { rx: 16; ry: 16 } .label { white-space: pre-wrap; font-weight: 600; }"
+}}%%
+flowchart TD
+    subgraph "Frontend Layer"
+        A[User Browser] --> B[Next.js App Router]
+        B --> C[Middleware]
+        C --> D[Admin Dashboard]
+        C --> E[Customer Portal]
+        D --> F[Enhanced Dashboard]
+        D --> G[Inventory Management]
+        D --> H[Order Management]
+        D --> I[Clients Management]
+        E --> J[New Order Page]
+        E --> K[Cart Sidebar]
+        E --> L[Order Confirmation]
+    end
+    
+    subgraph "Authentication & I18n"
+        M[Clerk Authentication]
+        N[next-intl Internationalization]
+        O[Language Switcher]
+    end
+    
+    subgraph "API Layer"
+        P[API Routes]
+        Q[Products API]
+        R[Orders API]
+        S[Clients API]
+        T[Alerts API]
+        U[Search API]
+        V[Health Check API]
+    end
+    
+    subgraph "Business Logic"
+        W[Database Layer]
+        X[Dashboard Analytics]
+        Y[Alerts System]
+        Z[WhatsApp Integration]
+        AA[Order Processing]
+        BB[Stock Management]
+    end
+    
+    subgraph "Database Layer"
+        CC[Supabase Client]
+        DD[PostgreSQL Database]
+        EE[Row Level Security]
+        FF[Products Table]
+        GG[Orders Table]
+        HH[Order Items Table]
+        II[Clients Table]
+        JJ[Payments Table]
+        KK[Returns Table]
+        LL[Alerts Table]
+        MM[Outbound Messages Table]
+    end
+    
+    subgraph "External Services"
+        NN[WhatsApp API]
+        OO[Email Service]
+        PP[Image Storage]
+    end
+    
+    subgraph "Static Assets"
+        QQ[Product Images]
+        RR[Guide Images]
+        SS[Icons & SVGs]
+    end
+    
+    A --> B
+    C --> M
+    C --> N
+    B --> P
+    P --> Q
+    P --> R
+    P --> S
+    P --> T
+    P --> U
+    P --> V
+    
+    Q --> W
+    R --> W
+    S --> W
+    T --> W
+    
+    W --> CC
+    CC --> DD
+    DD --> EE
+    DD --> FF
+    DD --> GG
+    DD --> HH
+    DD --> II
+    DD --> JJ
+    DD --> KK
+    DD --> LL
+    DD --> MM
+    
+    X --> W
+    Y --> W
+    Z --> NN
+    AA --> W
+    BB --> W
+    
+    B --> QQ
+    B --> RR
+    B --> SS
+    
+    classDef frontend fill:#e1f5fe
+    classDef auth fill:#f3e5f5
+    classDef api fill:#e8f5e8
+    classDef business fill:#fff3e0
+    classDef database fill:#fce4ec
+    classDef external fill:#f1f8e9
+    classDef assets fill:#f9fbe7
+    
+    class A,B,C,D,E,F,G,H,I,J,K,L frontend
+    class M,N,O auth
+    class P,Q,R,S,T,U,V api
+    class W,X,Y,Z,AA,BB business
+    class CC,DD,EE,FF,GG,HH,II,JJ,KK,LL,MM database
+    class NN,OO,PP external
+    class QQ,RR,SS assets
+```
+
+### **Architecture Overview**
+
+The system follows a modern, layered architecture with clear separation of concerns:
+
+- **Frontend Layer**: Next.js 15 with App Router, providing both admin and customer interfaces
+- **Authentication & I18n**: Clerk for secure authentication and next-intl for bilingual support
+- **API Layer**: RESTful APIs handling all business operations
+- **Business Logic**: Core business rules and data processing
+- **Database Layer**: Supabase with PostgreSQL, featuring Row Level Security
+- **External Services**: WhatsApp integration and email notifications
+- **Static Assets**: Optimized image delivery and static content
+
 ## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed and configured:
@@ -345,130 +513,6 @@ src/
     │   ├── en.json                # English translations
     │   └── he.json                # Hebrew translations
     └── config.ts                  # i18n configuration
-```
-
-## 🏗️ System Architecture
-
-```mermaid
-flowchart TD
-    subgraph "Frontend Layer"
-        A[User Browser] --> B[Next.js App Router]
-        B --> C[Middleware]
-        C --> D[Admin Dashboard]
-        C --> E[Customer Portal]
-        D --> F[Enhanced Dashboard]
-        D --> G[Inventory Management]
-        D --> H[Order Management]
-        D --> I[Clients Management]
-        E --> J[New Order Page]
-        E --> K[Cart Sidebar]
-        E --> L[Order Confirmation]
-    end
-    
-    subgraph "Authentication & I18n"
-        M[Clerk Authentication]
-        N[next-intl Internationalization]
-        O[Language Switcher]
-    end
-    
-    subgraph "API Layer"
-        P[API Routes]
-        Q[Products API]
-        R[Orders API]
-        S[Clients API]
-        T[Alerts API]
-        U[Search API]
-        V[Health Check API]
-    end
-    
-    subgraph "Business Logic"
-        W[Database Layer]
-        X[Dashboard Analytics]
-        Y[Alerts System]
-        Z[WhatsApp Integration]
-        AA[Order Processing]
-        BB[Stock Management]
-    end
-    
-    subgraph "Database Layer"
-        CC[Supabase Client]
-        DD[PostgreSQL Database]
-        EE[Row Level Security]
-        FF[Products Table]
-        GG[Orders Table]
-        HH[Order Items Table]
-        II[Clients Table]
-        JJ[Payments Table]
-        KK[Returns Table]
-        LL[Alerts Table]
-        MM[Outbound Messages Table]
-    end
-    
-    subgraph "External Services"
-        NN[WhatsApp API]
-        OO[Email Service]
-        PP[Image Storage]
-    end
-    
-    subgraph "Static Assets"
-        QQ[Product Images]
-        RR[Guide Images]
-        SS[Icons & SVGs]
-    end
-    
-    A --> B
-    C --> M
-    C --> N
-    B --> P
-    P --> Q
-    P --> R
-    P --> S
-    P --> T
-    P --> U
-    P --> V
-    
-    Q --> W
-    R --> W
-    S --> W
-    T --> W
-    
-    W --> CC
-    CC --> DD
-    DD --> EE
-    DD --> FF
-    DD --> GG
-    DD --> HH
-    DD --> II
-    DD --> JJ
-    DD --> KK
-    DD --> LL
-    DD --> MM
-    
-    X --> W
-    Y --> W
-    Z --> NN
-    AA --> W
-    BB --> W
-    
-    B --> QQ
-    B --> RR
-    B --> SS
-    
-    classDef frontend fill:#e1f5fe
-    classDef auth fill:#f3e5f5
-    classDef api fill:#e8f5e8
-    classDef business fill:#fff3e0
-    classDef database fill:#fce4ec
-    classDef external fill:#f1f8e9
-    classDef assets fill:#f9fbe7
-    
-    class A,B,C,D,E,F,G,H,I,J,K,L frontend
-    class M,N,O auth
-    class P,Q,R,S,T,U,V api
-    class W,X,Y,Z,AA,BB business
-    class CC,DD,EE,FF,GG,HH,II,JJ,KK,LL,MM database
-    class NN,OO,PP external
-    class QQ,RR,SS assets
 ```
 
 ## 🎯 Key Features Implementation
