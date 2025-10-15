@@ -3,7 +3,12 @@ import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Mobile For You - מובייל פור יו",
-  description: "Complete business management system for mobile device distribution company",
+  description: "הזמן מוצרים לחנות הסלולר שלך בקלות – מחירים מעולים, משלוח מהיר ושירות אמין ⚡ כל מה שאתה צריך במקום אחד לניהול חכם ופשוט של העסק שלך.",
+  icons: {
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
+    apple: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
