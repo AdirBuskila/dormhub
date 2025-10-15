@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Layout from './Layout';
-import { Product, CreateProductData, ProductCondition, ProductCategory } from '@/types/database';
+import { Product, CreateProductData, ProductCondition, ProductCategory, ImporterType } from '@/types/database';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '@/lib/database';
 import { formatCurrency, getConditionColor } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
@@ -41,7 +41,16 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
     condition: 'new',
     category: 'iphone',
     stock: 0,
-    min_stock_alert: 5
+    min_stock_alert: 5,
+    image_url: '',
+    purchase_price: 0,
+    sale_price_default: 0,
+    alert_threshold: 10,
+    importer: 'official',
+    warranty_provider: '',
+    warranty_months: 0,
+    is_promotion: false,
+    tags: []
   });
 
   useEffect(() => {
@@ -71,7 +80,16 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
         condition: 'new',
         category: 'iphone',
         stock: 0,
-        min_stock_alert: 5
+        min_stock_alert: 5,
+        image_url: '',
+        purchase_price: 0,
+        sale_price_default: 0,
+        alert_threshold: 10,
+        importer: 'official',
+        warranty_provider: '',
+        warranty_months: 0,
+        is_promotion: false,
+        tags: []
       });
       loadProducts();
     } catch (error) {
@@ -92,7 +110,16 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
         condition: 'new',
         category: 'iphone',
         stock: 0,
-        min_stock_alert: 5
+        min_stock_alert: 5,
+        image_url: '',
+        purchase_price: 0,
+        sale_price_default: 0,
+        alert_threshold: 10,
+        importer: 'official',
+        warranty_provider: '',
+        warranty_months: 0,
+        is_promotion: false,
+        tags: []
       });
       loadProducts();
     } catch (error) {
@@ -171,7 +198,15 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
       category: product.category,
       stock: product.total_stock,
       min_stock_alert: product.min_stock_alert,
-      image_url: product.image_url || ''
+      image_url: product.image_url || '',
+      purchase_price: product.purchase_price || 0,
+      sale_price_default: product.sale_price_default || 0,
+      alert_threshold: product.alert_threshold || 10,
+      importer: product.importer || 'official',
+      warranty_provider: product.warranty_provider || '',
+      warranty_months: product.warranty_months || 0,
+      is_promotion: product.is_promotion || false,
+      tags: product.tags || []
     });
   }
 
@@ -676,6 +711,101 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                         className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                       />
                     </div>
+                  </div>
+                  
+                  {/* New B2B Fields */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">{t('products.purchasePrice')}</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={formData.purchase_price}
+                        onChange={(e) => setFormData({ ...formData, purchase_price: parseFloat(e.target.value) || 0 })}
+                        className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">{t('products.salePrice')}</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={formData.sale_price_default}
+                        onChange={(e) => setFormData({ ...formData, sale_price_default: parseFloat(e.target.value) || 0 })}
+                        className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">{t('products.alertThreshold')}</label>
+                      <input
+                        type="number"
+                        value={formData.alert_threshold}
+                        onChange={(e) => setFormData({ ...formData, alert_threshold: parseInt(e.target.value) || 0 })}
+                        className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">{t('products.importer')}</label>
+                      <select
+                        value={formData.importer}
+                        onChange={(e) => setFormData({ ...formData, importer: e.target.value as ImporterType })}
+                        className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      >
+                        <option value="official">{t('products.official')}</option>
+                        <option value="parallel">{t('products.parallel')}</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">{t('products.warrantyProvider')}</label>
+                      <input
+                        type="text"
+                        value={formData.warranty_provider}
+                        onChange={(e) => setFormData({ ...formData, warranty_provider: e.target.value })}
+                        className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">{t('products.warrantyMonths')}</label>
+                      <input
+                        type="number"
+                        value={formData.warranty_months}
+                        onChange={(e) => setFormData({ ...formData, warranty_months: parseInt(e.target.value) || 0 })}
+                        className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">{t('products.tags')}</label>
+                    <input
+                      type="text"
+                      placeholder="Runner, Model A, Best Seller (comma separated)"
+                      value={formData.tags.join(', ')}
+                      onChange={(e) => setFormData({ ...formData, tags: e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag) })}
+                      className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      Enter tags separated by commas (e.g., "Runner, Model A, Best Seller")
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id="is_promotion"
+                      checked={formData.is_promotion}
+                      onChange={(e) => setFormData({ ...formData, is_promotion: e.target.checked })}
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="is_promotion" className="ml-2 block text-sm text-gray-900">
+                      {t('products.isPromotion')}
+                    </label>
                   </div>
                   <div className="flex justify-end space-x-3 pt-4">
                     <button

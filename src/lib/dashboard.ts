@@ -1,4 +1,5 @@
 import { supabaseAdmin } from './supabase';
+import { DailyKpis, ProfitByClient, BestSeller, LowStockItem as LowStockItemType } from '@/types/database';
 
 export interface KpiData {
   toDeliver: number;
@@ -379,6 +380,226 @@ export async function getRecentAlerts({
     return data || [];
   } catch (error) {
     console.error('Error fetching recent alerts:', error);
+    return [];
+  }
+}
+
+/**
+ * Get daily KPIs for today
+ */
+export async function getDailyKpis(): Promise<DailyKpis> {
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Get today's orders with their items
+    const { data: ordersData } = await supabaseAdmin
+      .from('orders')
+      .select(`
+        id,
+        total_price,
+        order_items!inner(
+          quantity,
+          price,
+          product:products(purchase_price)
+        )
+      `)
+      .gte('created_at', today)
+      .lt('created_at', new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]);
+
+    let unitsSold = 0;
+    let revenue = 0;
+    let cost = 0;
+
+    ordersData?.forEach(order => {
+      revenue += order.total_price || 0;
+      (order as any).order_items?.forEach((item: any) => {
+        unitsSold += item.quantity || 0;
+        const purchasePrice = item.product?.purchase_price || 0;
+        cost += (item.quantity || 0) * purchasePrice;
+      });
+    });
+
+    const profit = revenue - cost;
+
+    return {
+      unitsSold,
+      revenue,
+      cost,
+      profit,
+    };
+  } catch (error) {
+    console.error('Error fetching daily KPIs:', error);
+    return {
+      unitsSold: 0,
+      revenue: 0,
+      cost: 0,
+      profit: 0,
+    };
+  }
+}
+
+/**
+ * Get profit by client for a date range
+ */
+export async function getProfitByClient({ 
+  from, 
+  to 
+}: { 
+  from: string; 
+  to: string; 
+}): Promise<ProfitByClient[]> {
+  try {
+    const { data: ordersData } = await supabaseAdmin
+      .from('orders')
+      .select(`
+        id,
+        client_id,
+        total_price,
+        created_at,
+        client:clients(name),
+        order_items(
+          quantity,
+          price,
+          product:products(purchase_price)
+        )
+      `)
+      .gte('created_at', from)
+      .lte('created_at', to)
+      .in('status', ['delivered', 'closed']);
+
+    // Group by client
+    const clientMap = new Map<string, ProfitByClient>();
+
+    ordersData?.forEach(order => {
+      const clientId = order.client_id;
+      const clientName = (order as any).client?.name || 'Unknown Client';
+      
+      if (!clientMap.has(clientId)) {
+        clientMap.set(clientId, {
+          client_id: clientId,
+          client_name: clientName,
+          orders: 0,
+          revenue: 0,
+          cost: 0,
+          profit: 0,
+          profit_percentage: 0,
+        });
+      }
+
+      const clientData = clientMap.get(clientId)!;
+      clientData.orders += 1;
+      clientData.revenue += order.total_price || 0;
+
+      // Calculate cost from order items
+      (order as any).order_items?.forEach((item: any) => {
+        const purchasePrice = item.product?.purchase_price || 0;
+        clientData.cost += (item.quantity || 0) * purchasePrice;
+      });
+    });
+
+    // Calculate profit and profit percentage
+    const results = Array.from(clientMap.values()).map(client => {
+      client.profit = client.revenue - client.cost;
+      client.profit_percentage = client.revenue > 0 ? (client.profit / client.revenue) * 100 : 0;
+      return client;
+    });
+
+    // Sort by profit descending
+    return results.sort((a, b) => b.profit - a.profit);
+  } catch (error) {
+    console.error('Error fetching profit by client:', error);
+    return [];
+  }
+}
+
+/**
+ * Get best sellers for a period
+ */
+export async function getBestSellers({ 
+  sinceDays = 60 
+}: { 
+  sinceDays?: number; 
+} = {}): Promise<BestSeller[]> {
+  try {
+    const sinceDate = new Date();
+    sinceDate.setDate(sinceDate.getDate() - sinceDays);
+
+    const { data: orderItemsData } = await supabaseAdmin
+      .from('order_items')
+      .select(`
+        product_id,
+        quantity,
+        price,
+        product:products(brand, model, storage),
+        order:orders(created_at, status)
+      `)
+      .gte('order.created_at', sinceDate.toISOString())
+      .in('order.status', ['delivered', 'closed']);
+
+    // Group by product
+    const productMap = new Map<string, BestSeller>();
+
+    orderItemsData?.forEach(item => {
+      const productId = item.product_id;
+      const product = (item as any).product;
+      
+      if (!productMap.has(productId)) {
+        productMap.set(productId, {
+          product_id: productId,
+          brand: product?.brand || 'Unknown',
+          model: product?.model || 'Unknown',
+          storage: product?.storage || '',
+          quantity_sold: 0,
+          revenue: 0,
+        });
+      }
+
+      const productData = productMap.get(productId)!;
+      productData.quantity_sold += item.quantity || 0;
+      productData.revenue += (item.quantity || 0) * (item.price || 0);
+    });
+
+    // Sort by quantity sold and return top 10
+    return Array.from(productMap.values())
+      .sort((a, b) => b.quantity_sold - a.quantity_sold)
+      .slice(0, 10);
+  } catch (error) {
+    console.error('Error fetching best sellers:', error);
+    return [];
+  }
+}
+
+/**
+ * Get low stock items with alert threshold
+ */
+export async function getLowStockItems(): Promise<LowStockItemType[]> {
+  try {
+    const { data: productsData } = await supabaseAdmin
+      .from('products')
+      .select(`
+        id,
+        brand,
+        model,
+        storage,
+        total_stock,
+        reserved_stock,
+        alert_threshold
+      `);
+
+    const lowStockItems = productsData?.filter(product => 
+      (product.total_stock - product.reserved_stock) <= product.alert_threshold
+    ) || [];
+
+    return lowStockItems.map(product => ({
+      product_id: product.id,
+      brand: product.brand,
+      model: product.model,
+      storage: product.storage,
+      available_stock: product.total_stock - product.reserved_stock,
+      alert_threshold: product.alert_threshold,
+    }));
+  } catch (error) {
+    console.error('Error fetching low stock items:', error);
     return [];
   }
 }

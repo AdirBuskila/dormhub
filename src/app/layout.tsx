@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Mobile For You - Business Management System",
+  title: "Mobile For You - מובייל פור יו",
   description: "Complete business management system for mobile device distribution company",
 };
 

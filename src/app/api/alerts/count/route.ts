@@ -1,41 +1,21 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { auth, currentUser } from '@clerk/nextjs/server';
-import { createClient } from '@supabase/supabase-js';
-import { isAdminEmail } from '@/lib/admin';
+import { NextResponse } from 'next/server';
+import { supabaseAdmin } from '@/lib/supabase';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    // Check authentication
-    const { userId } = await auth();
-    const user = await currentUser();
-    
-    if (!userId || !user) {
-      return NextResponse.json({ unread: 0 }, { status: 200 });
-    }
-
-    // Check if user is admin
-    const userEmail = user.emailAddresses[0]?.emailAddress;
-    if (!isAdminEmail(userEmail)) {
-      return NextResponse.json({ unread: 0 }, { status: 200 });
-    }
-
-    // Get unread alerts count
-    const { count } = await supabase
+    const { count, error } = await supabaseAdmin
       .from('alerts')
       .select('*', { count: 'exact', head: true })
       .eq('delivered', false);
 
-    return NextResponse.json({ unread: count || 0 });
+    if (error) {
+      console.error('Error fetching alert count:', error);
+      return NextResponse.json({ count: 0 });
+    }
 
+    return NextResponse.json({ count: count || 0 });
   } catch (error) {
-    console.error('Error in alerts count API:', error);
-    return NextResponse.json({ unread: 0 }, { status: 200 });
+    console.error('Alert count error:', error);
+    return NextResponse.json({ count: 0 });
   }
 }
-
-

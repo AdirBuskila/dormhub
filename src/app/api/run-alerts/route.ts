@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
-import { runDailyAlerts } from '@/lib/alerts';
+import { runDailyAlerts, checkLowStock, checkUndelivered, onNewOrder } from '@/lib/alerts';
 import { isAdminEmail } from '@/lib/admin';
 
 export async function POST(request: NextRequest) {
@@ -19,12 +19,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 });
     }
 
-    // Run alerts
-    const result = await runDailyAlerts();
+    const body = await request.json();
+    const { action, orderId } = body;
+
+    let result;
+
+    switch (action) {
+      case 'low_stock':
+        result = await checkLowStock();
+        break;
+      case 'undelivered':
+        result = await checkUndelivered();
+        break;
+      case 'new_order':
+        if (!orderId) {
+          return NextResponse.json({ error: 'Order ID required for new_order action' }, { status: 400 });
+        }
+        result = await onNewOrder(orderId);
+        break;
+      case 'all':
+      default:
+        result = await runDailyAlerts();
+        break;
+    }
 
     return NextResponse.json({
       success: true,
-      ...result
+      action,
+      result
     });
 
   } catch (error) {

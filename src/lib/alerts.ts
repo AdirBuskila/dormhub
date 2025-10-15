@@ -392,6 +392,62 @@ export async function createNewOrderAlert(orderId: string, clientName: string, i
 }
 
 /**
+ * Check low stock and create alerts
+ */
+export async function checkLowStock(): Promise<number> {
+  return await createLowStockAlerts();
+}
+
+/**
+ * Check undelivered orders and create alerts
+ */
+export async function checkUndelivered(): Promise<number> {
+  return await createUndeliveredOrderAlerts();
+}
+
+/**
+ * Create alert for new order
+ */
+export async function onNewOrder(orderId: string): Promise<boolean> {
+  try {
+    // Get order details
+    const { data: order, error } = await supabase
+      .from('orders')
+      .select(`
+        id,
+        client_id,
+        clients(name),
+        order_items(
+          quantity,
+          product:products(brand, model, storage)
+        )
+      `)
+      .eq('id', orderId)
+      .single();
+
+    if (error || !order) {
+      console.error('Error fetching order for alert:', error);
+      return false;
+    }
+
+    const client = Array.isArray(order.clients) ? order.clients[0] : order.clients;
+    const clientName = client?.name || 'Unknown Client';
+    const itemCount = order.order_items?.length || 0;
+    
+    // Create items summary
+    const itemsSummary = order.order_items?.map((item: any) => {
+      const product = item.product;
+      return `${item.quantity}x ${product?.brand} ${product?.model} ${product?.storage}`;
+    }).join('\n');
+
+    return await createNewOrderAlert(orderId, clientName, itemCount, itemsSummary);
+  } catch (error) {
+    console.error('Error in onNewOrder:', error);
+    return false;
+  }
+}
+
+/**
  * Run all daily alerts
  */
 export async function runDailyAlerts() {

@@ -185,5 +185,74 @@
       "delivered": "נמסר",
       "closed": "סגור"
     }
+  },
+  "products": {
+    "purchasePrice": "מחיר עלות",
+    "salePrice": "מחיר מכירה",
+    "alertThreshold": "סף התראה",
+    "importer": "יבואן",
+    "warrantyProvider": "ספק אחריות",
+    "warrantyMonths": "חודשי אחריות",
+    "isPromotion": "מבצע",
+    "tags": "תגיות",
+    "official": "רשמי",
+    "parallel": "מקביל",
+    "inStock": "במלאי",
+    "lastFew": "נשארו אחרונים",
+    "outOfStock": "אזל במלאי",
+    "promotions": "מבצעים",
+    "bestSellers": "הנמכרים ביותר",
+    "runner": "Runner"
+  },
+  "dashboard": {
+    "dailyKpis": "מדדי היום",
+    "unitsSoldToday": "כמה סחורה נמכרה היום",
+    "costOfGoodsSoldToday": "עלות הסחורה שנמכרה היום",
+    "totalProfitToday": "הרווח הכולל של היום",
+    "profitByClient": "רווח לפי לקוח",
+    "bestSellers": "הנמכרים ביותר",
+    "lowStockList": "רשימת מלאי נמוך",
+    "openOrders": "הזמנות פתוחות",
+    "markDelivered": "סמן כנמסר",
+    "addPayment": "הוסף תשלום",
+    "viewOrder": "צפה בהזמנה",
+    "client": "לקוח",
+    "orders": "הזמנות",
+    "revenue": "הכנסות",
+    "cost": "עלות",
+    "profit": "רווח",
+    "profitPercentage": "אחוז רווח"
+  },
+  "search": {
+    "searchPlaceholder": "חפש מוצרים או לקוחות...",
+    "searchResults": "תוצאות חיפוש",
+    "products": "מוצרים",
+    "clients": "לקוחות",
+    "noResults": "לא נמצאו תוצאות",
+    "tryDifferentSearch": "נסה חיפוש אחר"
+  },
+  "clientOnboarding": {
+    "completeProfile": "השלם את הפרופיל שלך",
+    "profileIncomplete": "הפרופיל שלך לא שלם. אנא מלא את הפרטים הבאים:",
+    "phone": "טלפון",
+    "city": "עיר",
+    "shopName": "שם החנות",
+    "saveProfile": "שמור פרופיל",
+    "profileSaved": "הפרופיל נשמר בהצלחה"
+  },
+  "consignment": {
+    "consignmentTracking": "מעקב קונסיגנציה",
+    "consignmentItems": "פריטי קונסיגנציה",
+    "adjustQuantity": "התאם כמות",
+    "addNote": "הוסף הערה",
+    "notes": "הערות",
+    "quantity": "כמות",
+    "adjust": "התאם"
+  },
+  "alerts": {
+    "alertsBell": "פעמון התראות",
+    "newAlerts": "התראות חדשות",
+    "markAllDelivered": "סמן הכל כנמסר",
+    "markDelivered": "סמן כנמסר"
   }
 }

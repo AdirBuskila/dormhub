@@ -9,6 +9,7 @@ export type AlertSeverity = 'info' | 'warning' | 'danger';
 export type OutboundChannel = 'whatsapp';
 export type ReturnReason = 'defective' | 'unsold' | 'trade_in';
 export type ReturnCondition = 'returned' | 'refurbish' | 'restocked';
+export type ImporterType = 'official' | 'parallel';
 
 export interface Product {
   id: string;
@@ -24,6 +25,15 @@ export interface Product {
   created_at: string;
   updated_at?: string;
   available_stock?: number; // Computed field from view
+  // New B2B fields
+  purchase_price: number;
+  sale_price_default: number;
+  alert_threshold: number;
+  importer: ImporterType;
+  warranty_provider?: string;
+  warranty_months: number;
+  is_promotion: boolean;
+  tags: string[];
 }
 
 export interface Client {
@@ -107,6 +117,15 @@ export interface CreateProductData {
   stock: number; // This is used for form data, will be mapped to total_stock in database
   min_stock_alert: number;
   image_url?: string;
+  // New B2B fields
+  purchase_price: number;
+  sale_price_default: number;
+  alert_threshold: number;
+  importer: ImporterType;
+  warranty_provider?: string;
+  warranty_months: number;
+  is_promotion: boolean;
+  tags: string[];
 }
 
 export interface CreateClientData {
@@ -167,4 +186,57 @@ export interface OutboundMessage {
   sent_at: string | null;
   error: string | null;
   created_at: string;
+}
+
+// New interfaces for B2B improvements
+export interface DailyKpis {
+  unitsSold: number;
+  revenue: number;
+  cost: number;
+  profit: number;
+}
+
+export interface ProfitByClient {
+  client_id: string;
+  client_name: string;
+  orders: number;
+  revenue: number;
+  cost: number;
+  profit: number;
+  profit_percentage: number;
+}
+
+export interface BestSeller {
+  product_id: string;
+  brand: string;
+  model: string;
+  storage: string;
+  quantity_sold: number;
+  revenue: number;
+}
+
+export interface LowStockItem {
+  product_id: string;
+  brand: string;
+  model: string;
+  storage: string;
+  available_stock: number;
+  alert_threshold: number;
+}
+
+export interface ConsignmentItem {
+  id: string;
+  client_id: string;
+  product_id: string;
+  quantity: number;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+  product?: Product;
+  client?: Client;
+}
+
+export interface SearchResult {
+  products: Product[];
+  clients: Client[];
 }
