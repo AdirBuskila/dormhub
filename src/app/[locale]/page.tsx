@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { Calendar, Truck, AlertTriangle, DollarSign, TrendingUp } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 import Layout from '@/components/Layout';
 import KpiCard from '@/components/KpiCard';
 import OrdersToDeliverTable from '@/components/OrdersToDeliverTable';
@@ -9,7 +10,6 @@ import LowStockTable from '@/components/LowStockTable';
 import ReceivablesAndPayments from '@/components/ReceivablesAndPayments';
 import AlertsSidebar from '@/components/AlertsSidebar';
 import ClientRedirect from '@/components/ClientRedirect';
-import OnboardingDebug from '@/components/OnboardingDebug';
 import { 
   getKpis, 
   getOrdersToDeliver, 
@@ -45,12 +45,7 @@ export default async function Home() {
     // If user is authenticated and NOT admin, use client-side redirect
     if (!isAdmin) {
       console.log('Non-admin user, showing client redirect to customer portal');
-      return (
-        <>
-          <ClientRedirect redirectTo="/customer" />
-          <OnboardingDebug />
-        </>
-      );
+      return <ClientRedirect redirectTo="/customer" />;
     }
   }
   
@@ -60,11 +55,13 @@ export default async function Home() {
       <Layout isAdmin={false}>
         <div className="min-h-screen bg-gray-50 flex items-start justify-center pt-8">
           <div className="text-center">
-            <img 
-              src="/guide.png" 
-              alt="Mobile For You Guide" 
-              className="mx-auto max-w-sm h-auto rounded-lg shadow-lg"
-            />
+            <Link href="/sign-in" className="block cursor-pointer hover:opacity-90 transition-opacity">
+              <img 
+                src="/guide.png" 
+                alt="Mobile For You Guide - Click to sign in" 
+                className="mx-auto max-w-sm h-auto rounded-lg shadow-lg hover:shadow-xl transition-shadow"
+              />
+            </Link>
           </div>
         </div>
       </Layout>

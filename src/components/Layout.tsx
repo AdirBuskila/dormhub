@@ -160,7 +160,8 @@ function SidebarContent({ pathname, navigation }: { pathname: string; navigation
         </div>
         <nav className="mt-5 flex-1 px-2 space-y-1">
           {navigation.map((item) => {
-            const isActive = pathname === item.href;
+            // Handle locale prefixes in pathname comparison
+            const isActive = pathname === item.href || pathname.endsWith(item.href);
             return (
               <Link
                 key={item.name}
