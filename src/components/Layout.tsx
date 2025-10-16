@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UserButton, SignInButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -41,10 +41,32 @@ interface LayoutProps {
 
 export default function Layout({ children, isAdmin = false }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const pathname = usePathname();
   const { isSignedIn } = useUser();
   const t = useTranslations();
   const locale = useLocale();
+
+  // Handle sidebar close with animation
+  const handleCloseSidebar = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setSidebarOpen(false);
+      setIsClosing(false);
+    }, 300); // Match animation duration
+  };
+
+  // Prevent body scroll when sidebar is open
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [sidebarOpen]);
 
   // Define navigation based on admin status
   const navigation = isAdmin ? [
@@ -64,13 +86,23 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 flex z-40 md:hidden">
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
-          <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
+          {/* Backdrop with fade animation */}
+          <div 
+            className={`fixed inset-0 bg-gray-600 transition-opacity duration-300 ease-in-out ${
+              isClosing ? 'bg-opacity-0' : 'bg-opacity-75'
+            }`}
+            onClick={handleCloseSidebar} 
+          />
+          
+          {/* Sidebar with smooth slide animation */}
+          <div className={`relative flex-1 flex flex-col max-w-xs w-full bg-white shadow-xl transform transition-all duration-300 ease-out ${
+            isClosing ? '-translate-x-full' : 'translate-x-0'
+          }`} style={{ animation: isClosing ? 'none' : 'slideIn 0.3s ease-out' }}>
             <div className="absolute top-0 right-0 -mr-12 pt-2">
               <button
                 type="button"
-                className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
-                onClick={() => setSidebarOpen(false)}
+                className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white transition-all hover:scale-110 active:scale-95 hover:bg-white hover:bg-opacity-10"
+                onClick={handleCloseSidebar}
               >
                 <X className="h-6 w-6 text-white" />
               </button>
@@ -79,6 +111,18 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
           </div>
         </div>
       )}
+
+      {/* CSS Animation for sidebar slide-in */}
+      <style jsx>{`
+        @keyframes slideIn {
+          from {
+            transform: translateX(-100%);
+          }
+          to {
+            transform: translateX(0);
+          }
+        }
+      `}</style>
 
       {/* Main content area with sidebar */}
       <div className="flex flex-1 overflow-hidden">
@@ -95,7 +139,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
           <div className="relative z-10 flex-shrink-0 flex h-16 bg-white shadow">
             <button
               type="button"
-              className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
+              className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden hover:bg-gray-50 active:bg-gray-100 transition-colors"
               onClick={() => setSidebarOpen(true)}
             >
               <Menu className="h-6 w-6" />
