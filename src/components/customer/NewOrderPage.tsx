@@ -7,6 +7,7 @@ import { Product } from '@/types/database';
 // import { getProducts } from '@/lib/database';
 import NewOrderProductList from './NewOrderProductList';
 import CartSidebar from './CartSidebar';
+import CartModal from './CartModal';
 import { useTranslations } from 'next-intl';
 
 export interface CartItem {
@@ -25,6 +26,7 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [cartModalOpen, setCartModalOpen] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -120,11 +122,18 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
       }
 
       const { orderId } = await response.json();
+      
+      // Small delay to show success state before navigation
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Close modal and navigate
+      setCartModalOpen(false);
       router.push(`/customer/orders/${orderId}`);
     } catch (error) {
       console.error('Failed to submit order:', error);
       const errorMessage = error instanceof Error ? error.message : t('common.error');
       setError(`Order creation failed: ${errorMessage}`);
+      setCartModalOpen(false); // Close modal on error too
     } finally {
       setSubmitting(false);
     }
@@ -204,23 +213,32 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
           </div>
         </div>
 
-        {/* Floating Checkout Button - Mobile Only */}
+        {/* Floating Cart Button - Mobile Only */}
         {cart.length > 0 && (
           <div className="fixed bottom-6 right-6 lg:hidden z-50">
             <button
-              onClick={submitOrder}
-              disabled={submitting}
-              className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 text-white rounded-full p-4 shadow-lg transition-colors duration-200 flex items-center space-x-2"
+              onClick={() => setCartModalOpen(true)}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-full px-5 py-3 shadow-lg transition-all duration-200 flex items-center gap-2 hover:scale-105 active:scale-95"
             >
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01" />
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
-              <span className="font-medium">
-                {submitting ? t('common.submitting') : `${t('common.checkout')} (${cart.reduce((sum, item) => sum + item.quantity, 0)})`}
-              </span>
+              <span className="font-medium">{t('customer.viewCart')}</span>
+              <span className="font-medium">({cart.reduce((sum, item) => sum + item.quantity, 0)})</span>
             </button>
           </div>
         )}
+
+        {/* Mobile Cart Modal */}
+        <CartModal
+          isOpen={cartModalOpen}
+          onClose={() => setCartModalOpen(false)}
+          items={cart}
+          onQuantityChange={updateQuantity}
+          onRemove={removeFromCart}
+          onSubmit={submitOrder}
+          submitting={submitting}
+        />
       </div>
     </Layout>
   );

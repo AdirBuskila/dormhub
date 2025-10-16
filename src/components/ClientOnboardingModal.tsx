@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { X, User, Phone, MapPin, Store } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { filterCities, validateIsraeliPhone, formatIsraeliPhone } from '@/lib/israeli-cities';
 
 interface ClientOnboardingModalProps {
   isOpen: boolean;
@@ -22,20 +23,90 @@ export default function ClientOnboardingModal({
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({
+    phone: '',
+    city: '',
+    shop_name: ''
+  });
+  const [citySuggestions, setCitySuggestions] = useState<string[]>([]);
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false);
+  const cityInputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
   const t = useTranslations();
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        suggestionsRef.current && 
+        !suggestionsRef.current.contains(event.target as Node) &&
+        cityInputRef.current &&
+        !cityInputRef.current.contains(event.target as Node)
+      ) {
+        setShowCitySuggestions(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const validateForm = (): boolean => {
+    const errors = {
+      phone: '',
+      city: '',
+      shop_name: ''
+    };
+    let isValid = true;
+
+    // Validate phone
+    const phoneValidation = validateIsraeliPhone(formData.phone);
+    if (!phoneValidation.valid) {
+      errors.phone = phoneValidation.message || 'מספר טלפון לא תקין';
+      isValid = false;
+    }
+
+    // Validate city (non-empty)
+    if (!formData.city.trim()) {
+      errors.city = 'נא לבחור עיר';
+      isValid = false;
+    }
+
+    // Validate shop name (non-empty)
+    if (!formData.shop_name.trim()) {
+      errors.shop_name = 'נא להזין שם חנות';
+      isValid = false;
+    }
+
+    setFieldErrors(errors);
+    return isValid;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setFieldErrors({ phone: '', city: '', shop_name: '' });
+
+    // Validate form
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
 
     try {
+      // Format phone number before sending
+      const formattedData = {
+        ...formData,
+        phone: formatIsraeliPhone(formData.phone)
+      };
+
       const response = await fetch('/api/clients/upsert-self', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formattedData),
       });
 
       if (!response.ok) {
@@ -65,6 +136,38 @@ export default function ClientOnboardingModal({
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+
+    // Clear field error when user starts typing
+    if (fieldErrors[name as keyof typeof fieldErrors]) {
+      setFieldErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+
+    // Handle city autocomplete
+    if (name === 'city') {
+      if (value.trim().length > 0) {
+        const suggestions = filterCities(value);
+        setCitySuggestions(suggestions);
+        setShowCitySuggestions(suggestions.length > 0);
+      } else {
+        setCitySuggestions([]);
+        setShowCitySuggestions(false);
+      }
+    }
+  };
+
+  const selectCity = (city: string) => {
+    setFormData(prev => ({
+      ...prev,
+      city
+    }));
+    setShowCitySuggestions(false);
+    setFieldErrors(prev => ({
+      ...prev,
+      city: ''
     }));
   };
 
@@ -103,28 +206,67 @@ export default function ClientOnboardingModal({
                   value={formData.phone}
                   onChange={handleInputChange}
                   required
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className={`block w-full pl-10 pr-3 py-2 border rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 sm:text-sm ${
+                    fieldErrors.phone 
+                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                      : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                  }`}
                   placeholder="050-1234567"
                 />
               </div>
+              {fieldErrors.phone && (
+                <p className="mt-1 text-sm text-red-600">{fieldErrors.phone}</p>
+              )}
             </div>
 
-            <div>
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 {t('clientOnboarding.city')} *
               </label>
               <div className="relative">
-                <MapPin className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <MapPin className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
                 <input
+                  ref={cityInputRef}
                   type="text"
                   name="city"
                   value={formData.city}
                   onChange={handleInputChange}
+                  onFocus={() => {
+                    if (citySuggestions.length > 0) {
+                      setShowCitySuggestions(true);
+                    }
+                  }}
                   required
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  autoComplete="off"
+                  className={`block w-full pl-10 pr-3 py-2 border rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 sm:text-sm ${
+                    fieldErrors.city 
+                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                      : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                  }`}
                   placeholder="תל אביב"
                 />
+                
+                {/* City Suggestions Dropdown */}
+                {showCitySuggestions && citySuggestions.length > 0 && (
+                  <div 
+                    ref={suggestionsRef}
+                    className="absolute z-20 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm"
+                  >
+                    {citySuggestions.map((city) => (
+                      <div
+                        key={city}
+                        onClick={() => selectCity(city)}
+                        className="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-indigo-50 hover:text-indigo-900"
+                      >
+                        <span className="block truncate">{city}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
+              {fieldErrors.city && (
+                <p className="mt-1 text-sm text-red-600">{fieldErrors.city}</p>
+              )}
             </div>
 
             <div>
@@ -139,10 +281,17 @@ export default function ClientOnboardingModal({
                   value={formData.shop_name}
                   onChange={handleInputChange}
                   required
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  className={`block w-full pl-10 pr-3 py-2 border rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 sm:text-sm ${
+                    fieldErrors.shop_name 
+                      ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                      : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
+                  }`}
                   placeholder="חנות המובייל שלי"
                 />
               </div>
+              {fieldErrors.shop_name && (
+                <p className="mt-1 text-sm text-red-600">{fieldErrors.shop_name}</p>
+              )}
             </div>
 
             {error && (

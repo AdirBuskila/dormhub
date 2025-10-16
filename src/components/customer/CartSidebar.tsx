@@ -108,28 +108,16 @@ export default function CartSidebar({
 
             {/* Order Summary */}
             <div className="border-t border-gray-200 pt-4">
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">{t('common.total')} ({totalItems})</span>
-                  <span className="text-gray-900">{totalItems}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">{t('common.total')}</span>
-                  <span className="text-gray-900">$0.00</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">{t('common.total')}</span>
-                  <span className="text-gray-900">$0.00</span>
-                </div>
-                <div className="flex justify-between text-lg font-medium border-t border-gray-200 pt-2">
-                  <span>{t('common.total')}</span>
-                  <span>$0.00</span>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-base font-medium text-gray-900">{t('customer.totalItems')}:</span>
+                  <span className="text-lg font-semibold text-gray-900">{totalItems}</span>
                 </div>
               </div>
 
-              <div className="mt-4 text-xs text-gray-500">
+              <div className="mt-4 text-xs text-gray-600">
                 <p>
-                  {t('customer.finalPricing')}
+                  {t('customer.finalPricingNote')}
                 </p>
               </div>
 

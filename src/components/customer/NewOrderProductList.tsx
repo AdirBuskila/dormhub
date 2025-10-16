@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Product } from '@/types/database';
 import { Package, Plus, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useProductSearch } from '@/hooks/useProductSearch';
 
 interface CartItem {
   product: Product;
@@ -24,12 +25,34 @@ export default function NewOrderProductList({
   isAdmin = false
 }: NewOrderProductListProps) {
   const t = useTranslations();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterBrand, setFilterBrand] = useState<string>('all');
-  const [filterCategory, setFilterCategory] = useState<string>('all');
-  const [filterCondition, setFilterCondition] = useState<string>('all');
-  const [filterPromotion, setFilterPromotion] = useState<boolean | null>(null);
-  const [filterTag, setFilterTag] = useState<string>('all');
+  
+  // Use URL search params with Hebrew search support
+  const {
+    filters,
+    filteredProducts,
+    updateFilters,
+    availableBrands,
+    availableTags
+  } = useProductSearch(products);
+
+  // Local state for immediate input feedback
+  const [searchInput, setSearchInput] = useState(filters.search);
+
+  // Sync URL search params with input field
+  useEffect(() => {
+    setSearchInput(filters.search);
+  }, [filters.search]);
+
+  // Debounced search update (500ms delay for better performance)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== filters.search) {
+        updateFilters({ search: searchInput });
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchInput, filters.search, updateFilters]);
 
   // Helper function to get availability badge
   const getAvailabilityBadge = (product: Product) => {
@@ -45,35 +68,6 @@ export default function NewOrderProductList({
     }
   };
 
-  const filteredProducts = useMemo(() => {
-    return products.filter(product => {
-      const searchLower = searchTerm.toLowerCase().trim();
-      const matchesSearch = searchLower === '' || 
-                           product.brand.toLowerCase().includes(searchLower) ||
-                           product.model.toLowerCase().includes(searchLower) ||
-                           (product.tags && product.tags.some(tag => tag.toLowerCase().includes(searchLower)));
-      const matchesBrand = filterBrand === 'all' || product.brand === filterBrand;
-      const matchesCategory = filterCategory === 'all' || product.category === filterCategory;
-      const matchesCondition = filterCondition === 'all' || product.condition === filterCondition;
-      const matchesPromotion = filterPromotion === null || product.is_promotion === filterPromotion;
-      const matchesTag = filterTag === 'all' || (product.tags && product.tags.includes(filterTag));
-      const hasStock = product.total_stock > 0;
-      
-      return matchesSearch && matchesBrand && matchesCategory && matchesCondition && matchesPromotion && matchesTag && hasStock;
-    });
-  }, [products, searchTerm, filterBrand, filterCategory, filterCondition, filterPromotion, filterTag]);
-
-  const availableBrands = useMemo(() => {
-    const brands = [...new Set(products.map(p => p.brand))];
-    return brands.sort();
-  }, [products]);
-
-  const availableTags = useMemo(() => {
-    const allTags = products.flatMap(p => p.tags || []);
-    const uniqueTags = [...new Set(allTags)];
-    return uniqueTags.sort();
-  }, [products]);
-
   const getCartQuantity = (productId: string) => {
     const item = cartItems.find(item => item.product.id === productId);
     return item ? item.quantity : 0;
@@ -83,25 +77,25 @@ export default function NewOrderProductList({
     <div className="bg-white shadow rounded-lg">
       <div className="p-6">
         <h2 className="text-lg font-medium text-gray-900 mb-4">
-          {t('inventory.inventoryManagement')} ({filteredProducts.length})
+          {t('customer.createNewOrder')} ({filteredProducts.length})
         </h2>
 
         {/* Quick Filter Chips */}
         <div className="flex flex-wrap gap-2 mb-4">
           <button
-            onClick={() => setFilterPromotion(null)}
+            onClick={() => updateFilters({ promotion: null, tag: 'all' })}
             className={`px-3 py-1 rounded-full text-sm font-medium ${
-              filterPromotion === null 
+              !filters.promotion && filters.tag === 'all'
                 ? 'bg-indigo-100 text-indigo-800' 
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-{t('products.allProducts')}
+            {t('products.allProducts')}
           </button>
           <button
-            onClick={() => setFilterPromotion(true)}
+            onClick={() => updateFilters({ promotion: filters.promotion === 'true' ? null : 'true' })}
             className={`px-3 py-1 rounded-full text-sm font-medium ${
-              filterPromotion === true 
+              filters.promotion === 'true'
                 ? 'bg-red-100 text-red-800' 
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
@@ -109,9 +103,9 @@ export default function NewOrderProductList({
             {t('products.promotions')}
           </button>
           <button
-            onClick={() => setFilterTag('Runner')}
+            onClick={() => updateFilters({ tag: filters.tag === 'Runner' ? 'all' : 'Runner' })}
             className={`px-3 py-1 rounded-full text-sm font-medium ${
-              filterTag === 'Runner' 
+              filters.tag === 'Runner' 
                 ? 'bg-blue-100 text-blue-800' 
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
@@ -119,9 +113,9 @@ export default function NewOrderProductList({
             {t('products.runner')}
           </button>
           <button
-            onClick={() => setFilterTag('Best Seller')}
+            onClick={() => updateFilters({ tag: filters.tag === 'Best Seller' ? 'all' : 'Best Seller' })}
             className={`px-3 py-1 rounded-full text-sm font-medium ${
-              filterTag === 'Best Seller' 
+              filters.tag === 'Best Seller' 
                 ? 'bg-green-100 text-green-800' 
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
@@ -130,25 +124,12 @@ export default function NewOrderProductList({
           </button>
         </div>
 
-        {/* Search and Filters */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-5 mb-6">
-          <div className="sm:col-span-1">
-            <div className="relative">
-              <Search className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder={t('inventory.searchProducts')}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              />
-            </div>
-          </div>
-          
+        {/* Filter Dropdowns */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
           <div>
             <select
-              value={filterBrand}
-              onChange={(e) => setFilterBrand(e.target.value)}
+              value={filters.brand}
+              onChange={(e) => updateFilters({ brand: e.target.value })}
               className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             >
               <option value="all">{t('products.allBrands')}</option>
@@ -160,8 +141,8 @@ export default function NewOrderProductList({
 
           <div>
             <select
-              value={filterCategory}
-              onChange={(e) => setFilterCategory(e.target.value)}
+              value={filters.category}
+              onChange={(e) => updateFilters({ category: e.target.value })}
               className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             >
               <option value="all">{t('inventory.allCategories')}</option>
@@ -179,8 +160,8 @@ export default function NewOrderProductList({
 
           <div>
             <select
-              value={filterCondition}
-              onChange={(e) => setFilterCondition(e.target.value)}
+              value={filters.condition}
+              onChange={(e) => updateFilters({ condition: e.target.value })}
               className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
             >
               <option value="all">{t('inventory.allConditions')}</option>
@@ -191,18 +172,19 @@ export default function NewOrderProductList({
               <option value="open_box">{t('inventory.openBox')}</option>
             </select>
           </div>
+        </div>
 
-          <div>
-            <select
-              value={filterTag}
-              onChange={(e) => setFilterTag(e.target.value)}
-              className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            >
-              <option value="all">{t('products.allTags')}</option>
-              {availableTags.map(tag => (
-                <option key={tag} value={tag}>{tag}</option>
-              ))}
-            </select>
+        {/* Search Bar - Separate Row */}
+        <div className="mb-6">
+          <div className="relative">
+            <Search className="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder={t('inventory.searchProducts')}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            />
           </div>
         </div>
 
@@ -241,13 +223,23 @@ export default function NewOrderProductList({
 
                     {/* Product Title and Stock */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <h3 className="text-base font-semibold text-gray-900 leading-tight">
                           {product.brand} {product.model}
                         </h3>
                         {product.is_promotion && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                             {t('products.promotions')}
+                          </span>
+                        )}
+                        {product.is_runner && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {t('products.runner')}
+                          </span>
+                        )}
+                        {product.is_best_seller && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            {t('products.bestSellers')}
                           </span>
                         )}
                       </div>
@@ -331,13 +323,23 @@ export default function NewOrderProductList({
                   {/* Product Details */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="text-sm font-medium text-gray-900 truncate">
                           {product.brand} {product.model}
                         </h3>
                         {product.is_promotion && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                             {t('products.promotions')}
+                          </span>
+                        )}
+                        {product.is_runner && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {t('products.runner')}
+                          </span>
+                        )}
+                        {product.is_best_seller && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                            {t('products.bestSellers')}
                           </span>
                         )}
                       </div>

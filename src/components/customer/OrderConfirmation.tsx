@@ -190,18 +190,6 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
                           </div>
                         </div>
                       </div>
-
-                      {/* Price */}
-                      <div className="flex-shrink-0 ml-4 text-right">
-                        <div className="text-lg font-semibold text-gray-900">
-                          ${item.price * item.quantity}
-                        </div>
-                        {item.quantity > 1 && (
-                          <div className="text-sm text-gray-500">
-                            ${item.price} each
-                          </div>
-                        )}
-                      </div>
                     </div>
                   </div>
                 ))}
@@ -212,19 +200,11 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
               </div>
             )}
 
-            {/* Order Summary */}
+            {/* Order Note */}
             <div className="border-t border-gray-200 pt-4 mt-4">
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-medium text-gray-900">Total</span>
-                <span className="text-lg font-bold text-gray-900">
-                  ${order.total_price}
-                </span>
-              </div>
-              {order.total_price === 0 && (
-                <p className="text-sm text-gray-500 mt-2">
-                  Final pricing will be provided before delivery.
-                </p>
-              )}
+              <p className="text-sm text-gray-600 text-center">
+                {t('customer.finalPricingNote')}
+              </p>
             </div>
           </div>
         </div>

@@ -33,6 +33,8 @@ export interface Product {
   warranty_provider?: string;
   warranty_months: number;
   is_promotion: boolean;
+  is_runner: boolean;
+  is_best_seller: boolean;
   tags: string[];
 }
 
@@ -125,6 +127,8 @@ export interface CreateProductData {
   warranty_provider?: string;
   warranty_months: number;
   is_promotion: boolean;
+  is_runner: boolean;
+  is_best_seller: boolean;
   tags: string[];
 }
 
@@ -224,6 +228,83 @@ export interface LowStockItem {
   alert_threshold: number;
 }
 
+// Promotions
+export type PromotionStatus = 'active' | 'scheduled' | 'expired' | 'inactive';
+
+export interface Promotion {
+  id: string;
+  product_id: string;
+  title: string;
+  title_he?: string;
+  description?: string;
+  description_he?: string;
+  promo_price: number;
+  original_price?: number;
+  starts_at: string;
+  ends_at: string;
+  max_units?: number;
+  units_sold: number;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+  product?: Product;
+  // Computed fields
+  has_units_available?: boolean;
+  units_remaining?: number;
+  status?: PromotionStatus;
+}
+
+export interface CreatePromotionData {
+  product_id: string;
+  title: string;
+  title_he?: string;
+  description?: string;
+  description_he?: string;
+  promo_price: number;
+  original_price?: number;
+  starts_at: string;
+  ends_at: string;
+  max_units?: number;
+  active?: boolean;
+}
+
+// Consignments
+export type ConsignmentStatus = 'pending' | 'sold' | 'returned' | 'expired';
+
+export interface Consignment {
+  id: string;
+  product_id: string;
+  client_id?: string;
+  serial_number?: string;
+  imei?: string;
+  condition: ProductCondition;
+  consigned_date: string;
+  expected_price?: number;
+  status: ConsignmentStatus;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+  sold_date?: string;
+  sold_price?: number;
+  product?: Product;
+  client?: Client;
+  // Computed fields
+  client_name?: string;
+  client_phone?: string;
+}
+
+export interface CreateConsignmentData {
+  product_id: string;
+  client_id?: string;
+  serial_number?: string;
+  imei?: string;
+  condition: ProductCondition;
+  expected_price?: number;
+  notes?: string;
+}
+
+// Legacy interface for backwards compatibility
 export interface ConsignmentItem {
   id: string;
   client_id: string;
@@ -239,4 +320,11 @@ export interface ConsignmentItem {
 export interface SearchResult {
   products: Product[];
   clients: Client[];
+}
+
+// Hebrew search mapping
+export interface HebrewSearchMapping {
+  hebrew: string;
+  english: string;
+  aliases?: string[];
 }
