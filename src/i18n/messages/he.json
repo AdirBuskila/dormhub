@@ -1,8 +1,12 @@
 {
   "common": {
     "loading": "טוען...",
+    "redirecting": "מתחבר...",
+    "checkingProfile": "בודק פרופיל...",
     "error": "שגיאה",
     "success": "הצלחה",
+    "tryAgain": "נסה שוב",
+    "contactSupport": "אם הבעיה נמשכת, אנא פנה לתמיכה.",
     "cancel": "ביטול",
     "save": "שמור",
     "edit": "ערוך",
@@ -154,7 +158,9 @@
     "imageUrlDesc": "אופציונלי: קישור לתמונת המוצר. השאר ריק לשימוש בתמונה ברירת מחדל.",
     "minStockAlert": "התראת מלאי מינימלי",
     "noProductsFound": "לא נמצאו מוצרים",
-    "adjustSearchFilter": "נסה להתאים את החיפוש או קריטריוני הסינון שלך."
+    "adjustSearchFilter": "נסה להתאים את החיפוש או קריטריוני הסינון שלך.",
+    "noProductsYet": "אין עדיין מוצרים",
+    "getStartedByAdding": "התחל על ידי הוספת המוצר הראשון שלך למלאי."
   },
   "customer": {
     "mobileForYouStore": "חנות Mobile For You",
@@ -175,6 +181,8 @@
     "recentOrders": "הזמנות אחרונות",
     "noOrdersYet": "עדיין אין הזמנות",
     "getStartedByCreating": "התחל ביצירת ההזמנה הראשונה שלך.",
+    "browseProductsAndOrder": "עיין במוצרים שלנו ובצע את ההזמנה הראשונה שלך היום!",
+    "orderSubmitted": "ההזמנה נשלחה בהצלחה!",
     "viewDetails": "צפה בפרטים",
     "viewAllOrders": "צפה בכל ההזמנות",
     "orderDetails": "פרטי הזמנה",
@@ -243,6 +251,7 @@
     "registeredUsers": "משתמשים רשומים",
     "noUsersFound": "לא נמצאו משתמשים",
     "noUsersDesc": "עדיין לא נרשמו משתמשים.",
+    "usersWillAppearHere": "משתמשים שנרשמים יופיעו כאן באופן אוטומטי.",
     "anonymousUser": "משתמש אנונימי",
     "noEmail": "אין אימייל",
     "joined": "הצטרף",
@@ -261,6 +270,10 @@
     "reserved": "שמור",
     "delivered": "נמסר",
     "closed": "סגור",
+    "noOrdersYet": "אין עדיין הזמנות",
+    "ordersWillAppear": "הזמנות שנוצרו על ידך או על ידי הלקוחות שלך יופיעו כאן.",
+    "noMatchingOrders": "לא נמצאו הזמנות תואמות",
+    "tryAdjustingFilters": "נסה להתאים את החיפוש או קריטריוני הסינון שלך.",
     "orderStatus": {
       "draft": "טיוטה",
       "reserved": "שמור",
@@ -282,7 +295,7 @@
     "inStock": "במלאי",
     "lastFew": "נשארו אחרונים",
     "outOfStock": "אזל במלאי",
-    "promotions": "מבצעים",
+    "promotions": "מבצע",
     "bestSellers": "הנמכרים ביותר",
     "runner": "Runner",
     "allProducts": "כל המוצרים",
@@ -291,6 +304,7 @@
     "addToCart": "הוסף לעגלה",
     "noProductsFound": "לא נמצאו מוצרים",
     "tryAdjustingSearch": "נסה להתאים את החיפוש או קריטריוני הסינון שלך",
+    "clearFiltersOrSearch": "נקה את הפילטרים או נסה מונח חיפוש אחר.",
     "available": "זמין",
     "storage": "אחסון",
     "condition": "מצב",
@@ -312,7 +326,11 @@
     "city": "עיר",
     "shopName": "שם החנות",
     "saveProfile": "שמור פרופיל",
-    "profileSaved": "הפרופיל נשמר בהצלחה"
+    "profileSaved": "הפרופיל נשמר בהצלחה",
+    "invalidPhone": "מספר טלפון לא תקין. אנא הזן מספר טלפון ישראלי תקין.",
+    "pleaseSelectCity": "נא לבחור עיר מהרשימה.",
+    "pleaseEnterShopName": "נא להזין את שם החנות שלך.",
+    "errorSavingProfile": "שגיאה בשמירת הפרופיל. אנא בדוק את החיבור שלך ונסה שוב."
   },
   "consignment": {
     "consignmentTracking": "מעקב קונסיגנציה",

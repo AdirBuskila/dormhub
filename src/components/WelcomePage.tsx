@@ -6,23 +6,23 @@ import Layout from '@/components/Layout';
 export default function WelcomePage() {
   return (
     <Layout isAdmin={false}>
-      <div className="min-h-screen bg-gray-50 flex items-start justify-center pt-8">
-        <div className="text-center space-y-8">
+      <div className="min-h-screen bg-gray-50 flex items-start justify-center pt-8 px-6">
+        <div className="text-center space-y-8 w-full max-w-md">
           {/* Logo with professional animation */}
-          <div className="animate-fade-in-down">
+          <Link href="/sign-in" className="block animate-fade-in-down cursor-pointer hover:opacity-90 transition-opacity">
             <img 
               src="/logo.png" 
               alt="Mobile For You Logo" 
               className="mx-auto w-32 h-32 object-contain animate-subtle-float"
             />
-          </div>
+          </Link>
           
           {/* Guide image */}
           <Link href="/sign-in" className="block cursor-pointer hover:opacity-90 transition-opacity animate-fade-in-up">
             <img 
               src="/guide.png" 
               alt="Mobile For You Guide - Click to sign in" 
-              className="mx-auto max-w-sm h-auto rounded-lg shadow-lg hover:shadow-xl transition-shadow"
+              className="mx-auto w-full h-auto rounded-lg hover:shadow-xl transition-shadow"
             />
           </Link>
         </div>

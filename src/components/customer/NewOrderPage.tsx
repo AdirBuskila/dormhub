@@ -8,6 +8,8 @@ import { Product } from '@/types/database';
 import NewOrderProductList from './NewOrderProductList';
 import CartSidebar from './CartSidebar';
 import CartModal from './CartModal';
+import SuccessAnimation from '@/components/SuccessAnimation';
+import SkeletonLoader from '@/components/SkeletonLoader';
 import { useTranslations } from 'next-intl';
 
 export interface CartItem {
@@ -25,6 +27,7 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cartModalOpen, setCartModalOpen] = useState(false);
   const router = useRouter();
@@ -123,12 +126,14 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
 
       const { orderId } = await response.json();
       
-      // Small delay to show success state before navigation
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Close modal and navigate
+      // Show success animation
+      setShowSuccess(true);
       setCartModalOpen(false);
-      router.push(`/customer/orders/${orderId}`);
+      
+      // Navigate after success animation completes
+      setTimeout(() => {
+        router.push(`/customer/orders/${orderId}`);
+      }, 2000);
     } catch (error) {
       console.error('Failed to submit order:', error);
       const errorMessage = error instanceof Error ? error.message : t('common.error');
@@ -142,9 +147,12 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
   if (loading) {
     return (
       <Layout isAdmin={false}>
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-          <span className="ml-2">{t('common.loading')}</span>
+        <div className="space-y-6 p-4">
+          <div className="bg-white shadow rounded-lg p-6">
+            <div className="h-8 bg-gray-200 rounded w-64 mb-2 animate-pulse"></div>
+            <div className="h-4 bg-gray-200 rounded w-96 animate-pulse"></div>
+          </div>
+          <SkeletonLoader count={6} type="product" />
         </div>
       </Layout>
     );
@@ -152,22 +160,39 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
 
   return (
     <Layout isAdmin={false}>
-            <div className="space-y-6">
+      {/* Success Animation */}
+      {showSuccess && (
+        <SuccessAnimation 
+          message={t('customer.orderSubmitted')}
+          onComplete={() => setShowSuccess(false)}
+        />
+      )}
+
+      <div className="space-y-6">
               {/* Error Message */}
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="bg-red-50 border-l-4 border-red-400 rounded-lg p-4">
                   <div className="flex">
                     <div className="flex-shrink-0">
                       <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <div className="ml-3">
+                    <div className="ml-3 flex-1">
                       <h3 className="text-sm font-medium text-red-800">
                         {t('common.error')}
                       </h3>
                       <div className="mt-2 text-sm text-red-700">
                         <p>{error}</p>
+                        <p className="mt-1 text-xs text-red-600">{t('common.contactSupport')}</p>
+                      </div>
+                      <div className="mt-3">
+                        <button
+                          onClick={() => setError(null)}
+                          className="text-sm font-medium text-red-800 hover:text-red-900"
+                        >
+                          {t('common.close')}
+                        </button>
                       </div>
                     </div>
                   </div>

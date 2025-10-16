@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import ClientOnboardingModal from './ClientOnboardingModal';
 
 interface ClientRedirectProps {
@@ -15,6 +15,7 @@ export default function ClientRedirect({ redirectTo, isAdmin = false }: ClientRe
   const router = useRouter();
   const pathname = usePathname();
   const locale = useLocale();
+  const t = useTranslations();
   const { isSignedIn, isLoaded, user } = useUser();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [checkingProfile, setCheckingProfile] = useState(true);
@@ -87,10 +88,10 @@ export default function ClientRedirect({ redirectTo, isAdmin = false }: ClientRe
   }
 
   return (
-    <div className="flex items-center justify-center h-64">
+    <div className="flex items-center justify-center h-64 gap-4">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-      <span className="ml-2">
-        {checkingProfile ? 'Checking profile...' : 'Redirecting...'}
+      <span>
+        {checkingProfile ? t('common.checkingProfile') : t('common.redirecting')}
       </span>
     </div>
   );

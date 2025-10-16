@@ -1,10 +1,11 @@
 'use client';
 
 import { SignUp } from '@clerk/nextjs';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 export default function SignUpPage() {
   const t = useTranslations();
+  const locale = useLocale();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -18,8 +19,8 @@ export default function SignUpPage() {
           </p>
         </div>
         <SignUp 
-          afterSignUpUrl="/"
-          redirectUrl="/"
+          afterSignUpUrl={`/${locale}`}
+          redirectUrl={`/${locale}`}
         />
       </div>
     </div>

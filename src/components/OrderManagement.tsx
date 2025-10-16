@@ -281,8 +281,20 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
 
         {/* Orders Table */}
         <div className="bg-white shadow overflow-hidden sm:rounded-md">
-          <ul className="divide-y divide-gray-200">
-            {filteredOrders.map((order) => (
+          {/* Empty State */}
+          {filteredOrders.length === 0 ? (
+            <div className="text-center py-12 px-4">
+              <ShoppingCart className="mx-auto h-16 w-16 text-gray-400" />
+              <h3 className="mt-4 text-lg font-medium text-gray-900">
+                {orders.length === 0 ? t('noOrdersYet') : t('noMatchingOrders')}
+              </h3>
+              <p className="mt-2 text-sm text-gray-500">
+                {orders.length === 0 ? t('ordersWillAppear') : t('tryAdjustingFilters')}
+              </p>
+            </div>
+          ) : (
+            <ul className="divide-y divide-gray-200">
+              {filteredOrders.map((order) => (
               <li key={order.id}>
                 <div className="px-4 py-4 flex items-center justify-between">
                   <div className="flex items-center">
@@ -356,8 +368,9 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
                   </div>
                 </div>
               </li>
-            ))}
-          </ul>
+              ))}
+            </ul>
+          )}
         </div>
 
         {/* Create Order Modal */}

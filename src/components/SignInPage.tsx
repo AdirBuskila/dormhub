@@ -1,10 +1,11 @@
 'use client';
 
 import { SignIn } from '@clerk/nextjs';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 
 export default function SignInPage() {
   const t = useTranslations();
+  const locale = useLocale();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -18,8 +19,8 @@ export default function SignInPage() {
           </p>
         </div>
         <SignIn 
-          afterSignInUrl="/"
-          redirectUrl="/"
+          afterSignInUrl={`/${locale}`}
+          redirectUrl={`/${locale}`}
           appearance={{
             elements: {
               formButtonPrimary: 'bg-indigo-600 hover:bg-indigo-700 text-sm normal-case',

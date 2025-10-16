@@ -433,10 +433,35 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
             </div>
           )}
           
+          {/* Empty State */}
+          {filteredProducts.length === 0 && (
+            <div className="text-center py-12 px-4">
+              <Package className="mx-auto h-16 w-16 text-gray-400" />
+              <h3 className="mt-4 text-lg font-medium text-gray-900">
+                {products.length === 0 ? t('inventory.noProductsYet') : t('inventory.noProductsFound')}
+              </h3>
+              <p className="mt-2 text-sm text-gray-500">
+                {products.length === 0 ? t('inventory.getStartedByAdding') : t('inventory.adjustSearchFilter')}
+              </p>
+              {products.length === 0 && (
+                <div className="mt-6">
+                  <button
+                    onClick={() => setShowAddModal(true)}
+                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    <Plus className="h-5 w-5 mr-2" />
+                    {t('inventory.addProduct')}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Mobile Layout */}
-          <div className="block sm:hidden">
-            <div className="space-y-4 p-4">
-              {filteredProducts.map((product) => (
+          {filteredProducts.length > 0 && (
+            <div className="block sm:hidden">
+              <div className="space-y-4 p-4">
+                {filteredProducts.map((product) => (
                 <div key={product.id} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex items-start space-x-3 mb-3">
                     <input
@@ -522,13 +547,15 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                   </div>
                 </div>
               ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Desktop Layout */}
-          <div className="hidden sm:block">
-            <ul className="divide-y divide-gray-200">
-              {filteredProducts.map((product) => (
+          {filteredProducts.length > 0 && (
+            <div className="hidden sm:block">
+              <ul className="divide-y divide-gray-200">
+                {filteredProducts.map((product) => (
                 <li key={product.id}>
                   <div className="px-4 py-4 flex items-center justify-between">
                     <div className="flex items-center">
@@ -604,9 +631,10 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                     </div>
                   </div>
                 </li>
-              ))}
-            </ul>
-          </div>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
 
         {/* Add/Edit Product Modal */}

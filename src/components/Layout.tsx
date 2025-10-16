@@ -68,7 +68,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
     };
   }, [sidebarOpen]);
 
-  // Define navigation based on admin status
+  // Define navigation based on admin status and login state
   const navigation = isAdmin ? [
     { name: t('navigation.dashboard'), href: '/', icon: LayoutDashboard },
     { name: t('navigation.inventory'), href: '/inventory', icon: Package },
@@ -76,10 +76,10 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
     { name: t('navigation.orders'), href: '/orders', icon: ShoppingCart },
     { name: t('navigation.returns'), href: '/returns', icon: RotateCcw },
     { name: t('navigation.alerts'), href: '/alerts', icon: Bell },
-  ] : [
+  ] : isSignedIn ? [
     { name: t('navigation.newOrder'), href: '/customer/new-order', icon: ShoppingCart },
     { name: t('navigation.myOrders'), href: '/customer', icon: Package },
-  ];
+  ] : [];
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
@@ -127,23 +127,27 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
       {/* Main content area with sidebar */}
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop sidebar */}
-        <div className="hidden md:flex md:flex-shrink-0">
-          <div className="flex flex-col w-64">
-            <SidebarContent pathname={pathname} navigation={navigation} locale={locale} />
+        {isSignedIn && (
+          <div className="hidden md:flex md:flex-shrink-0">
+            <div className="flex flex-col w-64">
+              <SidebarContent pathname={pathname} navigation={navigation} locale={locale} />
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Main content */}
         <div className="flex flex-col w-0 flex-1 overflow-hidden">
           {/* Top navigation */}
           <div className="relative z-10 flex-shrink-0 flex h-16 bg-white shadow">
-            <button
-              type="button"
-              className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden hover:bg-gray-50 active:bg-gray-100 transition-colors"
-              onClick={() => setSidebarOpen(true)}
-            >
-              <Menu className="h-6 w-6" />
-            </button>
+            {isSignedIn && (
+              <button
+                type="button"
+                className="px-4 border-r border-gray-200 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden hover:bg-gray-50 active:bg-gray-100 transition-colors"
+                onClick={() => setSidebarOpen(true)}
+              >
+                <Menu className="h-6 w-6" />
+              </button>
+            )}
             <div className="flex-1 px-4 flex justify-between">
               <div className="flex-1 flex">
                 <div className="w-full flex md:ml-0">
@@ -158,7 +162,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
                 <LanguageSwitcher />
                 {isAdmin && <AlertsBell />}
                 {isSignedIn ? (
-                  <UserButton afterSignOutUrl="/" />
+                  <UserButton afterSignOutUrl={`/${locale}`} />
                 ) : (
                   <SignInButton mode="modal">
                     <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors">

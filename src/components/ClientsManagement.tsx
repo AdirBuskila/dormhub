@@ -182,13 +182,16 @@ export default function ClientsManagement() {
             </h3>
             
             {clerkUsers.length === 0 ? (
-              <div className="text-center py-8">
-                <Users className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">
+              <div className="text-center py-12">
+                <Users className="mx-auto h-16 w-16 text-gray-400" />
+                <h3 className="mt-4 text-lg font-medium text-gray-900">
                   {t('clients.noUsersFound')}
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-2 text-sm text-gray-500">
                   {t('clients.noUsersDesc')}
+                </p>
+                <p className="mt-2 text-xs text-gray-400">
+                  {t('clients.usersWillAppearHere')}
                 </p>
               </div>
             ) : (

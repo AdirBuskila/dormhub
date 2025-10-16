@@ -1,8 +1,12 @@
 {
   "common": {
     "loading": "Loading...",
+    "redirecting": "Redirecting...",
+    "checkingProfile": "Checking profile...",
     "error": "Error",
     "success": "Success",
+    "tryAgain": "Try Again",
+    "contactSupport": "If the problem persists, please contact support.",
     "cancel": "Cancel",
     "save": "Save",
     "edit": "Edit",
@@ -151,7 +155,9 @@
     "imageUrlDesc": "Optional: URL to product image. Leave empty to use default image.",
     "minStockAlert": "Min Stock Alert",
     "noProductsFound": "No products found",
-    "adjustSearchFilter": "Try adjusting your search or filter criteria."
+    "adjustSearchFilter": "Try adjusting your search or filter criteria.",
+    "noProductsYet": "No products yet",
+    "getStartedByAdding": "Get started by adding your first product to the inventory."
   },
   "clients": {
     "manageClients": "Manage your registered users and clients",
@@ -159,6 +165,7 @@
     "registeredUsers": "Registered Users",
     "noUsersFound": "No users found",
     "noUsersDesc": "No users have registered yet.",
+    "usersWillAppearHere": "Users who sign up will appear here automatically.",
     "anonymousUser": "Anonymous User",
     "noEmail": "No email",
     "joined": "Joined",
@@ -177,6 +184,10 @@
     "reserved": "Reserved",
     "delivered": "Delivered",
     "closed": "Closed",
+    "noOrdersYet": "No orders yet",
+    "ordersWillAppear": "Orders created by you or your customers will appear here.",
+    "noMatchingOrders": "No matching orders",
+    "tryAdjustingFilters": "Try adjusting your search or filter criteria.",
     "orderStatus": {
       "draft": "Draft",
       "reserved": "Reserved",
@@ -207,6 +218,7 @@
     "addToCart": "Add to Cart",
     "noProductsFound": "No products found",
     "tryAdjustingSearch": "Try adjusting your search or filter criteria",
+    "clearFiltersOrSearch": "Clear your filters or try a different search term.",
     "available": "Available",
     "storage": "Storage",
     "condition": "Condition",
@@ -231,6 +243,8 @@
     "recentOrders": "Recent Orders",
     "noOrdersYet": "No orders yet",
     "getStartedByCreating": "Get started by creating your first order.",
+    "browseProductsAndOrder": "Browse our products and place your first order today!",
+    "orderSubmitted": "Order Submitted Successfully!",
     "viewDetails": "View Details",
     "viewAllOrders": "View All Orders",
     "orderDetails": "Order Details",
@@ -282,7 +296,11 @@
     "city": "City",
     "shopName": "Shop Name",
     "saveProfile": "Save Profile",
-    "profileSaved": "Profile saved successfully"
+    "profileSaved": "Profile saved successfully",
+    "invalidPhone": "Invalid phone number. Please enter a valid Israeli phone number.",
+    "pleaseSelectCity": "Please select a city from the list.",
+    "pleaseEnterShopName": "Please enter your shop name.",
+    "errorSavingProfile": "Error saving profile. Please check your connection and try again."
   },
   "footer": {
     "forFurtherInfo": "For further information please contact:"

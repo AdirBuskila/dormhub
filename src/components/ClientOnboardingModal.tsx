@@ -62,19 +62,19 @@ export default function ClientOnboardingModal({
     // Validate phone
     const phoneValidation = validateIsraeliPhone(formData.phone);
     if (!phoneValidation.valid) {
-      errors.phone = phoneValidation.message || 'מספר טלפון לא תקין';
+      errors.phone = phoneValidation.message || t('clientOnboarding.invalidPhone');
       isValid = false;
     }
 
     // Validate city (non-empty)
     if (!formData.city.trim()) {
-      errors.city = 'נא לבחור עיר';
+      errors.city = t('clientOnboarding.pleaseSelectCity');
       isValid = false;
     }
 
     // Validate shop name (non-empty)
     if (!formData.shop_name.trim()) {
-      errors.shop_name = 'נא להזין שם חנות';
+      errors.shop_name = t('clientOnboarding.pleaseEnterShopName');
       isValid = false;
     }
 
@@ -125,7 +125,7 @@ export default function ClientOnboardingModal({
       onComplete();
     } catch (error) {
       console.error('Error saving profile:', error);
-      setError('שגיאה בשמירת הפרופיל. אנא נסה שוב.');
+      setError(t('clientOnboarding.errorSavingProfile'));
     } finally {
       setLoading(false);
     }
