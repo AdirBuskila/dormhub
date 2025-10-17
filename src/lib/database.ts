@@ -6,11 +6,13 @@ import {
   OrderItem, 
   Payment, 
   Return,
+  Deal,
   DashboardStats,
   CreateProductData,
   CreateClientData,
   CreateOrderData,
-  CreatePaymentData
+  CreatePaymentData,
+  CreateDealData
 } from '@/types/database';
 
 // Products
@@ -529,4 +531,171 @@ export async function createReturn(returnData: {
   
   if (error) throw error;
   return data;
+}
+
+// Deals
+export async function getDeals(activeOnly: boolean = false): Promise<Deal[]> {
+  try {
+    let query = supabase
+      .from('deals')
+      .select(`
+        *,
+        product:products(*)
+      `)
+      .order('priority', { ascending: false })
+      .order('created_at', { ascending: false });
+    
+    if (activeOnly) {
+      query = query.eq('is_active', true);
+    }
+    
+    const { data, error } = await query;
+    
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.warn('Database not available, returning empty deals array:', error);
+    return [];
+  }
+}
+
+export async function getDeal(id: string): Promise<Deal | null> {
+  try {
+    const { data, error } = await supabase
+      .from('deals')
+      .select(`
+        *,
+        product:products(*)
+      `)
+      .eq('id', id)
+      .single();
+    
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.warn('Database not available, returning null deal:', error);
+    return null;
+  }
+}
+
+export async function getDealsByProduct(productId: string): Promise<Deal[]> {
+  try {
+    const { data, error } = await supabase
+      .from('deals')
+      .select(`
+        *,
+        product:products(*)
+      `)
+      .eq('product_id', productId)
+      .eq('is_active', true)
+      .order('priority', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.warn('Database not available, returning empty deals array:', error);
+    return [];
+  }
+}
+
+export async function createDeal(dealData: CreateDealData): Promise<Deal> {
+  try {
+    const { data, error } = await supabase
+      .from('deals')
+      .insert({
+        title: dealData.title,
+        description: dealData.description || null,
+        product_id: dealData.product_id,
+        priority: dealData.priority || 0,
+        tier_1_qty: dealData.tier_1_qty || 1,
+        tier_1_price: dealData.tier_1_price,
+        tier_2_qty: dealData.tier_2_qty || null,
+        tier_2_price: dealData.tier_2_price || null,
+        tier_3_qty: dealData.tier_3_qty || null,
+        tier_3_price: dealData.tier_3_price || null,
+        expiration_type: dealData.expiration_type || 'none',
+        expires_at: dealData.expires_at || null,
+        max_quantity: dealData.max_quantity || null,
+        sold_quantity: 0,
+        payment_methods: dealData.payment_methods || ['cash'],
+        payment_surcharge_check_month: dealData.payment_surcharge_check_month || 0,
+        payment_surcharge_check_week: dealData.payment_surcharge_check_week || 0,
+        payment_notes: dealData.payment_notes || null,
+        allowed_colors: dealData.allowed_colors || null,
+        required_importer: dealData.required_importer || null,
+        is_esim: dealData.is_esim || null,
+        additional_specs: dealData.additional_specs || null,
+        notes: dealData.notes || null,
+        internal_notes: dealData.internal_notes || null,
+        is_active: true,
+      })
+      .select(`
+        *,
+        product:products(*)
+      `)
+      .single();
+    
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Failed to create deal:', error);
+    throw error;
+  }
+}
+
+export async function updateDeal(id: string, updates: Partial<CreateDealData> & { is_active?: boolean; sold_quantity?: number }): Promise<Deal> {
+  try {
+    const { data, error } = await supabase
+      .from('deals')
+      .update(updates)
+      .eq('id', id)
+      .select(`
+        *,
+        product:products(*)
+      `)
+      .single();
+    
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Failed to update deal:', error);
+    throw error;
+  }
+}
+
+export async function deleteDeal(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('deals')
+    .delete()
+    .eq('id', id);
+  
+  if (error) throw error;
+}
+
+export async function incrementDealSoldQuantity(id: string, quantity: number = 1): Promise<Deal> {
+  try {
+    // Get current deal
+    const deal = await getDeal(id);
+    if (!deal) {
+      throw new Error('Deal not found');
+    }
+    
+    // Increment sold quantity
+    const newSoldQuantity = deal.sold_quantity + quantity;
+    
+    // Check if deal should be deactivated
+    let shouldDeactivate = false;
+    if (deal.max_quantity && newSoldQuantity >= deal.max_quantity) {
+      shouldDeactivate = true;
+    }
+    
+    // Update deal
+    return await updateDeal(id, {
+      sold_quantity: newSoldQuantity,
+      is_active: shouldDeactivate ? false : deal.is_active,
+    });
+  } catch (error) {
+    console.error('Failed to increment deal sold quantity:', error);
+    throw error;
+  }
 }

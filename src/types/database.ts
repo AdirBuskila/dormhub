@@ -228,47 +228,6 @@ export interface LowStockItem {
   alert_threshold: number;
 }
 
-// Promotions
-export type PromotionStatus = 'active' | 'scheduled' | 'expired' | 'inactive';
-
-export interface Promotion {
-  id: string;
-  product_id: string;
-  title: string;
-  title_he?: string;
-  description?: string;
-  description_he?: string;
-  promo_price: number;
-  original_price?: number;
-  starts_at: string;
-  ends_at: string;
-  max_units?: number;
-  units_sold: number;
-  active: boolean;
-  created_at: string;
-  updated_at: string;
-  created_by?: string;
-  product?: Product;
-  // Computed fields
-  has_units_available?: boolean;
-  units_remaining?: number;
-  status?: PromotionStatus;
-}
-
-export interface CreatePromotionData {
-  product_id: string;
-  title: string;
-  title_he?: string;
-  description?: string;
-  description_he?: string;
-  promo_price: number;
-  original_price?: number;
-  starts_at: string;
-  ends_at: string;
-  max_units?: number;
-  active?: boolean;
-}
-
 // Consignments
 export type ConsignmentStatus = 'pending' | 'sold' | 'returned' | 'expired';
 
@@ -327,4 +286,67 @@ export interface HebrewSearchMapping {
   hebrew: string;
   english: string;
   aliases?: string[];
+}
+
+// Deals
+export type ExpirationType = 'date' | 'quantity' | 'both' | 'none';
+export type DealPaymentMethod = 'cash' | 'bank_transfer' | 'check_week' | 'check_month';
+
+export interface Deal {
+  id: string;
+  title: string;
+  description: string | null;
+  product_id: string;
+  is_active: boolean;
+  priority: number;
+  tier_1_qty: number;
+  tier_1_price: number;
+  tier_2_qty: number | null;
+  tier_2_price: number | null;
+  tier_3_qty: number | null;
+  tier_3_price: number | null;
+  expiration_type: ExpirationType;
+  expires_at: string | null;
+  max_quantity: number | null;
+  sold_quantity: number;
+  payment_methods: DealPaymentMethod[];
+  payment_surcharge_check_month: number;
+  payment_surcharge_check_week: number;
+  payment_notes: string | null;
+  allowed_colors: string[] | null;
+  required_importer: 'official' | 'parallel' | null;
+  is_esim: boolean | null;
+  additional_specs: Record<string, any> | null;
+  notes: string | null;
+  internal_notes: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+  product?: Product;
+}
+
+export interface CreateDealData {
+  title: string;
+  description?: string;
+  product_id: string;
+  priority?: number;
+  tier_1_qty: number;
+  tier_1_price: number;
+  tier_2_qty?: number;
+  tier_2_price?: number;
+  tier_3_qty?: number;
+  tier_3_price?: number;
+  expiration_type: ExpirationType;
+  expires_at?: string;
+  max_quantity?: number;
+  payment_methods: DealPaymentMethod[];
+  payment_surcharge_check_month?: number;
+  payment_surcharge_check_week?: number;
+  payment_notes?: string;
+  allowed_colors?: string[];
+  required_importer?: 'official' | 'parallel';
+  is_esim?: boolean;
+  additional_specs?: Record<string, any>;
+  notes?: string;
+  internal_notes?: string;
 }

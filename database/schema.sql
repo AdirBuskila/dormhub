@@ -141,31 +141,6 @@ CREATE TABLE public.returns (
   CONSTRAINT returns_client_id_fkey FOREIGN KEY (client_id) REFERENCES public.clients(id)
 );
 
--- Promotions table
-CREATE TABLE public.promotions (
-  id uuid NOT NULL DEFAULT uuid_generate_v4(),
-  product_id uuid NOT NULL,
-  title text NOT NULL,
-  title_he text,
-  description text,
-  description_he text,
-  promo_price numeric NOT NULL,
-  original_price numeric,
-  starts_at timestamp with time zone NOT NULL,
-  ends_at timestamp with time zone NOT NULL,
-  max_units integer,
-  units_sold integer DEFAULT 0,
-  active boolean DEFAULT true,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  created_by text,
-  CONSTRAINT promotions_pkey PRIMARY KEY (id),
-  CONSTRAINT promotions_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE,
-  CONSTRAINT promotions_dates_check CHECK (ends_at > starts_at),
-  CONSTRAINT promotions_price_check CHECK (promo_price > 0),
-  CONSTRAINT promotions_units_check CHECK (units_sold >= 0 AND (max_units IS NULL OR units_sold <= max_units))
-);
-
 -- Consignments table
 CREATE TABLE public.consignments (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -188,6 +163,41 @@ CREATE TABLE public.consignments (
   CONSTRAINT consignments_price_check CHECK (expected_price >= 0 AND (sold_price IS NULL OR sold_price >= 0))
 );
 
+-- Deals table (Special offers with tiered pricing)
+CREATE TABLE public.deals (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  title character varying(255) NOT NULL,
+  description text,
+  product_id uuid NOT NULL,
+  is_active boolean DEFAULT true,
+  priority integer DEFAULT 0,
+  tier_1_qty integer NOT NULL DEFAULT 1,
+  tier_1_price numeric(10,2) NOT NULL,
+  tier_2_qty integer,
+  tier_2_price numeric(10,2),
+  tier_3_qty integer,
+  tier_3_price numeric(10,2),
+  expiration_type character varying(20) CHECK (expiration_type IN ('date', 'quantity', 'both', 'none')),
+  expires_at timestamp with time zone,
+  max_quantity integer,
+  sold_quantity integer DEFAULT 0,
+  payment_methods text[],
+  payment_surcharge_check_month numeric(10,2) DEFAULT 0,
+  payment_surcharge_check_week numeric(10,2) DEFAULT 0,
+  payment_notes text,
+  allowed_colors text[],
+  required_importer character varying(20),
+  is_esim boolean,
+  additional_specs jsonb,
+  notes text,
+  internal_notes text,
+  created_by character varying(255),
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT deals_pkey PRIMARY KEY (id),
+  CONSTRAINT deals_product_id_fkey FOREIGN KEY (product_id) REFERENCES public.products(id) ON DELETE CASCADE
+);
+
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_products_brand_model ON public.products USING btree (brand, model);
 CREATE INDEX IF NOT EXISTS idx_products_category ON public.products USING btree (category);
@@ -206,15 +216,15 @@ CREATE INDEX IF NOT EXISTS idx_payments_order_id ON public.payments USING btree 
 CREATE INDEX IF NOT EXISTS idx_payments_date ON public.payments USING btree (date);
 CREATE INDEX IF NOT EXISTS idx_returns_product_id ON public.returns USING btree (product_id);
 CREATE INDEX IF NOT EXISTS idx_returns_client_id ON public.returns USING btree (client_id);
-CREATE INDEX IF NOT EXISTS idx_promotions_product_id ON public.promotions USING btree (product_id);
-CREATE INDEX IF NOT EXISTS idx_promotions_active ON public.promotions USING btree (active) WHERE active = true;
-CREATE INDEX IF NOT EXISTS idx_promotions_dates ON public.promotions USING btree (starts_at, ends_at);
-CREATE INDEX IF NOT EXISTS idx_promotions_active_dates ON public.promotions USING btree (active, starts_at, ends_at) WHERE active = true;
 CREATE INDEX IF NOT EXISTS idx_consignments_product_id ON public.consignments USING btree (product_id);
 CREATE INDEX IF NOT EXISTS idx_consignments_client_id ON public.consignments USING btree (client_id);
 CREATE INDEX IF NOT EXISTS idx_consignments_status ON public.consignments USING btree (status);
 CREATE INDEX IF NOT EXISTS idx_consignments_serial ON public.consignments USING btree (serial_number) WHERE serial_number IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_consignments_imei ON public.consignments USING btree (imei) WHERE imei IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_deals_active ON public.deals USING btree (is_active) WHERE is_active = true;
+CREATE INDEX IF NOT EXISTS idx_deals_product ON public.deals USING btree (product_id);
+CREATE INDEX IF NOT EXISTS idx_deals_expires ON public.deals USING btree (expires_at) WHERE expires_at IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_deals_priority ON public.deals USING btree (priority DESC);
 
 -- Create updated_at trigger function
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -238,12 +248,12 @@ CREATE TRIGGER update_updated_at_on_orders
     BEFORE UPDATE ON public.orders 
     FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
-CREATE TRIGGER update_updated_at_on_promotions 
-    BEFORE UPDATE ON public.promotions 
-    FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
-
 CREATE TRIGGER update_updated_at_on_consignments 
     BEFORE UPDATE ON public.consignments 
+    FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+
+CREATE TRIGGER update_updated_at_on_deals 
+    BEFORE UPDATE ON public.deals 
     FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 
 -- Row Level Security (RLS) policies
@@ -255,8 +265,8 @@ ALTER TABLE public.payments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.returns ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.alerts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.outbound_messages ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.promotions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.consignments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.deals ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for development (allow all operations)
 CREATE POLICY "Allow all operations for authenticated users" ON public.products
@@ -283,8 +293,8 @@ CREATE POLICY "Allow all operations for authenticated users" ON public.alerts
 CREATE POLICY "Allow all operations for authenticated users" ON public.outbound_messages
     FOR ALL USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Allow all operations for authenticated users" ON public.promotions
+CREATE POLICY "Allow all operations for authenticated users" ON public.consignments
     FOR ALL USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Allow all operations for authenticated users" ON public.consignments
+CREATE POLICY "Allow all operations for authenticated users" ON public.deals
     FOR ALL USING (auth.role() = 'authenticated');

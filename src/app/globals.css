@@ -56,3 +56,72 @@ button:active:not(:disabled) {
   transform: translateY(-2px);
   transition: transform 0.2s ease-in-out;
 }
+
+/* Deal card animations */
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes gradient-shift-hot {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes gradient-shift-cool {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes gradient-shift-mint {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+.animate-bounce-subtle {
+  animation: bounce-subtle 2s ease-in-out infinite;
+}
+
+.border-gradient-hot {
+  background-size: 200% 200%;
+  animation: gradient-shift-hot 3s ease infinite;
+}
+
+.border-gradient-cool {
+  background-size: 200% 200%;
+  animation: gradient-shift-cool 4s ease infinite;
+}
+
+.border-gradient-mint {
+  background-size: 200% 200%;
+  animation: gradient-shift-mint 5s ease infinite;
+}

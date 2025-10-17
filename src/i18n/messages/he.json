@@ -48,6 +48,7 @@
   "navigation": {
     "dashboard": "לוח בקרה",
     "inventory": "מלאי",
+    "deals": "מבצעים",
     "clients": "לקוחות",
     "orders": "הזמנות",
     "payments": "תשלומים",
@@ -122,6 +123,35 @@
     "cost": "עלות",
     "profit": "רווח",
     "profitPercentage": "אחוז רווח"
+  },
+  "deals": {
+    "title": "מבצעים והצעות מיוחדות",
+    "subtitle": "נהל מבצעים עם תמחור מדורג ותפוגה",
+    "createNew": "צור מבצע חדש",
+    "edit": "ערוך מבצע",
+    "empty": "אין מבצעים פעילים כרגע",
+    "product": "מוצר",
+    "description": "תיאור",
+    "priority": "עדיפות",
+    "pricingTiers": "תמחור מדורג",
+    "expiration": "תפוגה",
+    "paymentMethods": "אמצעי תשלום",
+    "notes": "הערות",
+    "hotDeal": "מבצע לוהט!",
+    "onlyLeft": "נותרו {count} בלבד!",
+    "tieredPricing": "תמחור מדורג",
+    "expired": "פג תוקף",
+    "left": "נותרו",
+    "noExpiration": "ללא תפוגה",
+    "grabDeal": "תפוס מבצע!",
+    "showDeals": "הצג מבצעים",
+    "activeDeals": "מבצעים פעילים",
+    "payment": {
+      "cash": "מזומן",
+      "bank_transfer": "העברה בנקאית",
+      "check_week": "צ'ק שבוע",
+      "check_month": "צ'ק עד חודש"
+    }
   },
   "alerts": {
     "alertsManagement": "ניהול התראות",

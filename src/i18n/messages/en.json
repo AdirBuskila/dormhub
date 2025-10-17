@@ -48,6 +48,7 @@
   "navigation": {
     "dashboard": "Dashboard",
     "inventory": "Inventory",
+    "deals": "Deals",
     "clients": "Clients",
     "orders": "Orders",
     "payments": "Payments",
@@ -122,6 +123,35 @@
     "cost": "Cost",
     "profit": "Profit",
     "profitPercentage": "Profit %"
+  },
+  "deals": {
+    "title": "Deals & Special Offers",
+    "subtitle": "Manage deals with tiered pricing and expiration",
+    "createNew": "Create New Deal",
+    "edit": "Edit Deal",
+    "empty": "No active deals at the moment",
+    "product": "Product",
+    "description": "Description",
+    "priority": "Priority",
+    "pricingTiers": "Pricing Tiers",
+    "expiration": "Expiration",
+    "paymentMethods": "Payment Methods",
+    "notes": "Notes",
+    "hotDeal": "Hot Deal!",
+    "onlyLeft": "Only {count} left!",
+    "tieredPricing": "Tiered Pricing",
+    "expired": "Expired",
+    "left": "left",
+    "noExpiration": "No Expiration",
+    "grabDeal": "Grab Deal!",
+    "showDeals": "Show Deals",
+    "activeDeals": "Active Deals",
+    "payment": {
+      "cash": "Cash",
+      "bank_transfer": "Bank Transfer",
+      "check_week": "Check (Week)",
+      "check_month": "Check (Month)"
+    }
   },
   "alerts": {
     "alertsManagement": "Alerts Management",

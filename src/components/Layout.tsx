@@ -22,7 +22,8 @@ import {
   Smartphone,
   Tablet,
   Headphones,
-  Wrench
+  Wrench,
+  Flame
 } from 'lucide-react';
 import AlertsBell from './AlertsBell';
 import Footer from './Footer';
@@ -72,6 +73,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
   const navigation = isAdmin ? [
     { name: t('navigation.dashboard'), href: '/', icon: LayoutDashboard },
     { name: t('navigation.inventory'), href: '/inventory', icon: Package },
+    { name: t('navigation.deals'), href: '/deals', icon: Flame },
     { name: t('navigation.clients'), href: '/clients', icon: Users },
     { name: t('navigation.orders'), href: '/orders', icon: ShoppingCart },
     { name: t('navigation.returns'), href: '/returns', icon: RotateCcw },
