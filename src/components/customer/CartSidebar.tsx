@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { CartItem } from './NewOrderPage';
 import { Package, Minus, Plus, Trash2, ShoppingCart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -52,15 +53,17 @@ export default function CartSidebar({
                   {/* Product Image */}
                   <div className="flex-shrink-0">
                     {item.product.image_url ? (
-                      <img
-                        src={item.product.image_url}
-                        alt={`${item.product.brand} ${item.product.model}`}
-                        className="h-12 w-12 rounded-lg object-cover border border-gray-200"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
-                        }}
-                      />
+                      <div className="relative h-12 w-12 rounded-lg overflow-hidden border border-gray-200">
+                        <Image
+                          src={item.product.image_url}
+                          alt={`${item.product.brand} ${item.product.model}`}
+                          fill
+                          sizes="48px"
+                          className="object-cover"
+                          placeholder="blur"
+                          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UwZTBlMCIvPjwvc3ZnPg=="
+                        />
+                      </div>
                     ) : null}
                     <div 
                       className={`h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center ${item.product.image_url ? 'hidden' : 'flex'}`}
@@ -129,12 +132,12 @@ export default function CartSidebar({
               >
                 {submitting ? (
                   <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white me-2"></div>
                     {t('common.loading')}
                   </>
                 ) : (
                   <>
-                    <ShoppingCart className="h-4 w-4 mr-2" />
+                    <ShoppingCart className="h-4 w-4 me-2" />
                     {t('customer.proceedToCheckout')}
                   </>
                 )}

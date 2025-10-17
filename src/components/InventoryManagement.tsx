@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import Layout from './Layout';
 import { Product, CreateProductData, ProductCondition, ProductCategory, ImporterType } from '@/types/database';
 import { getProducts, createProduct, updateProduct, deleteProduct } from '@/lib/database';
 import { formatCurrency, getConditionColor } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
+import { useProductSearch } from '@/hooks/useProductSearch';
 import {
   Plus,
   Search,
@@ -25,15 +27,24 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
   const t = useTranslations();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterCategory, setFilterCategory] = useState<string>('all');
-  const [filterBrand, setFilterBrand] = useState<string>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [showBulkStockModal, setShowBulkStockModal] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [bulkStockAction, setBulkStockAction] = useState<'add' | 'subtract' | 'set'>('add');
   const [bulkStockValue, setBulkStockValue] = useState(0);
+  
+  // Use the same Hebrew-enabled search hook as customer portal
+  const {
+    searchQuery,
+    setSearch,
+    filters,
+    filteredProducts,
+    updateFilters,
+    availableBrands,
+    availableCategories
+  } = useProductSearch(products);
+
   const [formData, setFormData] = useState<CreateProductData>({
     brand: '',
     model: '',
@@ -50,6 +61,8 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
     warranty_provider: '',
     warranty_months: 0,
     is_promotion: false,
+    is_runner: false,
+    is_best_seller: false,
     tags: []
   });
 
@@ -89,6 +102,8 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
         warranty_provider: '',
         warranty_months: 0,
         is_promotion: false,
+        is_runner: false,
+        is_best_seller: false,
         tags: []
       });
       loadProducts();
@@ -119,6 +134,8 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
         warranty_provider: '',
         warranty_months: 0,
         is_promotion: false,
+        is_runner: false,
+        is_best_seller: false,
         tags: []
       });
       loadProducts();
@@ -180,11 +197,10 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
   };
 
   const handleSelectAll = () => {
-    const filtered = getFilteredProducts();
-    if (selectedProducts.length === filtered.length) {
+    if (selectedProducts.length === filteredProducts.length) {
       setSelectedProducts([]);
     } else {
-      setSelectedProducts(filtered.map(p => p.id));
+      setSelectedProducts(filteredProducts.map(p => p.id));
     }
   };
 
@@ -206,6 +222,8 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
       warranty_provider: product.warranty_provider || '',
       warranty_months: product.warranty_months || 0,
       is_promotion: product.is_promotion || false,
+      is_runner: product.is_runner || false,
+      is_best_seller: product.is_best_seller || false,
       tags: product.tags || []
     });
   }
@@ -220,35 +238,20 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
       condition: 'new',
       category: 'iphone',
       stock: 0,
-      min_stock_alert: 5
+      min_stock_alert: 5,
+      image_url: '',
+      purchase_price: 0,
+      sale_price_default: 0,
+      alert_threshold: 10,
+      importer: 'official',
+      warranty_provider: '',
+      warranty_months: 0,
+      is_promotion: false,
+      is_runner: false,
+      is_best_seller: false,
+      tags: []
     });
   }
-
-  function getFilteredProducts() {
-    return products.filter(product => {
-      const searchLower = searchTerm.toLowerCase().trim();
-      const brandLower = product.brand.toLowerCase();
-      const modelLower = product.model.toLowerCase();
-      
-      const matchesSearch = searchLower === '' || 
-                           brandLower.includes(searchLower) ||
-                           modelLower.includes(searchLower);
-      
-      const matchesCategory = filterCategory === 'all' || product.category === filterCategory;
-      
-      const brandFilterLower = filterBrand.toLowerCase().trim();
-      const matchesBrand = filterBrand === 'all' || 
-                          brandLower === brandFilterLower ||
-                          brandLower.includes(brandFilterLower);
-      
-      return matchesSearch && matchesCategory && matchesBrand;
-    });
-  }
-
-  const filteredProducts = getFilteredProducts();
-
-  // Get unique brands for the brand filter
-  const uniqueBrands = Array.from(new Set(products.map(p => p.brand))).sort();
 
   const lowStockProducts = products.filter(product => product.total_stock <= product.min_stock_alert);
 
@@ -362,7 +365,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Filters - Now with Hebrew Search Support! */}
         <div className="bg-white shadow rounded-lg p-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 sm:space-x-4">
             <div className="flex-1">
@@ -373,8 +376,8 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                 <input
                   type="text"
                   placeholder={t('inventory.searchProducts')}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchQuery}
+                  onChange={(e) => setSearch(e.target.value)}
                   className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
@@ -383,8 +386,8 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
               <div className="flex items-center">
                 <Filter className="h-5 w-5 text-gray-400 mr-2" />
                 <select
-                  value={filterCategory}
-                  onChange={(e) => setFilterCategory(e.target.value)}
+                  value={filters.category}
+                  onChange={(e) => updateFilters({ category: e.target.value })}
                   className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                 >
                   <option value="all">All Categories</option>
@@ -401,12 +404,12 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
               </div>
               <div className="flex items-center">
                 <select
-                  value={filterBrand}
-                  onChange={(e) => setFilterBrand(e.target.value)}
+                  value={filters.brand}
+                  onChange={(e) => updateFilters({ brand: e.target.value })}
                   className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                 >
                   <option value="all">All Brands</option>
-                  {uniqueBrands.map(brand => (
+                  {availableBrands.map(brand => (
                     <option key={brand} value={brand}>{brand}</option>
                   ))}
                 </select>
@@ -474,15 +477,17 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                     {/* Product Image */}
                     <div className="flex-shrink-0">
                       {product.image_url ? (
-                        <img
-                          src={product.image_url}
-                          alt={`${product.brand} ${product.model}`}
-                          className="h-16 w-16 rounded-lg object-cover border border-gray-200"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
-                          }}
-                        />
+                        <div className="relative h-16 w-16 rounded-lg overflow-hidden border border-gray-200">
+                          <Image
+                            src={product.image_url}
+                            alt={`${product.brand} ${product.model}`}
+                            fill
+                            sizes="64px"
+                            className="object-cover"
+                            placeholder="blur"
+                            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UwZTBlMCIvPjwvc3ZnPg=="
+                          />
+                        </div>
                       ) : null}
                       <div 
                         className={`h-16 w-16 rounded-lg bg-gray-200 flex items-center justify-center ${product.image_url ? 'hidden' : 'flex'}`}
@@ -496,13 +501,28 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                       <h3 className="text-base font-semibold text-gray-900 leading-tight mb-1">
                         {product.brand} {product.model}
                       </h3>
-                      <div className="flex items-center space-x-2 mb-2">
+                      <div className="flex flex-wrap gap-1.5 mb-2">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${getConditionColor(product.condition)}`}>
                           {product.condition}
                         </span>
+                        {product.is_promotion && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+                            🔥 {t('products.promotions')}
+                          </span>
+                        )}
+                        {product.is_runner && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
+                            ⚡ {t('products.runner')}
+                          </span>
+                        )}
+                        {product.is_best_seller && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                            ⭐ {t('products.bestSellers')}
+                          </span>
+                        )}
                         {product.total_stock <= product.min_stock_alert && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                            Low Stock
+                            {t('inventory.lowStock')}
                           </span>
                         )}
                       </div>
@@ -567,16 +587,17 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                       />
                       <div className="flex-shrink-0 h-12 w-12">
                         {product.image_url ? (
-                          <img
-                            src={product.image_url}
-                            alt={`${product.brand} ${product.model}`}
-                            className="h-12 w-12 rounded-lg object-cover border border-gray-200"
-                            onError={(e) => {
-                              // Fallback to icon if image fails to load
-                              e.currentTarget.style.display = 'none';
-                              (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
-                            }}
-                          />
+                          <div className="relative h-12 w-12 rounded-lg overflow-hidden border border-gray-200">
+                            <Image
+                              src={product.image_url}
+                              alt={`${product.brand} ${product.model}`}
+                              fill
+                              sizes="48px"
+                              className="object-cover"
+                              placeholder="blur"
+                              blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UwZTBlMCIvPjwvc3ZnPg=="
+                            />
+                          </div>
                         ) : null}
                         <div 
                           className={`h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center ${product.image_url ? 'hidden' : 'flex'}`}
@@ -584,22 +605,37 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                           <Package className="h-6 w-6 text-gray-500" />
                         </div>
                       </div>
-                      <div className="ml-4">
-                        <div className="flex items-center">
+                      <div className="ml-4 flex-1">
+                        <div className="flex items-center flex-wrap gap-2">
                           <p className="text-sm font-medium text-gray-900">
                             {product.brand} {product.model}
                           </p>
-                          <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getConditionColor(product.condition)}`}>
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getConditionColor(product.condition)}`}>
                             {product.condition}
                           </span>
+                          {product.is_promotion && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+                              🔥 {t('products.promotions')}
+                            </span>
+                          )}
+                          {product.is_runner && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
+                              ⚡ {t('products.runner')}
+                            </span>
+                          )}
+                          {product.is_best_seller && (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                              ⭐ {t('products.bestSellers')}
+                            </span>
+                          )}
                         </div>
-                        <div className="flex items-center mt-1">
+                        <div className="flex items-center mt-1 flex-wrap gap-2">
                           <p className="text-sm text-gray-500">
                             {product.storage} • {product.category}
                           </p>
                           {product.total_stock <= product.min_stock_alert && (
-                            <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                              Low Stock
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                              {t('inventory.lowStock')}
                             </span>
                           )}
                         </div>
@@ -640,7 +676,7 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
         {/* Add/Edit Product Modal */}
         {(showAddModal || editingProduct) && (
           <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="relative top-4 sm:top-20 mx-auto p-4 sm:p-5 border w-full sm:w-96 max-w-md shadow-lg rounded-md bg-white">
               <div className="mt-3">
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
                   {editingProduct ? 'Edit Product' : 'Add New Product'}
@@ -823,17 +859,51 @@ export default function InventoryManagement({ isAdmin = true }: InventoryManagem
                     </p>
                   </div>
                   
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id="is_promotion"
-                      checked={formData.is_promotion}
-                      onChange={(e) => setFormData({ ...formData, is_promotion: e.target.checked })}
-                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                    />
-                    <label htmlFor="is_promotion" className="ml-2 block text-sm text-gray-900">
-                      {t('products.isPromotion')}
+                  {/* Product Flags */}
+                  <div className="border-t border-gray-200 pt-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-3">
+                      Product Flags
                     </label>
+                    <div className="space-y-3">
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="is_promotion"
+                          checked={formData.is_promotion}
+                          onChange={(e) => setFormData({ ...formData, is_promotion: e.target.checked })}
+                          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="is_promotion" className="ms-3 block text-sm text-gray-900">
+                          🔥 {t('products.isPromotion')} <span className="text-gray-500">(On Sale)</span>
+                        </label>
+                      </div>
+                      
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="is_runner"
+                          checked={formData.is_runner}
+                          onChange={(e) => setFormData({ ...formData, is_runner: e.target.checked })}
+                          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="is_runner" className="ms-3 block text-sm text-gray-900">
+                          ⚡ {t('products.runner')} <span className="text-gray-500">(Fast-moving item)</span>
+                        </label>
+                      </div>
+                      
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id="is_best_seller"
+                          checked={formData.is_best_seller}
+                          onChange={(e) => setFormData({ ...formData, is_best_seller: e.target.checked })}
+                          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                        />
+                        <label htmlFor="is_best_seller" className="ms-3 block text-sm text-gray-900">
+                          ⭐ {t('products.bestSellers')} <span className="text-gray-500">(Top selling product)</span>
+                        </label>
+                      </div>
+                    </div>
                   </div>
                   <div className="flex justify-end space-x-3 pt-4">
                     <button

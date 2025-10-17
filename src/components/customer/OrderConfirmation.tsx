@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import Layout from '@/components/Layout';
 import { Package, CheckCircle, Clock, ArrowLeft } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
@@ -62,11 +63,11 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'delivered':
-        return <CheckCircle className="h-5 w-5 text-green-600" />;
+        return <CheckCircle className="h-5 w-5 text-green-600 me-2" />;
       case 'reserved':
-        return <Clock className="h-5 w-5 text-yellow-600" />;
+        return <Clock className="h-5 w-5 text-yellow-600 me-2" />;
       default:
-        return <Package className="h-5 w-5 text-gray-600" />;
+        return <Package className="h-5 w-5 text-gray-600 me-2" />;
     }
   };
 
@@ -105,7 +106,7 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center">
               {getStatusIcon(order.status)}
               <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
                 {t(`orders.orderStatus.${order.status}`)}
@@ -120,7 +121,7 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
             <div className="flex-shrink-0">
               {getStatusIcon(order.status)}
             </div>
-            <div className="ml-3">
+            <div className="ml-4">
               <h3 className="text-sm font-medium text-gray-900">
                 {getStatusMessage(order.status)}
               </h3>
@@ -147,11 +148,17 @@ export default function OrderConfirmation({ order }: OrderConfirmationProps) {
                         <div className="flex items-center space-x-3 mb-3">
                           <div className="flex-shrink-0">
                             {(item.product as any)?.image_url ? (
-                              <img
-                                src={(item.product as any).image_url}
-                                alt={`${item.product.brand} ${item.product.model}`}
-                                className="w-12 h-12 rounded-lg object-cover"
-                              />
+                              <div className="relative w-12 h-12 rounded-lg overflow-hidden">
+                                <Image
+                                  src={(item.product as any).image_url}
+                                  alt={`${item.product.brand} ${item.product.model}`}
+                                  fill
+                                  sizes="48px"
+                                  className="object-cover"
+                                  placeholder="blur"
+                                  blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UwZTBlMCIvPjwvc3ZnPg=="
+                                />
+                              </div>
                             ) : (
                               <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
                                 <Package className="h-6 w-6 text-indigo-600" />

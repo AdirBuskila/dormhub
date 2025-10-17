@@ -56,7 +56,7 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
               href="/customer/new-order"
               className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              <ShoppingCart className='h-4 w-4 mr-2' />
+              <ShoppingCart className="h-4 w-4 me-2" />
               {t('navigation.newOrder')}
             </Link>
           </div>
@@ -66,11 +66,11 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-5">
-              <div className="flex items-center">
+              <div className="flex items-center gap-4">
                 <div className="flex-shrink-0">
                   <Package className="h-6 w-6 text-gray-400" />
                 </div>
-                <div className="ml-5 w-0 flex-1">
+                <div className="flex-1">
                   <dl>
                     <dt className="text-sm font-medium text-gray-500 truncate">
                       {t('customer.totalOrders')}
@@ -86,11 +86,11 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
 
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-5">
-              <div className="flex items-center">
+              <div className="flex items-center gap-4">
                 <div className="flex-shrink-0">
                   <Clock className="h-6 w-6 text-yellow-400" />
                 </div>
-                <div className="ml-5 w-0 flex-1">
+                <div className="flex-1">
                   <dl>
                     <dt className="text-sm font-medium text-gray-500 truncate">
                       {t('customer.outstandingOrders')}
@@ -106,11 +106,11 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
 
           <div className="bg-white overflow-hidden shadow rounded-lg">
             <div className="p-5">
-              <div className="flex items-center">
+              <div className="flex items-center gap-4">
                 <div className="flex-shrink-0">
                   <CheckCircle className="h-6 w-6 text-green-400" />
                 </div>
-                <div className="ml-5 w-0 flex-1">
+                <div className="flex-1">
                   <dl>
                     <dt className="text-sm font-medium text-gray-500 truncate">
                       {t('customer.totalSpent')}
@@ -149,7 +149,7 @@ export default function CustomerDashboard({ client, orders }: CustomerDashboardP
                     href="/customer/new-order"
                     className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
                   >
-                    <ShoppingCart className='h-5 w-5 mr-2' />
+                    <ShoppingCart className="h-5 w-5 me-2" />
                     {t('dashboard.createFirstOrder')}
                   </Link>
                 </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { CartItem } from './NewOrderPage';
 import { Package, Minus, Plus, Trash2, ShoppingCart, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -51,7 +52,7 @@ export default function CartModal({
 
       {/* Loading Overlay */}
       {submitting && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 z-[60] flex items-center justify-center">
+        <div className="fixed inset-0 bg-gray-50 z-[60] flex items-center justify-center">
           <div className="bg-white rounded-2xl p-8 shadow-2xl flex flex-col items-center max-w-sm mx-4">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-indigo-600 border-t-transparent mb-6"></div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('customer.processingOrder')}</h3>
@@ -104,15 +105,17 @@ export default function CartModal({
                     {/* Product Image */}
                     <div className="flex-shrink-0">
                       {item.product.image_url ? (
-                        <img
-                          src={item.product.image_url}
-                          alt={`${item.product.brand} ${item.product.model}`}
-                          className="h-16 w-16 rounded-lg object-cover border border-gray-300"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
-                          }}
-                        />
+                        <div className="relative h-16 w-16 rounded-lg overflow-hidden border border-gray-300">
+                          <Image
+                            src={item.product.image_url}
+                            alt={`${item.product.brand} ${item.product.model}`}
+                            fill
+                            sizes="64px"
+                            className="object-cover"
+                            placeholder="blur"
+                            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UwZTBlMCIvPjwvc3ZnPg=="
+                          />
+                        </div>
                       ) : null}
                       <div 
                         className={`h-16 w-16 rounded-lg bg-gray-200 flex items-center justify-center ${item.product.image_url ? 'hidden' : 'flex'}`}
@@ -128,9 +131,6 @@ export default function CartModal({
                       </h4>
                       <p className="text-xs text-gray-600 mt-1">
                         {item.product.storage} • {item.product.condition}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-1">
-                        {t('products.stock')}: {item.product.total_stock - item.product.reserved_stock}
                       </p>
                     </div>
 
@@ -155,7 +155,7 @@ export default function CartModal({
                       >
                         <Minus className="h-4 w-4" />
                       </button>
-                      <span className="w-10 text-center text-base font-semibold">
+                      <span className="w-10 text-center text-base font-semibold text-gray-900">
                         {item.quantity}
                       </span>
                       <button
@@ -199,12 +199,12 @@ export default function CartModal({
             >
               {submitting ? (
                 <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white me-2"></div>
                   {t('common.submitting')}
                 </>
               ) : (
                 <>
-                  <ShoppingCart className="h-5 w-5 mr-2" />
+                  <ShoppingCart className="h-5 w-5 me-2" />
                   {t('customer.completeOrder')}
                 </>
               )}

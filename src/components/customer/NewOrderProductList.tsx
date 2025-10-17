@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
+import Image from 'next/image';
 import { Product } from '@/types/database';
 import { Package, Plus, Search } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -28,31 +29,14 @@ export default function NewOrderProductList({
   
   // Use URL search params with Hebrew search support
   const {
+    searchQuery,
+    setSearch,
     filters,
     filteredProducts,
     updateFilters,
     availableBrands,
     availableTags
   } = useProductSearch(products);
-
-  // Local state for immediate input feedback
-  const [searchInput, setSearchInput] = useState(filters.search);
-
-  // Sync URL search params with input field
-  useEffect(() => {
-    setSearchInput(filters.search);
-  }, [filters.search]);
-
-  // Debounced search update (500ms delay for better performance)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchInput !== filters.search) {
-        updateFilters({ search: searchInput });
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchInput, filters.search, updateFilters]);
 
   // Helper function to get availability badge
   const getAvailabilityBadge = (product: Product) => {
@@ -181,8 +165,8 @@ export default function NewOrderProductList({
             <input
               type="text"
               placeholder={t('inventory.searchProducts')}
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              value={searchQuery}
+              onChange={(e) => setSearch(e.target.value)}
               className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
@@ -204,15 +188,21 @@ export default function NewOrderProductList({
                     {/* Product Image */}
                     <div className="flex-shrink-0">
                       {product.image_url ? (
-                        <img
-                          src={product.image_url}
-                          alt={`${product.brand} ${product.model}`}
-                          className="h-20 w-20 rounded-lg object-cover border border-gray-200"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
-                          }}
-                        />
+                        <div className="relative h-20 w-20 rounded-lg overflow-hidden border border-gray-200">
+                          <Image
+                            src={product.image_url}
+                            alt={`${product.brand} ${product.model}`}
+                            fill
+                            sizes="80px"
+                            className="object-cover"
+                            placeholder="blur"
+                            blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UwZTBlMCIvPjwvc3ZnPg=="
+                            onError={(e) => {
+                              const parent = e.currentTarget.parentElement;
+                              if (parent) parent.style.display = 'none';
+                            }}
+                          />
+                        </div>
                       ) : null}
                       <div 
                         className={`h-20 w-20 rounded-lg bg-gray-200 flex items-center justify-center ${product.image_url ? 'hidden' : 'flex'}`}
@@ -292,7 +282,7 @@ export default function NewOrderProductList({
                           : 'text-gray-400 bg-gray-200 cursor-not-allowed'
                       }`}
                     >
-                      <Plus className="h-4 w-4 mr-2" />
+                      <Plus className="h-4 w-4 me-2" />
                       {t('products.addToCart')}
                     </button>
                   </div>
@@ -303,15 +293,21 @@ export default function NewOrderProductList({
                   {/* Product Image */}
                   <div className="flex-shrink-0">
                     {product.image_url ? (
-                      <img
-                        src={product.image_url}
-                        alt={`${product.brand} ${product.model}`}
-                        className="h-16 w-16 rounded-lg object-cover border border-gray-200"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none';
-                          (e.currentTarget.nextElementSibling as HTMLElement).style.display = 'flex';
-                        }}
-                      />
+                      <div className="relative h-16 w-16 rounded-lg overflow-hidden border border-gray-200">
+                        <Image
+                          src={product.image_url}
+                          alt={`${product.brand} ${product.model}`}
+                          fill
+                          sizes="64px"
+                          className="object-cover"
+                          placeholder="blur"
+                          blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2UwZTBlMCIvPjwvc3ZnPg=="
+                          onError={(e) => {
+                            const parent = e.currentTarget.parentElement;
+                            if (parent) parent.style.display = 'none';
+                          }}
+                        />
+                      </div>
                     ) : null}
                     <div 
                       className={`h-16 w-16 rounded-lg bg-gray-200 flex items-center justify-center ${product.image_url ? 'hidden' : 'flex'}`}

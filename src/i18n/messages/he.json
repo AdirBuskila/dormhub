@@ -42,9 +42,6 @@
     "email": "אימייל",
     "phone": "טלפון",
     "address": "כתובת",
-    "category": "קטגוריה",
-    "condition": "מצב",
-    "storage": "אחסון",
     "brand": "מותג",
     "model": "דגם"
   },
@@ -126,6 +123,53 @@
     "profit": "רווח",
     "profitPercentage": "אחוז רווח"
   },
+  "alerts": {
+    "alertsManagement": "ניהול התראות",
+    "manageAlertsDescription": "ניהול התראות מערכת והתראות",
+    "unreadAlerts": "התראות שלא נקראו",
+    "totalAlerts": "סה\"כ התראות",
+    "unread": "לא נקראו",
+    "delivered": "נקראו",
+    "filtered": "מסוננות",
+    "markAllAsRead": "סמן הכל כנקרא",
+    "markAsDelivered": "סמן כנקרא",
+    "filters": "מסננים",
+    "type": "סוג",
+    "severity": "רצינות",
+    "status": "סטטוס",
+    "allTypes": "כל הסוגים",
+    "allSeverities": "כל הרצינויות",
+    "allStatus": "כל הסטטוסים",
+    "lowStock": "מלאי נמוך",
+    "undelivered": "לא נשלח",
+    "overduePayment": "תשלום באיחור",
+    "reservedStale": "הזמנה שמורה ישנה",
+    "info": "מידע",
+    "warning": "אזהרה",
+    "danger": "דחוף",
+    "noAlertsFound": "לא נמצאו התראות",
+    "adjustFilters": "נסה לשנות את המסננים.",
+    "alertsList": "התראות",
+    "markedAsRead": "כל ההתראות סומנו כנקראות",
+    "refresh": "רענן התראות",
+    "messages": {
+      "orderUndelivered": "הזמנה #{orderId} לא נמסרה כבר {days} ימים",
+      "orderDraftStale": "הזמנה #{orderId} בטיוטה כבר {days} ימים",
+      "newOrder": "הזמנה חדשה #{orderId} מ-{clientName} עם {items} פריטים",
+      "lowStockProduct": "{productName} במלאי נמוך: נותרו {remaining} (מינימום: {minimum})",
+      "overduePayment": "תשלום באיחור מ-{clientName}: {amount} (באיחור {days} ימים)",
+      "days": "ימים",
+      "items": "פריטים",
+      "item": "פריט"
+    },
+    "types": {
+      "low_stock": "מלאי נמוך",
+      "undelivered": "לא נמסר",
+      "overdue_payment": "תשלום באיחור",
+      "reserved_stale": "טיוטה ישנה",
+      "new_order": "הזמנה חדשה"
+    }
+  },
   "inventory": {
     "inventoryManagement": "ניהול מלאי",
     "inventoryDescription": "נהל את מלאי המוצרים שלך, רמות מלאי והתראות.",
@@ -199,7 +243,6 @@
     "shoppingCart": "עגלת קניות",
     "items": "פריטים",
     "item": "פריט",
-    "yourCartIsEmpty": "העגלה שלך ריקה",
     "addSomeProducts": "הוסף כמה מוצרים כדי להתחיל",
     "quantity": "כמות",
     "orderSummary": "סיכום הזמנה",
@@ -211,7 +254,6 @@
     "invalidOrderData": "נתוני הזמנה לא תקינים",
     "orderInfoMissing": "מידע ההזמנה חסר או לא תקין",
     "orderNumber": "הזמנה #",
-    "createdOn": "נוצר ב",
     "serverSideAuthIssue": "בעיית אימות בצד השרת",
     "clientSideAuthWorking": "אימות בצד הלקוח עובד, אך צד השרת דורש תצורה",
     "quickFix": "תיקון מהיר",
@@ -340,12 +382,6 @@
     "notes": "הערות",
     "quantity": "כמות",
     "adjust": "התאם"
-  },
-  "alerts": {
-    "alertsBell": "פעמון התראות",
-    "newAlerts": "התראות חדשות",
-    "markAllDelivered": "סמן הכל כנמסר",
-    "markDelivered": "סמן כנמסר"
   },
   "footer": {
     "forFurtherInfo": "לפרטים נוספים אנא צרו קשר:"

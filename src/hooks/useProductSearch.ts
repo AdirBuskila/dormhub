@@ -1,7 +1,7 @@
 'use client';
 
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
-import { useCallback, useMemo, useTransition } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Product } from '@/types/database';
 import { matchesHebrewSearch } from '@/lib/hebrew-search';
 
@@ -18,11 +18,15 @@ export function useProductSearch(products: Product[]) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
 
-  // Get current filters from URL - memoized to prevent unnecessary re-renders
-  const filters: ProductSearchFilters = useMemo(() => ({
-    search: searchParams.get('search') || '',
+  // Get initial search from URL (for bookmarks/sharing)
+  const initialSearch = searchParams.get('search') || '';
+  
+  // LOCAL state for search - NO URL sync during typing!
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
+
+  // Get other filters from URL (these can update URL immediately)
+  const filters: Omit<ProductSearchFilters, 'search'> = useMemo(() => ({
     brand: searchParams.get('brand') || 'all',
     category: searchParams.get('category') || 'all',
     condition: searchParams.get('condition') || 'all',
@@ -30,29 +34,44 @@ export function useProductSearch(products: Product[]) {
     tag: searchParams.get('tag') || 'all',
   }), [searchParams]);
 
-  // Update URL with new filters - wrapped in transition for better performance
-  const updateFilters = useCallback((newFilters: Partial<ProductSearchFilters>) => {
-    startTransition(() => {
-      const params = new URLSearchParams(searchParams.toString());
-      
-      Object.entries(newFilters).forEach(([key, value]) => {
-        if (value && value !== 'all' && value !== '') {
-          params.set(key, value);
-        } else {
-          params.delete(key);
-        }
-      });
+  // Update search query (local only, no URL update)
+  const setSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+  }, []);
 
-      // Use router.replace instead of push to avoid adding to history on every keystroke
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  // Update URL with filters (for dropdowns, NOT search input)
+  const updateFilters = useCallback((newFilters: Partial<Omit<ProductSearchFilters, 'search'>>) => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    Object.entries(newFilters).forEach(([key, value]) => {
+      if (value && value !== 'all' && value !== '') {
+        params.set(key, value);
+      } else {
+        params.delete(key);
+      }
     });
+
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   }, [searchParams, pathname, router]);
 
-  // Filter products based on current filters
+  // Update URL with search (call this manually when appropriate, e.g., on blur)
+  const commitSearch = useCallback(() => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (searchQuery && searchQuery.trim() !== '') {
+      params.set('search', searchQuery);
+    } else {
+      params.delete('search');
+    }
+
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  }, [searchQuery, searchParams, pathname, router]);
+  
+  // CLIENT-SIDE filtering - NO API CALLS!
   const filteredProducts = useMemo(() => {
     return products.filter(product => {
-      // Hebrew-enabled search
-      const matchesSearch = !filters.search || matchesHebrewSearch(filters.search, product);
+      // Hebrew-enabled search (instant, client-side)
+      const matchesSearch = !searchQuery || matchesHebrewSearch(searchQuery, product);
       
       const matchesBrand = filters.brand === 'all' || product.brand === filters.brand;
       const matchesCategory = filters.category === 'all' || product.category === filters.category;
@@ -77,7 +96,7 @@ export function useProductSearch(products: Product[]) {
       
       return matchesSearch && matchesBrand && matchesCategory && matchesCondition && matchesPromotion && matchesTag && hasStock;
     });
-  }, [products, filters]);
+  }, [products, searchQuery, filters]);
 
   // Get available options for filters
   const availableBrands = useMemo(() => {
@@ -97,6 +116,9 @@ export function useProductSearch(products: Product[]) {
   }, [products]);
 
   return {
+    searchQuery,
+    setSearch,
+    commitSearch,
     filters,
     filteredProducts,
     updateFilters,

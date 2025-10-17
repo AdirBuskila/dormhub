@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import Layout from '@/components/Layout';
 
 export default function WelcomePage() {
@@ -10,20 +11,30 @@ export default function WelcomePage() {
         <div className="text-center space-y-8 w-full max-w-md">
           {/* Logo with professional animation */}
           <Link href="/sign-in" className="block animate-fade-in-down cursor-pointer hover:opacity-90 transition-opacity">
-            <img 
-              src="/logo.png" 
-              alt="Mobile For You Logo" 
-              className="mx-auto w-32 h-32 object-contain animate-subtle-float"
-            />
+            <div className="relative mx-auto w-32 h-32 animate-subtle-float">
+              <Image 
+                src="/logo.png" 
+                alt="Mobile For You Logo" 
+                fill
+                sizes="128px"
+                className="object-contain"
+                priority
+              />
+            </div>
           </Link>
           
           {/* Guide image */}
           <Link href="/sign-in" className="block cursor-pointer hover:opacity-90 transition-opacity animate-fade-in-up">
-            <img 
-              src="/guide.png" 
-              alt="Mobile For You Guide - Click to sign in" 
-              className="mx-auto w-full h-auto rounded-lg hover:shadow-xl transition-shadow"
-            />
+            <div className="relative mx-auto w-full rounded-lg hover:shadow-xl transition-shadow" style={{ aspectRatio: '3/4' }}>
+              <Image 
+                src="/guide.png" 
+                alt="Mobile For You Guide - Click to sign in" 
+                fill
+                sizes="(max-width: 768px) 100vw, 448px"
+                className="object-contain rounded-lg"
+                priority
+              />
+            </div>
           </Link>
         </div>
       </div>

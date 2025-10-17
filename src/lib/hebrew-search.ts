@@ -195,37 +195,52 @@ export function translateHebrewSearch(query: string): string[] {
   ];
   
   for (const mapping of allMappings) {
-    // Check if query contains Hebrew term
-    if (normalizedQuery.includes(mapping.hebrew.toLowerCase())) {
+    const hebrewTerm = mapping.hebrew.toLowerCase();
+    const englishTerm = mapping.english.toLowerCase();
+    
+    // FIXED: Check if Hebrew term CONTAINS query (partial matching)
+    // e.g., "אייפון".includes("אייפ") = true ✓
+    if (hebrewTerm.includes(normalizedQuery)) {
       // Add English translation
-      searchTerms.add(mapping.english.toLowerCase());
+      searchTerms.add(englishTerm);
+    }
+    
+    // Check if query is exact match or full Hebrew term
+    if (normalizedQuery.includes(hebrewTerm)) {
+      searchTerms.add(englishTerm);
       
       // Replace Hebrew with English for compound searches
-      const translated = normalizedQuery.replace(
-        mapping.hebrew.toLowerCase(),
-        mapping.english.toLowerCase()
-      );
+      const translated = normalizedQuery.replace(hebrewTerm, englishTerm);
       searchTerms.add(translated);
     }
     
-    // Check aliases
+    // Check aliases for partial and full matches
     if (mapping.aliases) {
       for (const alias of mapping.aliases) {
-        if (normalizedQuery.includes(alias.toLowerCase())) {
-          searchTerms.add(mapping.english.toLowerCase());
+        const aliasLower = alias.toLowerCase();
+        
+        // Partial match: alias contains query
+        if (aliasLower.includes(normalizedQuery)) {
+          searchTerms.add(englishTerm);
+        }
+        
+        // Full match: query contains alias
+        if (normalizedQuery.includes(aliasLower)) {
+          searchTerms.add(englishTerm);
           
-          const translated = normalizedQuery.replace(
-            alias.toLowerCase(),
-            mapping.english.toLowerCase()
-          );
+          const translated = normalizedQuery.replace(aliasLower, englishTerm);
           searchTerms.add(translated);
         }
       }
     }
     
-    // Reverse: if searching in English, also add Hebrew
-    if (normalizedQuery.includes(mapping.english.toLowerCase())) {
-      searchTerms.add(mapping.hebrew.toLowerCase());
+    // Reverse: if searching in English (partial or full), also add Hebrew
+    if (englishTerm.includes(normalizedQuery)) {
+      searchTerms.add(hebrewTerm);
+    }
+    
+    if (normalizedQuery.includes(englishTerm)) {
+      searchTerms.add(hebrewTerm);
     }
   }
   

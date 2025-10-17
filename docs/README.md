@@ -32,20 +32,33 @@ This directory contains all essential documentation for the Mobile For You appli
 
 ### Technical Documentation
 
-3. **[SCRIPTS_AND_MIGRATIONS.md](./SCRIPTS_AND_MIGRATIONS.md)**
+3. **[IMAGE_OPTIMIZATION.md](./IMAGE_OPTIMIZATION.md)** ✨ (NEW)
+   - Next.js Image component implementation
+   - Automatic WebP/AVIF optimization (70% smaller images)
+   - Lazy loading & responsive images
+   - Blur placeholders & zero layout shift
+   - **👉 Complete image optimization guide**
+
+3.1. **[IMAGE_OPTIMIZATION_SUMMARY.md](./IMAGE_OPTIMIZATION_SUMMARY.md)** ✨ (NEW)
+   - Quick reference for image optimization
+   - Before/after comparison
+   - Performance metrics
+   - **👉 Quick start guide**
+
+4. **[SCRIPTS_AND_MIGRATIONS.md](./SCRIPTS_AND_MIGRATIONS.md)**
    - Database migration scripts
    - Utility scripts
    - Seeding data
    - Testing scripts
    - **👉 Essential for database management**
 
-4. **[PROMOTIONS_CONSIGNMENTS_HEBREW_SEARCH.md](./PROMOTIONS_CONSIGNMENTS_HEBREW_SEARCH.md)**
+5. **[PROMOTIONS_CONSIGNMENTS_HEBREW_SEARCH.md](./PROMOTIONS_CONSIGNMENTS_HEBREW_SEARCH.md)**
    - Product promotion flags
    - Consignment tracking
    - Hebrew search implementation
    - **👉 Feature-specific technical details**
 
-5. **[PERFORMANCE_AND_I18N_FIX.md](./PERFORMANCE_AND_I18N_FIX.md)**
+6. **[PERFORMANCE_AND_I18N_FIX.md](./PERFORMANCE_AND_I18N_FIX.md)**
    - Performance optimizations
    - Internationalization fixes
    - Technical implementation details
@@ -122,9 +135,9 @@ When making changes to the application:
 
 ## 📝 Documentation Metadata
 
-**Total Documentation Files**: 5  
+**Total Documentation Files**: 7  
 **Last Major Update**: January 16, 2025  
-**Documentation Version**: 1.0  
+**Documentation Version**: 1.2  
 **Maintained By**: Development Team
 
 ---
