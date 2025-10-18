@@ -7,7 +7,7 @@ export default function TestUserPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Set test mode flag
+    // Set test mode flag in localStorage
     localStorage.setItem('testMode', 'true');
     localStorage.setItem('testUser', JSON.stringify({
       id: 'test-user-demo',
@@ -18,8 +18,14 @@ export default function TestUserPage() {
       shopName: 'Demo Shop'
     }));
 
-    // Redirect to customer portal
-    router.push('/customer/new-order');
+    // Set test mode cookie for server-side detection
+    document.cookie = 'testMode=true; path=/; max-age=86400'; // 24 hours
+
+    // Small delay to ensure cookie is set
+    setTimeout(() => {
+      // Redirect to customer portal
+      router.push('/customer/new-order');
+    }, 100);
   }, [router]);
 
   return (

@@ -1,8 +1,19 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { upsertClientFromClerkUser } from '@/lib/db/clients';
 import NewOrderPage from '@/components/customer/NewOrderPage';
+import { cookies } from 'next/headers';
 
 export default async function NewOrder() {
+  // Check if we're in test mode (via cookie or query param)
+  const cookieStore = await cookies();
+  const isTestMode = cookieStore.get('testMode')?.value === 'true';
+  
+  // If test mode, bypass authentication
+  if (isTestMode) {
+    console.log('🧪 Test mode detected - bypassing authentication');
+    return <NewOrderPage clientId="test-client-demo" />;
+  }
+  
   // Get authenticated user - middleware already ensures we're authenticated
   const { userId } = await auth();
   const user = await currentUser();
