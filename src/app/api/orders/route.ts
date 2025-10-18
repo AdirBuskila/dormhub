@@ -5,6 +5,25 @@ import { updateOrderStatus } from '@/lib/database';
 
 export async function POST(request: NextRequest) {
   try {
+    // Parse request body first to check for test mode
+    const body = await request.json();
+    const { clientId, items, testMode, paymentMethod } = body;
+    
+    // Handle test mode - simulate order creation without DB update
+    if (testMode === true) {
+      console.log('🧪 TEST MODE: Simulating order creation');
+      
+      // Simulate processing delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Return fake success response
+      return NextResponse.json({ 
+        orderId: `test-order-${Date.now()}`,
+        message: 'Test order created successfully (not saved to database)',
+        testMode: true 
+      });
+    }
+    
     // Get authenticated user
     const { userId } = await auth();
     console.log('Orders API - userId:', userId);
@@ -16,8 +35,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized - Please sign in to create orders' }, { status: 401 });
     }
 
-    // Parse request body
-    const { clientId, items } = await request.json();
     console.log('Orders API - clientId:', clientId, 'items:', items);
 
     if (!clientId || !items || items.length === 0) {
@@ -95,7 +112,8 @@ export async function POST(request: NextRequest) {
         client_id: clientId,
         status: 'draft',
         total_price: 0, // Will be calculated when admin sets prices
-        notes: null
+        notes: null,
+        payment_method: paymentMethod || null
       })
       .select()
       .single();

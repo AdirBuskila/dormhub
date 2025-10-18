@@ -294,81 +294,90 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
             </div>
           ) : (
             <ul className="divide-y divide-gray-200">
-              {filteredOrders.map((order) => (
-              <li key={order.id}>
-                <div className="px-4 py-4 flex items-center justify-between">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0 h-10 w-10">
-                      <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                        <ShoppingCart className="h-5 w-5 text-gray-500" />
+              {filteredOrders.map((order, index) => {
+                // Find the actual order number based on the full orders array
+                const actualOrderIndex = orders.findIndex(o => o.id === order.id);
+                const orderNumber = orders.length - actualOrderIndex;
+                
+                return (
+                <li key={order.id}>
+                  <div 
+                    className="px-4 py-4 flex items-center justify-between hover:bg-gray-50 cursor-pointer transition-colors"
+                    onClick={() => setSelectedOrder(order)}
+                  >
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10">
+                        <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
+                          <span className="text-sm font-semibold text-indigo-600">#{orderNumber}</span>
+                        </div>
+                      </div>
+                      <div className="ml-4">
+                        <div className="flex items-center">
+                          <p className="text-sm font-medium text-gray-900">
+                            {order.client?.name || 'Unknown Client'}
+                          </p>
+                          <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                            {order.status}
+                          </span>
+                        </div>
+                        <div className="flex items-center mt-1">
+                          <p className="text-sm text-gray-500">
+                            Order #{orderNumber} • {new Date(order.created_at).toLocaleString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        </div>
+                        <div className="mt-1">
+                          <p className="text-sm text-gray-500">
+                            {order.order_items?.length || 0} items • {formatCurrency(order.total_price)}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                    <div className="ml-4">
-                      <div className="flex items-center">
+                    <div className="flex items-center space-x-4">
+                      <div className="text-right">
                         <p className="text-sm font-medium text-gray-900">
-                          {order.client?.name || 'Unknown Client'}
+                          {formatCurrency(order.total_price)}
                         </p>
-                        <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
-                          {order.status}
-                        </span>
-                      </div>
-                      <div className="flex items-center mt-1">
                         <p className="text-sm text-gray-500">
-                          Order #{order.id.slice(0, 8)} • {formatDate(order.created_at)}
+                          {order.order_items?.length || 0} items
                         </p>
                       </div>
-                      <div className="mt-1">
-                        <p className="text-sm text-gray-500">
-                          {order.order_items?.length || 0} items • {formatCurrency(order.total_price)}
-                        </p>
+                      <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
+                        {order.status === 'draft' && (
+                          <button
+                            onClick={() => handleUpdateStatus(order.id, 'reserved')}
+                            className="text-yellow-600 hover:text-yellow-900 px-2 py-1 text-xs font-medium"
+                          >
+                            {t('reserve')}
+                          </button>
+                        )}
+                        {order.status === 'reserved' && (
+                          <button
+                            onClick={() => handleUpdateStatus(order.id, 'delivered')}
+                            className="text-green-600 hover:text-green-900 px-2 py-1 text-xs font-medium"
+                          >
+                            Deliver
+                          </button>
+                        )}
+                        {order.status === 'delivered' && (
+                          <button
+                            onClick={() => handleUpdateStatus(order.id, 'closed')}
+                            className="text-blue-600 hover:text-blue-900 px-2 py-1 text-xs font-medium"
+                          >
+                            Close
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">
-                        {formatCurrency(order.total_price)}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {order.order_items?.length || 0} items
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => setSelectedOrder(order)}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      {order.status === 'draft' && (
-                        <button
-                          onClick={() => handleUpdateStatus(order.id, 'reserved')}
-                          className="text-yellow-600 hover:text-yellow-900"
-                        >
-{t('reserve')}
-                        </button>
-                      )}
-                      {order.status === 'reserved' && (
-                        <button
-                          onClick={() => handleUpdateStatus(order.id, 'delivered')}
-                          className="text-green-600 hover:text-green-900"
-                        >
-                          Deliver
-                        </button>
-                      )}
-                      {order.status === 'delivered' && (
-                        <button
-                          onClick={() => handleUpdateStatus(order.id, 'closed')}
-                          className="text-blue-600 hover:text-blue-900"
-                        >
-                          Close
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </li>
-              ))}
+                </li>
+                );
+              })}
             </ul>
           )}
         </div>
@@ -487,44 +496,106 @@ export default function OrderManagement({ isAdmin = true }: OrderManagementProps
 
         {/* Order Details Modal */}
         {selectedOrder && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+          <div 
+            className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
+            onClick={() => setSelectedOrder(null)}
+          >
+            <div 
+              className="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="mt-3">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Order Details</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-medium text-gray-900">
+                    Order #{orders.length - orders.findIndex(o => o.id === selectedOrder.id)} Details
+                  </h3>
+                  <button
+                    onClick={() => setSelectedOrder(null)}
+                    className="text-gray-400 hover:text-gray-500"
+                  >
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
                 <div className="space-y-4">
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-500">Client</h4>
-                    <p className="text-sm text-gray-900">{selectedOrder.client?.name}</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500">Client</h4>
+                      <p className="text-sm text-gray-900">{selectedOrder.client?.name}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500">Status</h4>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(selectedOrder.status)}`}>
+                        {selectedOrder.status}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-500">Status</h4>
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(selectedOrder.status)}`}>
-                      {selectedOrder.status}
-                    </span>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-gray-500">Total Price</h4>
-                    <p className="text-sm text-gray-900">{formatCurrency(selectedOrder.total_price)}</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500">Order Date</h4>
+                      <p className="text-sm text-gray-900">
+                        {new Date(selectedOrder.created_at).toLocaleString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-500">Total Price</h4>
+                      <p className="text-sm text-gray-900 font-semibold">{formatCurrency(selectedOrder.total_price)}</p>
+                    </div>
                   </div>
                   {selectedOrder.notes && (
                     <div>
                       <h4 className="text-sm font-medium text-gray-500">Notes</h4>
-                      <p className="text-sm text-gray-900">{selectedOrder.notes}</p>
+                      <p className="text-sm text-gray-900 bg-gray-50 p-3 rounded">{selectedOrder.notes}</p>
                     </div>
                   )}
                   <div>
-                    <h4 className="text-sm font-medium text-gray-500">Items</h4>
-                    <div className="space-y-2">
-                      {selectedOrder.order_items?.map((item) => (
-                        <div key={item.id} className="flex justify-between text-sm">
-                          <span>{item.product?.brand} {item.product?.model} ({item.product?.storage})</span>
-                          <span>{item.quantity}x {formatCurrency(item.price)}</span>
-                        </div>
-                      ))}
+                    <h4 className="text-sm font-medium text-gray-500 mb-3">Order Items</h4>
+                    <div className="border rounded-lg overflow-hidden">
+                      <table className="min-w-full divide-y divide-gray-200">
+                        <thead className="bg-gray-50">
+                          <tr>
+                            <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Product</th>
+                            <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Qty</th>
+                            <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Price</th>
+                            <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Total</th>
+                          </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-200">
+                          {selectedOrder.order_items?.map((item) => (
+                            <tr key={item.id}>
+                              <td className="px-4 py-3 text-sm text-gray-900">
+                                {item.product?.brand} {item.product?.model} ({item.product?.storage})
+                              </td>
+                              <td className="px-4 py-3 text-sm text-gray-900 text-right">{item.quantity}</td>
+                              <td className="px-4 py-3 text-sm text-gray-900 text-right">{formatCurrency(item.price)}</td>
+                              <td className="px-4 py-3 text-sm font-medium text-gray-900 text-right">
+                                {formatCurrency(item.price * item.quantity)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        <tfoot className="bg-gray-50">
+                          <tr>
+                            <td colSpan={3} className="px-4 py-3 text-sm font-semibold text-gray-900 text-right">
+                              Total:
+                            </td>
+                            <td className="px-4 py-3 text-sm font-bold text-gray-900 text-right">
+                              {formatCurrency(selectedOrder.total_price)}
+                            </td>
+                          </tr>
+                        </tfoot>
+                      </table>
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end pt-4">
+                <div className="flex justify-end pt-4 mt-4 border-t">
                   <button
                     onClick={() => setSelectedOrder(null)}
                     className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

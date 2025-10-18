@@ -85,6 +85,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
+      
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div className="fixed inset-0 flex z-40 md:hidden">
@@ -177,7 +178,7 @@ export default function Layout({ children, isAdmin = false }: LayoutProps) {
           </div>
 
           {/* Page content */}
-          <main className="flex-1 relative overflow-y-auto focus:outline-none">
+          <main id="main-content" className="flex-1 relative overflow-y-auto focus:outline-none" role="main" aria-label="Main content">
             <div className="py-6">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
                 {children}

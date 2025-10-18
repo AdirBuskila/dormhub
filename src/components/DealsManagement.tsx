@@ -13,6 +13,7 @@ export default function DealsManagement() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingDeal, setEditingDeal] = useState<Deal | null>(null);
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState<CreateDealData>({
     title: '',
     description: '',
@@ -45,36 +46,46 @@ export default function DealsManagement() {
     try {
       const response = await fetch('/api/products');
       const data = await response.json();
-      setProducts(data || []);
+      // Handle both {products: [...]} and [...] response formats
+      setProducts(data.products || data || []);
     } catch (error) {
       console.error('Error fetching products:', error);
+      setProducts([]);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
     
     try {
-      if (editingDeal) {
-        // Update existing deal
-        await fetch(`/api/deals/${editingDeal.id}`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        });
-      } else {
-        // Create new deal
-        await fetch('/api/deals', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        });
+      const response = editingDeal
+        ? await fetch(`/api/deals/${editingDeal.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+          })
+        : await fetch('/api/deals', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData),
+          });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save deal');
       }
       
-      fetchDeals();
+      await fetchDeals();
       closeModal();
+      
+      // Show success notification
+      alert(editingDeal ? 'Deal updated successfully!' : 'Deal created successfully!');
     } catch (error) {
       console.error('Error saving deal:', error);
+      alert(`Failed to save deal: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -262,7 +273,7 @@ export default function DealsManagement() {
                       </span>
                       {!deal.is_active && (
                         <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                          Inactive
+                          {t('deals.inactive')}
                         </span>
                       )}
                       {expStatus && (
@@ -311,7 +322,7 @@ export default function DealsManagement() {
                         <span>Sold: {deal.sold_quantity} / {deal.max_quantity}</span>
                       )}
                       {deal.payment_methods && (
-                        <span>Payment: {deal.payment_methods.join(', ')}</span>
+                        <span>{t('deals.payment')}: {deal.payment_methods.map(m => t(`deals.paymentMethod.${m}`)).join(', ')}</span>
                       )}
                     </div>
                   </div>
@@ -326,7 +337,7 @@ export default function DealsManagement() {
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                     >
-                      {deal.is_active ? 'Active' : 'Inactive'}
+                      {deal.is_active ? t('deals.active') : t('deals.inactive')}
                     </button>
                     <button
                       onClick={() => openEditModal(deal)}
@@ -430,6 +441,12 @@ export default function DealsManagement() {
               <div className="border-t pt-4">
                 <h3 className="font-medium text-gray-900 mb-3">{t('deals.pricingTiers')}</h3>
                 
+                <div className="bg-gray-50 p-3 rounded-lg mb-3">
+                  <p className="text-xs text-gray-600 mb-2">
+                    💡 Tier prices are <strong>per unit</strong>. Example: 2x @ ₪4200 means 2 units for ₪4200 each (₪8400 total)
+                  </p>
+                </div>
+                
                 <div className="grid grid-cols-2 gap-4 mb-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -442,11 +459,12 @@ export default function DealsManagement() {
                       required
                       min="1"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      placeholder="e.g., 1"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tier 1 Price (₪) *
+                      Tier 1 Price per unit (₪) *
                     </label>
                     <input
                       type="number"
@@ -454,8 +472,9 @@ export default function DealsManagement() {
                       onChange={(e) => setFormData({ ...formData, tier_1_price: parseFloat(e.target.value) })}
                       required
                       min="0"
-                      step="0.01"
+                      step="1"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      placeholder="e.g., 4300"
                     />
                   </div>
                 </div>
@@ -471,19 +490,21 @@ export default function DealsManagement() {
                       onChange={(e) => setFormData({ ...formData, tier_2_qty: e.target.value ? parseInt(e.target.value) : undefined })}
                       min="1"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      placeholder="e.g., 2"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tier 2 Price (₪)
+                      Tier 2 Price per unit (₪)
                     </label>
                     <input
                       type="number"
                       value={formData.tier_2_price || ''}
                       onChange={(e) => setFormData({ ...formData, tier_2_price: e.target.value ? parseFloat(e.target.value) : undefined })}
                       min="0"
-                      step="0.01"
+                      step="1"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      placeholder="e.g., 4200"
                     />
                   </div>
                 </div>
@@ -499,19 +520,21 @@ export default function DealsManagement() {
                       onChange={(e) => setFormData({ ...formData, tier_3_qty: e.target.value ? parseInt(e.target.value) : undefined })}
                       min="1"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      placeholder="e.g., 5"
                     />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Tier 3 Price (₪)
+                      Tier 3 Price per unit (₪)
                     </label>
                     <input
                       type="number"
                       value={formData.tier_3_price || ''}
                       onChange={(e) => setFormData({ ...formData, tier_3_price: e.target.value ? parseFloat(e.target.value) : undefined })}
                       min="0"
-                      step="0.01"
+                      step="1"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                      placeholder="e.g., 4100"
                     />
                   </div>
                 </div>
@@ -587,7 +610,7 @@ export default function DealsManagement() {
                         }}
                         className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
                       />
-                      <span className="text-sm text-gray-700">{method.replace('_', ' ')}</span>
+                      <span className="text-sm text-gray-700">{t(`deals.paymentMethod.${method}`)}</span>
                     </label>
                   ))}
                 </div>
@@ -612,15 +635,24 @@ export default function DealsManagement() {
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  disabled={submitting}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                  disabled={submitting}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
-                  {editingDeal ? t('common.save') : t('common.create')}
+                  {submitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                      {editingDeal ? 'Saving...' : 'Creating...'}
+                    </>
+                  ) : (
+                    <>{editingDeal ? t('common.save') : t('common.create')}</>
+                  )}
                 </button>
               </div>
             </form>

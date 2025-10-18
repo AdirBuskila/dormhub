@@ -61,6 +61,7 @@ export interface Order {
   promised_date?: string | null;
   source?: OrderSource | null;
   notes: string | null;
+  payment_method?: string | null;
   client?: Client;
   order_items?: OrderItem[];
 }

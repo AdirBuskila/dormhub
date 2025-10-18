@@ -376,10 +376,17 @@ export async function getRecentAlerts({
       .order('created_at', { ascending: false })
       .limit(limit);
 
-    if (error) throw error;
+    if (error) {
+      // If alerts table doesn't exist or there's a permission error, silently return empty
+      if (error.code === '42P01' || error.code === 'PGRST116') {
+        console.warn('Alerts table not found or not accessible, skipping alerts');
+        return [];
+      }
+      throw error;
+    }
     return data || [];
   } catch (error) {
-    console.error('Error fetching recent alerts:', error);
+    console.warn('Error fetching recent alerts (non-critical):', error);
     return [];
   }
 }

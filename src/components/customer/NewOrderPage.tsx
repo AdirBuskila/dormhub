@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Layout from '@/components/Layout';
-import { Product } from '@/types/database';
+import { Product, Deal } from '@/types/database';
 // import { getProducts } from '@/lib/database';
 import NewOrderProductList from './NewOrderProductList';
 import CartSidebar from './CartSidebar';
 import CartModal from './CartModal';
+import DealsCarousel from './DealsCarousel';
+import DealModal from './DealModal';
 import SuccessAnimation from '@/components/SuccessAnimation';
 import SkeletonLoader from '@/components/SkeletonLoader';
 import { useTranslations } from 'next-intl';
@@ -15,6 +17,13 @@ import { useTranslations } from 'next-intl';
 export interface CartItem {
   product: Product;
   quantity: number;
+  isDeal?: boolean;
+  dealInfo?: {
+    dealId: string;
+    tierQty: number;
+    tierPrice: number;
+    totalUnits: number;
+  };
 }
 
 interface NewOrderPageProps {
@@ -30,6 +39,7 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cartModalOpen, setCartModalOpen] = useState(false);
+  const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -85,24 +95,76 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
     setCart(prev => prev.filter(item => item.product.id !== productId));
   };
 
-  const submitOrder = async () => {
+  const addDealToCart = async (deal: Deal, quantity: number, tierPrice: number, tierQty: number) => {
+    if (!deal.product) return;
+    
+    const totalUnits = tierQty * quantity;
+    
+    // Add deal to cart with special deal info
+    setCart(prev => {
+      const existingDealItem = prev.find(
+        item => item.isDeal && item.dealInfo?.dealId === deal.id && item.dealInfo?.tierQty === tierQty
+      );
+      
+      if (existingDealItem) {
+        // Update existing deal item
+        return prev.map(item =>
+          item.isDeal && item.dealInfo?.dealId === deal.id && item.dealInfo?.tierQty === tierQty
+            ? { 
+                ...item, 
+                quantity: item.quantity + quantity,
+                dealInfo: {
+                  ...item.dealInfo,
+                  totalUnits: (item.dealInfo.totalUnits || 0) + totalUnits
+                }
+              }
+            : item
+        );
+      } else {
+        // Add new deal item
+        return [...prev, {
+          product: deal.product,
+          quantity: quantity, // Number of "sets" (e.g., 2 sets of 5 units each)
+          isDeal: true,
+          dealInfo: {
+            dealId: deal.id,
+            tierQty: tierQty,
+            tierPrice: tierPrice,
+            totalUnits: totalUnits
+          }
+        }];
+      }
+    });
+  };
+
+  const submitOrder = async (paymentMethod: string, paymentOtherText?: string) => {
     if (cart.length === 0) return;
 
     setSubmitting(true);
     setError(null);
     try {
+      // Check if we're in test mode
+      const testMode = typeof window !== 'undefined' && localStorage.getItem('testMode') === 'true';
+      
+      // Prepare payment method value
+      const paymentMethodValue = paymentMethod === 'other' && paymentOtherText 
+        ? `Other: ${paymentOtherText}` 
+        : paymentMethod;
+
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          clientId,
+          clientId: testMode ? 'test-client-id' : clientId,
           items: cart.map(item => ({
             productId: item.product.id,
             quantity: item.quantity,
             price: 0 // For MVP, we'll use 0 price and let admin set later
-          }))
+          })),
+          paymentMethod: paymentMethodValue,
+          testMode: testMode
         }),
       });
 
@@ -124,15 +186,24 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
         }
       }
 
-      const { orderId } = await response.json();
+      const responseData = await response.json();
+      const { orderId, testMode: isTestOrder } = responseData;
       
       // Show success animation
       setShowSuccess(true);
       setCartModalOpen(false);
       
+      // Clear cart
+      setCart([]);
+      
       // Navigate after success animation completes
       setTimeout(() => {
-        router.push(`/customer/orders/${orderId}`);
+        if (isTestOrder) {
+          // In test mode, just redirect back to the order page
+          router.push('/customer/new-order');
+        } else {
+          router.push(`/customer/orders/${orderId}`);
+        }
       }, 2000);
     } catch (error) {
       console.error('Failed to submit order:', error);
@@ -158,12 +229,45 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
     );
   }
 
+  // Check if we're in test mode
+  const testMode = typeof window !== 'undefined' && localStorage.getItem('testMode') === 'true';
+
   return (
     <Layout isAdmin={false}>
+      {/* Test Mode Banner */}
+      {testMode && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-yellow-700">
+                  <span className="font-semibold">🧪 Demo Mode:</span> You're testing the app. Orders will appear to complete but won't be saved to the database.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                localStorage.removeItem('testMode');
+                localStorage.removeItem('testUser');
+                window.location.href = '/';
+              }}
+              className="ml-4 px-3 py-1 bg-yellow-600 text-white text-xs font-medium rounded hover:bg-yellow-700 transition-colors"
+            >
+              Exit Demo
+            </button>
+          </div>
+        </div>
+      )}
+      
       {/* Success Animation */}
       {showSuccess && (
         <SuccessAnimation 
-          message={t('customer.orderSubmitted')}
+          message={testMode ? '🧪 Demo Order Created!' : t('customer.orderSubmitted')}
           onComplete={() => setShowSuccess(false)}
         />
       )}
@@ -216,6 +320,9 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
           </div>
         </div>
 
+        {/* Deals Carousel */}
+        <DealsCarousel onDealClick={setSelectedDeal} />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Product List */}
           <div className="lg:col-span-2">
@@ -264,6 +371,15 @@ export default function NewOrderPage({ clientId }: NewOrderPageProps) {
           onSubmit={submitOrder}
           submitting={submitting}
         />
+
+        {/* Deal Modal */}
+        {selectedDeal && (
+          <DealModal
+            deal={selectedDeal}
+            onClose={() => setSelectedDeal(null)}
+            onAddToCart={addDealToCart}
+          />
+        )}
       </div>
     </Layout>
   );

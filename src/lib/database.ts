@@ -21,7 +21,11 @@ export async function getProducts(): Promise<Product[]> {
     const { data, error } = await supabase
       .from('products')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('is_runner', { ascending: false })      // Runners first
+      .order('is_best_seller', { ascending: false }) // Best sellers second
+      .order('is_promotion', { ascending: false })   // Promotions third
+      .order('total_stock', { ascending: false })    // In-stock items next
+      .order('created_at', { ascending: false });    // Newest last
     
     if (error) throw error;
     return data || [];

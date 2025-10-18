@@ -48,6 +48,7 @@ CREATE TABLE public.orders (
   status order_status NOT NULL DEFAULT 'draft'::order_status,
   total_price numeric NOT NULL DEFAULT 0,
   notes text,
+  payment_method text,
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
   promised_date date,

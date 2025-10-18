@@ -206,7 +206,7 @@ export default function DealCard({ deal, onClick }: DealCardProps) {
         {deal.payment_methods && deal.payment_methods.length > 0 && (
           <div className="mt-3 pt-3 border-t border-gray-200">
             <div className="text-xs text-gray-600">
-              {t('deals.paymentMethods')}: {deal.payment_methods.map(m => t(`deals.payment.${m}`)).join(', ')}
+              {t('deals.payment')}: {deal.payment_methods.map(m => t(`deals.paymentMethod.${m}`)).join(', ')}
             </div>
             {deal.payment_notes && (
               <div className="text-xs text-gray-500 mt-1">{deal.payment_notes}</div>

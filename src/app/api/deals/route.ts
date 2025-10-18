@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { CreateDealData } from '@/types/database';
 
+// Cache deals for 2 minutes
+export const revalidate = 120; // 2 minutes
+
 // GET /api/deals - Get all deals (with optional filters)
 export async function GET(request: Request) {
   try {
@@ -44,7 +47,14 @@ export async function GET(request: Request) {
       );
     }
     
-    return NextResponse.json({ deals });
+    return NextResponse.json(
+      { deals },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=120, stale-while-revalidate=240',
+        },
+      }
+    );
   } catch (error) {
     console.error('Error in GET /api/deals:', error);
     return NextResponse.json(

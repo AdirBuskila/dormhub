@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useState } from 'react';
 import { CartItem } from './NewOrderPage';
 import { Package, Minus, Plus, Trash2, ShoppingCart } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -9,7 +10,7 @@ interface CartSidebarProps {
   items: CartItem[];
   onQuantityChange: (productId: string, quantity: number) => void;
   onRemove: (productId: string) => void;
-  onSubmit: () => void;
+  onSubmit: (paymentMethod: string, paymentOtherText?: string) => void;
   submitting: boolean;
 }
 
@@ -21,8 +22,23 @@ export default function CartSidebar({
   submitting
 }: CartSidebarProps) {
   const t = useTranslations();
+  const [paymentMethod, setPaymentMethod] = useState<string>('');
+  const [paymentOtherText, setPaymentOtherText] = useState<string>('');
+  
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + (item.quantity * 0), 0); // Using 0 for MVP
+  
+  const handleSubmit = () => {
+    if (!paymentMethod) {
+      alert(t('customer.paymentMethodRequired'));
+      return;
+    }
+    if (paymentMethod === 'other' && !paymentOtherText.trim()) {
+      alert(t('customer.paymentMethodRequired'));
+      return;
+    }
+    onSubmit(paymentMethod, paymentMethod === 'other' ? paymentOtherText : undefined);
+  };
 
   return (
     <div className="bg-white shadow rounded-lg">
@@ -48,8 +64,8 @@ export default function CartSidebar({
           <>
             {/* Cart Items */}
             <div className="space-y-4 mb-6 max-h-96 overflow-y-auto">
-              {items.map((item) => (
-                <div key={item.product.id} className="flex items-start space-x-3 border-b border-gray-200 pb-4">
+              {items.map((item, index) => (
+                <div key={`${item.product.id}-${item.isDeal ? item.dealInfo?.dealId : 'regular'}-${index}`} className="flex items-start space-x-3 border-b border-gray-200 pb-4">
                   {/* Product Image */}
                   <div className="flex-shrink-0">
                     {item.product.image_url ? (
@@ -80,6 +96,11 @@ export default function CartSidebar({
                     <p className="text-sm text-gray-500">
                       {item.product.storage} • {item.product.condition}
                     </p>
+                    {item.isDeal && item.dealInfo && (
+                      <div className="mt-1 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-gradient-to-r from-orange-100 to-pink-100 text-orange-700 border border-orange-300">
+                        🔥 {t('deals.hotDeal')} • {item.dealInfo.tierQty}x @ ₪{item.dealInfo.tierPrice.toFixed(0)}
+                      </div>
+                    )}
                     
                     {/* Quantity Controls */}
                     <div className="flex items-center space-x-2 mt-2">
@@ -124,10 +145,75 @@ export default function CartSidebar({
                 </p>
               </div>
 
+              {/* Payment Method Selection */}
+              <div className="mt-4 border-t border-gray-200 pt-4">
+                <label className="block text-sm font-medium text-gray-900 mb-2">
+                  {t('customer.paymentMethod')} *
+                </label>
+                <div className="space-y-1.5">
+                  <label className="flex items-center space-x-2 p-2 border border-gray-300 rounded-md hover:bg-gray-50 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="cash"
+                      checked={paymentMethod === 'cash'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    <span className="text-sm text-gray-900">💵 {t('customer.paymentCash')}</span>
+                  </label>
+                  <label className="flex items-center space-x-2 p-2 border border-gray-300 rounded-md hover:bg-gray-50 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="credit"
+                      checked={paymentMethod === 'credit'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    <span className="text-sm text-gray-900">💳 {t('customer.paymentCredit')}</span>
+                  </label>
+                  <label className="flex items-center space-x-2 p-2 border border-gray-300 rounded-md hover:bg-gray-50 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="checks"
+                      checked={paymentMethod === 'checks'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                    />
+                    <span className="text-sm text-gray-900">📝 {t('customer.paymentChecks')}</span>
+                  </label>
+                  <label className="flex items-start space-x-2 p-2 border border-gray-300 rounded-md hover:bg-gray-50 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="other"
+                      checked={paymentMethod === 'other'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 mt-0.5"
+                    />
+                    <div className="flex-1">
+                      <span className="text-sm text-gray-900 block mb-2">✏️ {t('customer.paymentOther')}</span>
+                      {paymentMethod === 'other' && (
+                        <input
+                          type="text"
+                          value={paymentOtherText}
+                          onChange={(e) => setPaymentOtherText(e.target.value)}
+                          placeholder={t('customer.paymentOtherPlaceholder')}
+                          className="w-full px-2 py-1.5 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      )}
+                    </div>
+                  </label>
+                </div>
+              </div>
+
               {/* Submit Button */}
               <button
-                onClick={onSubmit}
-                disabled={submitting}
+                onClick={handleSubmit}
+                disabled={submitting || !paymentMethod}
                 className="w-full mt-6 inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {submitting ? (
