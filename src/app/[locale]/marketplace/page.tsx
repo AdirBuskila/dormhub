@@ -1,6 +1,5 @@
 import React from 'react';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import { getListings } from '@/lib/db/listings';
 import { ListingGrid } from '@/components/marketplace/ListingGrid';
@@ -26,6 +25,7 @@ export default async function MarketplacePage({
   const { locale } = await params;
   const search = await searchParams;
   const user = await getOptionalUser();
+  const t = await getTranslations({ locale, namespace: 'marketplace' });
 
   // Parse filters from search params
   const filters = {
@@ -43,10 +43,10 @@ export default async function MarketplacePage({
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            {useTranslations('marketplace')('title')}
+            {t('title')}
           </h1>
           <p className="text-gray-600">
-            {useTranslations('marketplace')('subtitle')}
+            {t('subtitle')}
           </p>
         </div>
 
@@ -55,7 +55,7 @@ export default async function MarketplacePage({
             href={`/${locale}/marketplace/new`}
             className="bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 transition-colors"
           >
-            {useTranslations('marketplace')('createListing')}
+            {t('createListing')}
           </Link>
         )}
       </div>
