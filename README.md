@@ -52,23 +52,23 @@ DormHub is a Next.js-powered community platform designed specifically for dorm r
    ```
 
 2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
 
 3. **Set up environment variables**
 
-   Create a `.env.local` file in the root directory:
+Create a `.env.local` file in the root directory:
 
-   ```env
+```env
    # Clerk
-   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
-   CLERK_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
    CLERK_SIGN_IN_URL=/sign-in
    CLERK_SIGN_UP_URL=/sign-up
 
    # Supabase
-   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
    NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbG...
    SUPABASE_SERVICE_ROLE_KEY=eyJhbG...
 
@@ -101,9 +101,9 @@ DormHub is a Next.js-powered community platform designed specifically for dorm r
 
 6. **Run the development server**
 
-   ```bash
-   npm run dev
-   ```
+```bash
+npm run dev
+```
 
    Open [http://localhost:3000](http://localhost:3000) in your browser.
 

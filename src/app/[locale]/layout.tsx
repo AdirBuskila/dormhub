@@ -5,6 +5,8 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { locales } from '@/i18n/config';
 import { notFound } from 'next/navigation';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import "../globals.css";
 
 const geistSans = Geist({
@@ -18,8 +20,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Mobile For You - מובייל פור יו",
-  description: "הזמן מוצרים לחנות הסלולר שלך בקלות – מחירים מעולים, משלוח מהיר ושירות אמין ⚡ כל מה שאתה צריך במקום אחד לניהול חכם ופשוט של העסק שלך.",
+  title: "DormHub - Your Dorm Community Platform",
+  description: "Connect with your dorm community - buy, sell, swap items, share tips, and discover local businesses with student discounts.",
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
@@ -53,10 +55,14 @@ export default async function LocaleLayout({
     <ClerkProvider>
       <html lang={locale} dir={locale === 'he' ? 'rtl' : 'ltr'}>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
         >
           <NextIntlClientProvider messages={messages}>
-            {children}
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
           </NextIntlClientProvider>
         </body>
       </html>

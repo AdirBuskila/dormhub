@@ -81,7 +81,15 @@ export default function Footer() {
         {/* Copyright */}
         <div className="text-center">
           <p className="text-xs text-gray-600">
-            {t('copyright')}
+            {t('copyright', { year: new Date().getFullYear() })}{' '}
+            <a 
+              href="https://github.com/AdirBuskila"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 rounded"
+            >
+              Adir Buskila
+            </a>
           </p>
         </div>
       </div>

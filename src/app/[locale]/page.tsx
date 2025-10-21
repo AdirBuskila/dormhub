@@ -56,7 +56,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             Explore DormHub
           </h2>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {/* Marketplace Card */}
             <Link
               href={`/${locale}/marketplace`}
@@ -112,6 +112,37 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 </p>
                 <div className="flex items-center text-green-600 font-medium">
                   Read Tips
+                  <svg className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </Link>
+
+            {/* Local Businesses Card */}
+            <Link
+              href={`/${locale}/businesses`}
+              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow overflow-hidden group"
+            >
+              <div className="bg-gradient-to-br from-purple-500 to-purple-600 h-48 flex items-center justify-center">
+                <svg className="w-24 h-24 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+                </svg>
+              </div>
+              <div className="p-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors">
+                  Local Businesses
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Discover shops and restaurants right below your dorm. Save money with exclusive student discounts!
+                </p>
+                <div className="flex items-center text-purple-600 font-medium">
+                  View Businesses
                   <svg className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>

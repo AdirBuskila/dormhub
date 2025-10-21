@@ -1,0 +1,1008 @@
+# 🚀 DormHub Production Readiness Guide
+
+**Launch Target: Before October 31, 2025 (11 days)**
+
+---
+
+## 📋 **Quick Status Overview**
+
+### ✅ **Completed Features**
+- [x] Marketplace (buy/sell/swap/giveaway)
+- [x] Tips & Info system (general tips)
+- [x] Local Businesses with student discounts
+- [x] Bilingual support (English/Hebrew)
+- [x] User authentication (Clerk)
+- [x] Responsive design
+- [x] Navigation bar
+
+### 🚧 **Missing Critical Features** (Must build before launch)
+- [ ] Content moderation & reporting system
+- [ ] Business owner dashboard
+- [ ] Admin dashboard for you
+- [ ] Terms of Service page (legal requirement)
+- [ ] Privacy Policy page (legal requirement)
+- [ ] Business onboarding form/questionnaire
+- [ ] Profanity filter for tips
+- [ ] User profiles (view/edit)
+- [ ] Contact page with actual form
+
+### 🎁 **New Feature Requests** (Optional for launch)
+- [ ] Product Tips (tips with product links, prices, apartment compatibility)
+- [ ] Dorm Calendar (social events, movie nights, tournaments)
+
+### 🔮 **Post-Launch Features** (v1.1+)
+- Product Tips system (product recommendations with links & pricing)
+- Dorm Calendar (social events, movie nights, tournaments)
+- Email notifications
+- Business self-management portal
+- Advanced analytics
+- Video support
+- Payment integration for business listings
+- Direct messaging between users
+
+---
+
+## 🎯 **WEEK 1 (Days 1-4): Critical Infrastructure**
+
+### Day 1-2: Authentication & Database Setup
+
+#### ✅ **Clerk Production Setup**
+1. **Create Clerk Production Instance**
+   - Go to https://dashboard.clerk.com
+   - Create new application (Production)
+   - Enable: Google, Apple, Facebook sign-in
+   - Copy production keys
+
+2. **Update Environment Variables**
+   ```env
+   # Production .env (Vercel)
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...
+   CLERK_SECRET_KEY=sk_live_...
+   NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+   NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+   ```
+
+3. **Configure Clerk Settings**
+   - Set production domain in Clerk dashboard
+   - Configure OAuth callbacks
+   - Set up user metadata fields (room, dorm, etc.)
+   - Enable account deletion (GDPR compliance)
+
+#### ✅ **Supabase Production Setup**
+1. **Database Migration**
+   ```bash
+   # Already have your migration files, just need to run them
+   # Run in Supabase SQL Editor:
+   - 20250118000000_create_dormhub_schema.sql
+   - 20250120000000_create_local_businesses.sql
+   ```
+
+2. **Set Environment Variables**
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+   SUPABASE_SERVICE_ROLE_KEY=eyJ...
+   ```
+
+3. **Storage Buckets Setup**
+   - Go to Supabase Storage
+   - Verify `listings` bucket exists
+   - Set file size limits (10MB recommended)
+   - Enable image transformations
+
+4. **RLS Policies Verification**
+   - Test all RLS policies work correctly
+   - Verify anonymous users can read public data
+   - Test authenticated user permissions
+
+### Day 3: Legal Pages (CRITICAL - Required by law)
+
+#### 📄 **Create Terms of Service**
+```typescript
+// File: src/app/[locale]/terms/page.tsx
+```
+**What to include:**
+- User responsibilities
+- Prohibited content
+- Marketplace rules (no illegal items, accurate descriptions)
+- Account termination conditions
+- Liability disclaimers
+- Dispute resolution
+- Business listing terms
+- Student discount verification requirements
+
+**Quick tip**: Use a template from:
+- https://www.termsfeed.com/
+- https://www.termsandconditionsgenerator.com/
+- Customize for your specific use case
+
+#### 📄 **Create Privacy Policy**
+**What to include:**
+- What data you collect (name, email, room, phone)
+- How you use it (authentication, marketplace communication)
+- Third-party services (Clerk, Supabase, Vercel)
+- Cookie policy
+- User rights (access, deletion, modification)
+- Data retention
+- GDPR compliance (if applicable)
+- Contact information for privacy concerns
+
+**Action**: I can create basic templates for both - just need your contact email
+
+### Day 4: Content Moderation System
+
+#### 🛡️ **Build Reporting System**
+
+**Features needed:**
+1. Report button on marketplace listings
+2. Report button on tips
+3. Report reasons (inappropriate, spam, false info, etc.)
+4. Admin dashboard to review reports
+
+**Database schema addition:**
+```sql
+-- Add to migration
+CREATE TABLE public.reports (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  reporter_id uuid REFERENCES public.profiles(id),
+  reported_item_type text NOT NULL, -- 'listing' or 'tip'
+  reported_item_id uuid NOT NULL,
+  reason text NOT NULL,
+  description text,
+  status text DEFAULT 'pending', -- pending, reviewed, resolved
+  created_at timestamptz DEFAULT now()
+);
+```
+
+#### 🚫 **Profanity Filter for Tips**
+- Install: `npm install bad-words`
+- Add filter to tip submission API
+- Automatic rejection if profanity detected
+- Option to review flagged content
+
+---
+
+## 🎯 **WEEK 2 (Days 5-8): User Features**
+
+### Day 5: User Profiles
+
+#### 👤 **Profile Page**
+```typescript
+// File: src/app/[locale]/profile/page.tsx
+```
+
+**Features:**
+- View own profile
+- Edit: full name, room number, phone (optional)
+- View own listings
+- View favorite listings
+- Delete account option
+
+**Database**: Already have profiles table, just need UI
+
+### Day 6-7: Admin & Business Dashboards
+
+#### 🔧 **Admin Dashboard (Your Access)**
+```typescript
+// File: src/app/[locale]/admin/page.tsx
+```
+
+**Features you need:**
+- View all reports
+- Approve/reject tips
+- Remove inappropriate listings
+- Add/edit/remove businesses
+- View user statistics
+- Manage business owners accounts
+
+**Access Control:**
+- Add admin role to your Clerk account
+- Check admin status in middleware
+- Protect admin routes
+
+#### 🏢 **Business Owner Dashboard**
+```typescript
+// File: src/app/[locale]/business-dashboard/page.tsx
+```
+
+**Phase 1 (Post-launch):**
+- View their business info
+- Edit opening hours
+- Add/edit/remove discounts
+- View discount usage stats (future)
+
+**For now (Day 1):**
+- You manage everything
+- Business owners can request changes via contact form
+
+### Day 8: Business Onboarding
+
+#### 📋 **Business Onboarding Questionnaire**
+
+**Questions for new businesses:**
+
+1. **Basic Information**
+   - Business name
+   - Category (restaurant, minimarket, bakery, supermarket, other)
+   - Description (50-200 characters)
+   - Address/Location in building
+   - Contact phone number
+   - WhatsApp number (if different)
+   - Website (optional)
+   - Logo (upload)
+
+2. **Opening Hours**
+   - For each day of week: Opening time, closing time, or closed
+   - Special notes (e.g., "Delivery only after 8 PM")
+
+3. **Student Discounts**
+   - Do you offer student discounts? (Yes/No)
+   - If yes:
+     - Discount title (e.g., "10% off all items")
+     - Description
+     - Discount type (percentage, fixed amount, BOGO, other)
+     - Discount value
+     - Valid days (all days or specific days)
+     - Valid times (all day or specific hours)
+     - Requires student ID? (Yes/No)
+     - Terms & conditions
+     - Expiry date (if applicable)
+
+4. **Agreement**
+   - [ ] I confirm all information is accurate
+   - [ ] I agree to honor the student discounts listed
+   - [ ] I understand false information may result in removal
+   - [ ] I agree to Terms of Service
+
+**Action**: Create a Google Form or Typeform for now, migrate to in-app later
+
+---
+
+## 🎁 **NEW FEATURES: Product Tips & Dorm Calendar**
+
+### Feature 1: Product Tips 🛍️
+
+**What it is:**
+Enhanced tips that recommend specific products to students, with links, pricing, and apartment compatibility.
+
+#### Database Schema Addition:
+```sql
+-- Extend the tips table or create a new product_tips table
+ALTER TABLE public.tips ADD COLUMN tip_type text DEFAULT 'general'; -- 'general' or 'product'
+ALTER TABLE public.tips ADD COLUMN product_url text;
+ALTER TABLE public.tips ADD COLUMN product_price_min numeric(10,2);
+ALTER TABLE public.tips ADD COLUMN product_price_max numeric(10,2);
+ALTER TABLE public.tips ADD COLUMN apartment_types text[]; -- ['single', 'couple', 'single_balcony']
+```
+
+#### Features to Build:
+1. **Submission Form Enhancement**
+   - Add "Product Tip" option when submitting
+   - Fields:
+     - Product name/title
+     - Product link (URL validation)
+     - Price range (min-max or approximate)
+     - Apartment compatibility (multi-select):
+       - Single room
+       - Couple room
+       - Single + Balcony
+       - Any apartment
+     - Why it's useful (description)
+     - Category (furniture, appliances, decor, storage, kitchen, etc.)
+
+2. **Display Product Tips**
+   - Show product image preview (from URL)
+   - Display price badge
+   - Show apartment type icons
+   - "Buy Now" button linking to product
+   - Track clicks on product links (analytics)
+
+3. **Filter by Apartment Type**
+   - Students can filter tips by their apartment type
+   - Show only relevant product recommendations
+
+#### UI Components:
+```typescript
+// File: src/components/tips/ProductTipCard.tsx
+// File: src/components/tips/ProductTipForm.tsx
+```
+
+**Time to build:** 4-6 hours
+**Priority:** Nice to have for launch (adds value but not critical)
+
+---
+
+### Feature 2: Dorm Calendar 📅
+
+**What it is:**
+A social events calendar showing recurring and one-time dorm events like "Arak Monday", movie nights, and gaming tournaments.
+
+#### Database Schema:
+```sql
+CREATE TABLE public.dorm_events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title text NOT NULL,
+  title_he text NOT NULL,
+  description text,
+  description_he text,
+  event_type text NOT NULL, -- 'social', 'movie', 'gaming', 'sports', 'study', 'other'
+  location text, -- 'common room', 'roof', 'lobby', etc.
+  location_he text,
+  
+  -- Timing
+  event_date date, -- for one-time events
+  event_time time, -- e.g., '22:00'
+  duration_hours numeric(3,1), -- e.g., 2.5 hours
+  
+  -- Recurring events
+  is_recurring boolean DEFAULT false,
+  recurrence_pattern text, -- 'weekly', 'biweekly', 'monthly'
+  day_of_week integer, -- 0=Sunday, 1=Monday, etc. (for recurring events)
+  
+  -- Metadata
+  organizer_id uuid REFERENCES public.profiles(id),
+  max_participants integer,
+  requires_registration boolean DEFAULT false,
+  is_approved boolean DEFAULT false,
+  image_url text,
+  
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- For event registrations (optional)
+CREATE TABLE public.event_registrations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_id uuid REFERENCES public.dorm_events(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE,
+  status text DEFAULT 'registered', -- 'registered', 'cancelled', 'attended'
+  created_at timestamptz DEFAULT now(),
+  UNIQUE(event_id, user_id)
+);
+```
+
+#### Example Events:
+1. **Arak Monday (שני ערק)**
+   - Type: Social
+   - Recurring: Weekly (Monday)
+   - Time: 22:00
+   - Location: Common room/Roof
+   - Description: "Gather for drinks, music, and socializing"
+
+2. **Movie Night**
+   - Type: Movie
+   - Recurring: Biweekly (Friday)
+   - Time: 20:00
+   - Location: Common room
+   - Description: "Vote on the movie in the group chat"
+
+3. **Mario Kart Tournament**
+   - Type: Gaming
+   - One-time or recurring monthly
+   - Max participants: 16
+   - Requires registration: Yes
+
+#### Features to Build:
+
+1. **Calendar View Page**
+   ```typescript
+   // File: src/app/[locale]/calendar/page.tsx
+   ```
+   - Monthly calendar view
+   - List view (upcoming events)
+   - Filter by event type
+   - Highlight today and upcoming events
+
+2. **Event Details Page**
+   ```typescript
+   // File: src/app/[locale]/calendar/[eventId]/page.tsx
+   ```
+   - Full event details
+   - Register button (if applicable)
+   - See who's attending (optional)
+   - Share event (WhatsApp, copy link)
+   - Add to personal calendar (iCal export)
+
+3. **Submit Event Form**
+   ```typescript
+   // File: src/app/[locale]/calendar/submit/page.tsx
+   ```
+   - Any student can suggest events
+   - Admin approval required
+   - Fields: title, description, type, location, date/time, recurring options
+
+4. **Admin Event Management**
+   - Approve/reject event submissions
+   - Create official events
+   - Edit/delete events
+   - See registration counts
+
+5. **Notifications (Future)**
+   - Remind users 1 day before registered events
+   - Notify when new events are posted
+
+#### UI Components:
+```typescript
+// File: src/components/calendar/CalendarView.tsx
+// File: src/components/calendar/EventCard.tsx
+// File: src/components/calendar/EventForm.tsx
+// File: src/components/calendar/RegisterButton.tsx
+```
+
+**Time to build:** 8-12 hours
+**Priority:** Post-launch feature (fun but not essential for MVP)
+
+---
+
+## 🎯 **Implementation Priority**
+
+### If Time Permits Before Launch:
+1. **Product Tips** (4-6 hours)
+   - Extends existing tips system
+   - Adds immediate value
+   - Lower complexity
+   - **Recommendation:** Build if you have 2-3 days after critical features
+
+2. **Dorm Calendar** (8-12 hours)
+   - Standalone feature
+   - Requires more UI work
+   - Great for engagement
+   - **Recommendation:** Save for v1.1 (post-launch)
+
+### Build Order (if doing both):
+1. Get all critical features done first (Days 1-8)
+2. Deploy and test (Days 9-10)
+3. Day 11: Add Product Tips if time permits
+4. Post-launch Week 1: Add Dorm Calendar
+
+---
+
+## 🎯 **WEEK 2 (Days 9-11): Deployment & Testing**
+
+### Day 9: Vercel Deployment
+
+#### 🚀 **Deploy to Vercel**
+
+1. **Connect Repository**
+   ```bash
+   # If not already connected
+   git remote add origin https://github.com/yourusername/dormhub.git
+   git push -u origin main
+   ```
+
+2. **Vercel Setup**
+   - Go to https://vercel.com
+   - Import your GitHub repository
+   - Configure project:
+     - Framework: Next.js
+     - Root directory: `./`
+     - Build command: `npm run build`
+     - Output directory: `.next`
+
+3. **Environment Variables** (CRITICAL!)
+   Add all these in Vercel dashboard:
+   ```env
+   # Clerk
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...
+   CLERK_SECRET_KEY=sk_live_...
+   NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+   NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+   
+   # Supabase
+   NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+   SUPABASE_SERVICE_ROLE_KEY=eyJ...
+   
+   # App
+   NEXT_PUBLIC_APP_URL=https://your-app.vercel.app
+   ```
+
+4. **Deploy**
+   - Click "Deploy"
+   - Wait for build to complete
+   - Note your Vercel URL: `https://dormhub-xyz.vercel.app`
+
+5. **Configure Clerk with Vercel URL**
+   - Go back to Clerk dashboard
+   - Add your Vercel URL to allowed origins
+   - Update OAuth redirect URLs
+
+### Day 10: Testing & Bug Fixes
+
+#### 🧪 **Testing Checklist**
+
+**Authentication:**
+- [ ] Sign up with Google works
+- [ ] Sign up with Apple works
+- [ ] Sign up with Facebook works
+- [ ] Sign out works
+- [ ] Protected routes redirect to sign-in
+
+**Marketplace:**
+- [ ] Create listing (all types: sell, buy, swap, giveaway)
+- [ ] Upload images (test multiple images)
+- [ ] View listings
+- [ ] Filter listings
+- [ ] Search listings (English & Hebrew)
+- [ ] Edit own listing
+- [ ] Delete own listing
+- [ ] Favorite/unfavorite listings
+
+**Tips:**
+- [ ] Submit tip (general)
+- [ ] Submit product tip (if implemented)
+- [ ] View tips (only approved ones show)
+- [ ] Filter product tips by apartment type (if implemented)
+- [ ] Vote helpful on tip
+- [ ] Click product links (if product tips implemented)
+- [ ] Admin can approve tips
+- [ ] Profanity filter works
+
+**Local Businesses:**
+- [ ] View all businesses
+- [ ] See opening hours (current day highlighted)
+- [ ] See student discounts
+- [ ] Contact buttons work (phone, WhatsApp)
+- [ ] Smart Buying section displays correctly
+
+**Dorm Calendar (if implemented):**
+- [ ] View calendar/events list
+- [ ] Filter events by type
+- [ ] View event details
+- [ ] Register for events (if registration enabled)
+- [ ] Submit event suggestions
+- [ ] Admin can approve/manage events
+- [ ] Recurring events display correctly
+
+**UI/UX:**
+- [ ] Navigation works on all pages
+- [ ] Language switcher works (English ↔ Hebrew)
+- [ ] RTL layout works correctly for Hebrew
+- [ ] Mobile responsive on all pages
+- [ ] No console errors
+- [ ] Fast page loads
+
+**Admin:**
+- [ ] Access admin dashboard
+- [ ] View reports
+- [ ] Approve/reject tips
+- [ ] Manage businesses
+
+### Day 11: Final Polish & Launch
+
+#### ✨ **Pre-Launch Checklist**
+
+**Performance:**
+- [ ] Run Lighthouse audit (aim for 90+ scores)
+- [ ] Optimize images (use Next.js Image component everywhere)
+- [ ] Enable Vercel Analytics (free tier)
+- [ ] Set up error monitoring (Vercel or Sentry free tier)
+
+**SEO:**
+- [ ] Update all page metadata (title, description)
+- [ ] Add Open Graph images
+- [ ] Create robots.txt
+- [ ] Create sitemap.xml
+- [ ] Verify meta tags for social sharing
+
+**Legal:**
+- [ ] Terms of Service live and linked
+- [ ] Privacy Policy live and linked
+- [ ] Add links in footer
+- [ ] Add "By signing up you agree to Terms" on signup
+
+**Content:**
+- [ ] Add initial tips (5-10 useful tips)
+- [ ] Add product tips if feature is built (3-5 recommendations)
+- [ ] Seed initial calendar events if feature is built (Arak Monday, etc.)
+- [ ] Verify all 4 businesses are live with correct info
+- [ ] Test all student discounts are accurate
+- [ ] Add welcome message on homepage
+- [ ] Update navigation to include new features (if built)
+
+**Communication:**
+- [ ] Prepare launch announcement
+- [ ] Create social media posts
+- [ ] Print QR codes for dorm bulletin boards
+- [ ] Contact dorm administration (if needed)
+
+---
+
+## 📊 **Post-Launch (First Week)**
+
+### Day 1 After Launch
+- [ ] Monitor for errors in Vercel logs
+- [ ] Watch user signups
+- [ ] Check for inappropriate content
+- [ ] Be ready to respond to issues quickly
+
+### Day 2-7 After Launch
+- [ ] Gather user feedback
+- [ ] Monitor which features are most used
+- [ ] Review any reports submitted
+- [ ] Update business information if needed
+- [ ] Add more tips based on submissions
+
+---
+
+## 🔒 **Security Checklist**
+
+### Before Launch:
+- [ ] All API routes validate authentication
+- [ ] RLS policies tested and verified
+- [ ] No sensitive data in client-side code
+- [ ] Environment variables never committed to git
+- [ ] Service role key only used server-side
+- [ ] File upload size limits enforced
+- [ ] Rate limiting on API routes (optional but recommended)
+- [ ] Input validation on all forms
+- [ ] SQL injection prevention (using Supabase prevents this)
+- [ ] XSS prevention (React prevents most, but verify user-generated content)
+
+---
+
+## 💰 **Business Model Setup (Post-Launch)**
+
+### Phase 1: Free for All (Launch - Month 1)
+- Get users
+- Prove value
+- Gather testimonials
+
+### Phase 2: Business Listings (Month 2+)
+**Pricing Ideas:**
+- Free tier: Basic listing, opening hours
+- Premium ($20-50/month): 
+  - Featured placement
+  - Multiple discount listings
+  - Analytics
+  - Logo display
+  - Social media links
+
+**Payment Integration:**
+- Stripe for payments
+- Monthly subscriptions
+- 14-day free trial
+
+---
+
+## 📝 **Content Moderation Guidelines**
+
+### What to Remove:
+**Listings:**
+- Illegal items
+- Explicit content
+- Scams/fraud
+- Duplicates
+- Misleading descriptions
+
+**Tips:**
+- Profanity
+- Harassment
+- False information
+- Spam/advertisements
+- Off-topic content
+
+### Response Times:
+- Reports: Review within 24 hours
+- Profanity: Auto-block immediately
+- User complaints: Respond within 48 hours
+
+---
+
+## 🛠️ **Missing Features to Build (Priority Order)**
+
+### CRITICAL (Before Launch)
+1. **Reporting System** (2-3 hours)
+   - Add report button to listings
+   - Add report button to tips
+   - Create reports table
+   - Admin view for reports
+
+2. **Profanity Filter** (1 hour)
+   - Install bad-words package
+   - Add to tip submission
+   - Test with various words
+
+3. **Terms of Service Page** (2 hours)
+   - Create page
+   - Write content
+   - Add link to footer and signup
+
+4. **Privacy Policy Page** (2 hours)
+   - Create page
+   - Write content
+   - Add link to footer
+
+5. **Admin Dashboard** (4-6 hours)
+   - Basic admin check
+   - View all tips with approve/reject
+   - View reports
+   - Manage businesses CRUD
+
+6. **User Profile Page** (3-4 hours)
+   - View profile
+   - Edit profile
+   - View own listings
+   - Account deletion
+
+### IMPORTANT (Can launch without, add week 1)
+7. **Business Dashboard** (4-6 hours)
+   - View business info
+   - Request changes form
+
+8. **Contact Page with Form** (2 hours)
+   - Contact form
+   - Email or save to database
+
+9. **Enhanced Search** (2-3 hours)
+   - Better filters
+   - Sort options
+   - Search history
+
+### NICE TO HAVE (v1.1+)
+10. **Product Tips** (4-6 hours)
+    - Extend tips table
+    - Add product-specific fields
+    - Enhanced submission form
+    - Display with product info
+
+11. **Dorm Calendar** (8-12 hours)
+    - Events database schema
+    - Calendar view page
+    - Event submission form
+    - Admin event management
+    - Registration system
+
+12. Direct messaging between buyers/sellers
+13. Email notifications
+14. Push notifications
+15. Business analytics
+16. Image optimization/compression
+17. Video support
+
+---
+
+## 🎨 **Design Polish**
+
+### Before Launch:
+- [ ] Consistent spacing/padding throughout
+- [ ] Loading states for all async operations
+- [ ] Empty states (no listings, no tips, etc.)
+- [ ] Error states (404, 500, etc.)
+- [ ] Success messages for all actions
+- [ ] Hover states on all interactive elements
+- [ ] Focus states for accessibility
+
+---
+
+## 📱 **Testing on Real Devices**
+
+### Test on:
+- [ ] iPhone (Safari)
+- [ ] Android (Chrome)
+- [ ] Desktop (Chrome, Safari, Firefox)
+- [ ] Tablet
+- [ ] Test both Hebrew and English on each
+
+---
+
+## 🚨 **Emergency Contacts & Rollback Plan**
+
+### If Something Breaks:
+1. **Vercel Instant Rollback**
+   - Go to Vercel dashboard
+   - Click "Deployments"
+   - Click "..." on previous working deployment
+   - Click "Promote to Production"
+
+2. **Database Issues**
+   - Have SQL backup ready
+   - Know how to restore from Supabase backup
+   - Test restore process before launch
+
+3. **Support Contact**
+   - Add your contact email/phone
+   - Set up status page (optional)
+   - Prepare template responses for common issues
+
+---
+
+## ✅ **Launch Day Checklist**
+
+### Morning of Launch:
+- [ ] Final backup of database
+- [ ] All tests passing
+- [ ] Verify all environment variables
+- [ ] Check Clerk auth working
+- [ ] Check Supabase connection
+- [ ] Verify images uploading
+- [ ] Test on mobile device
+- [ ] Spell check all text
+- [ ] Verify Terms & Privacy links work
+
+### Announcement:
+- [ ] Post in dorm groups
+- [ ] Post on social media
+- [ ] Email dorm administration
+- [ ] Put up physical posters/QR codes
+- [ ] Tell friends to spread the word
+
+### Monitor:
+- [ ] Watch Vercel logs for errors
+- [ ] Monitor Supabase usage
+- [ ] Check for signup errors
+- [ ] Be available for quick fixes
+
+---
+
+## 📈 **Success Metrics (First Month)**
+
+### Track:
+- User signups
+- Active listings
+- Tips submitted
+- Business page views
+- Most popular features
+- User retention
+
+### Goals:
+- 50+ signups in first week
+- 20+ marketplace listings
+- 10+ approved tips
+- All 4 businesses verified
+
+---
+
+## 🎓 **Key Learnings & Next Steps**
+
+### After Launch:
+1. Gather user feedback
+2. Fix bugs quickly
+3. Add most requested features
+4. Talk to business owners
+5. Plan v1.1 features
+6. Consider monetization timing
+
+---
+
+## 📞 **Support & Resources**
+
+### Documentation:
+- Next.js: https://nextjs.org/docs
+- Clerk: https://clerk.com/docs
+- Supabase: https://supabase.com/docs
+- Vercel: https://vercel.com/docs
+
+### Community:
+- Next.js Discord
+- Supabase Discord
+- Clerk Discord
+
+### Emergency Help:
+- Vercel Support (if critical issue)
+- Supabase Support
+- Clerk Support
+
+---
+
+## 🎯 **Timeline Summary**
+
+**Week 1:**
+- Days 1-2: Auth & Database setup
+- Day 3: Legal pages
+- Day 4: Content moderation
+
+**Week 2:**
+- Day 5: User profiles
+- Days 6-7: Dashboards
+- Day 8: Business onboarding
+- Day 9: Deploy to Vercel
+- Day 10: Testing
+- Day 11: Final polish & LAUNCH! 🚀
+
+---
+
+**Total Estimated Work: 60-80 hours over 11 days**
+**New Features Add: 12-18 additional hours**
+
+**Priority if time is tight:**
+1. Legal pages (MUST HAVE)
+2. Profanity filter (MUST HAVE)
+3. Reporting system (SHOULD HAVE)
+4. Admin dashboard (SHOULD HAVE)
+5. User profiles & contact page (SHOULD HAVE)
+6. Product Tips (NICE TO HAVE - 4-6 hours)
+7. Dorm Calendar (NICE TO HAVE - 8-12 hours, recommend post-launch)
+
+---
+
+## 📝 **New Features: Quick Implementation Guide**
+
+### If you decide to build Product Tips:
+1. Run database migration (alter tips table)
+2. Update `SubmitTipForm.tsx` to include product fields
+3. Update `TipCard.tsx` to display product info
+4. Add apartment type filter to tips page
+5. Test product links and price display
+6. Add i18n keys (see below)
+
+**I18n Keys Needed (add to en.json & he.json):**
+```json
+{
+  "tips": {
+    "productTip": "Product Recommendation",
+    "generalTip": "General Tip",
+    "productUrl": "Product Link",
+    "priceRange": "Price Range",
+    "apartmentTypes": "Suitable for",
+    "apartmentType": {
+      "single": "Single Room",
+      "couple": "Couple Room",
+      "singleBalcony": "Single + Balcony",
+      "any": "Any Apartment"
+    },
+    "buyNow": "View Product",
+    "filterByApartment": "Filter by apartment type"
+  }
+}
+```
+
+### If you decide to build Dorm Calendar:
+1. Run database migration (create dorm_events & event_registrations tables)
+2. Create calendar page structure
+3. Build event submission form
+4. Add admin approval system
+5. Implement registration functionality (optional for v1)
+6. Seed initial events (Arak Monday, etc.)
+7. Add i18n keys (see below)
+8. Add calendar link to navigation
+
+**I18n Keys Needed (add to en.json & he.json):**
+```json
+{
+  "calendar": {
+    "title": "Dorm Calendar",
+    "events": "Events",
+    "upcomingEvents": "Upcoming Events",
+    "noEvents": "No upcoming events",
+    "eventTypes": {
+      "social": "Social",
+      "movie": "Movie Night",
+      "gaming": "Gaming",
+      "sports": "Sports",
+      "study": "Study Session",
+      "other": "Other"
+    },
+    "submitEvent": "Suggest Event",
+    "eventDetails": "Event Details",
+    "register": "Register",
+    "registered": "Registered",
+    "cancel": "Cancel Registration",
+    "location": "Location",
+    "time": "Time",
+    "duration": "Duration",
+    "participants": "Participants",
+    "recurring": "Recurring Event",
+    "everyWeek": "Every week",
+    "everyTwoWeeks": "Every two weeks",
+    "everyMonth": "Every month"
+  }
+}
+```
+
+**Recommendation:** 
+- Build Product Tips if you finish critical features by Day 10
+- Save Dorm Calendar for Week 1 post-launch (more complex, but very engaging!)
+
+---
+
+## 🎉 **You've Got This!**
+
+With 11 days, you can definitely launch a working MVP. Focus on the critical features first, and remember:
+
+**"Done is better than perfect"**
+
+Launch with the essentials, gather feedback, and iterate quickly. The new features (Product Tips & Dorm Calendar) will make DormHub even more engaging, but get the core experience solid first! 🚀
+
+
+

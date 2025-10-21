@@ -25,6 +25,7 @@
     "home": "Home",
     "marketplace": "Marketplace",
     "tips": "Tips & Info",
+    "businesses": "Local Businesses",
     "about": "About",
     "contact": "Contact",
     "signIn": "Sign In",
@@ -164,12 +165,88 @@
     "title": "Terms of Service",
     "content": "Please read these terms carefully."
   },
+  "businesses": {
+    "title": "Local Businesses",
+    "subtitle": "Shops and services right below your dorm",
+    "description": "Support local businesses and save money with student discounts",
+    "openingHours": "Opening Hours",
+    "studentDiscounts": "Student Discounts",
+    "noDiscounts": "No student discounts available",
+    "contactInfo": "Contact Information",
+    "phone": "Phone",
+    "address": "Address",
+    "website": "Website",
+    "whatsapp": "WhatsApp",
+    "closed": "Closed",
+    "requiresStudentId": "Show student ID required",
+    "allDay": "All day",
+    "category": {
+      "restaurant": "Restaurant",
+      "minimarket": "Mini Market",
+      "bakery": "Bakery",
+      "supermarket": "Supermarket",
+      "other": "Other"
+    },
+    "days": {
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday",
+      "sunday": "Sunday"
+    },
+    "smartBuying": "Smart Buying",
+    "smartBuyingDescription": "See all student discounts in one place"
+  },
   "footer": {
     "about": "About",
     "privacy": "Privacy",
     "terms": "Terms",
     "accessibility": "Accessibility",
     "contact": "Contact",
+    "deliveryReturns": "Delivery & Returns",
+    "copyright": "© {year} All rights reserved to",
     "allRightsReserved": "All rights reserved"
+  },
+  "legal": {
+    "terms": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last Updated: {date}",
+      "intro": "Welcome to DormHub. By accessing or using our platform, you agree to be bound by these Terms of Service. Please read them carefully. If you do not agree with any part of these terms, you may not use DormHub.",
+      "section1Title": "1. Acceptance of Terms",
+      "section1Content": "By creating an account and using DormHub, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service and our Privacy Policy. These terms apply to all users of the platform, including those who browse, post listings, submit tips, or engage with local businesses featured on our platform.\n\nDormHub reserves the right to modify these terms at any time. We will notify users of significant changes via email or through the platform. Your continued use of DormHub after such modifications constitutes your acceptance of the updated terms.",
+      "section2Title": "2. Eligibility and User Accounts",
+      "section2Content": "You must be at least 18 years old to use DormHub. By creating an account, you represent and warrant that you are of legal age and have the right, authority, and capacity to enter into this agreement.\n\nYou are responsible for:\n• Maintaining the confidentiality of your account credentials\n• All activities that occur under your account\n• Ensuring your account information is accurate and up-to-date\n• Notifying us immediately of any unauthorized access\n\nYou may not:\n• Create multiple accounts\n• Share your account with others\n• Use another person's account without permission\n• Create an account using false or misleading information",
+      "section3Title": "3. Marketplace Rules and User Conduct",
+      "section3Content": "DormHub's marketplace is a peer-to-peer platform for dorm residents. Users agree to:\n\nProhibited Items and Content:\n• No illegal items, drugs, weapons, or counterfeit goods\n• No stolen property or items obtained illegally\n• No adult content, offensive material, or hate speech\n• No spam, scams, or misleading information\n• No items that violate intellectual property rights\n\nAccurate Listings:\n• Provide truthful, accurate descriptions of items\n• Use real photos of your actual items\n• Price items fairly and honor stated prices\n• Update or remove listings when items are sold\n• Respond to inquiries in a timely manner\n\nUser Conduct:\n• Treat other users with respect\n• No harassment, threats, or abusive behavior\n• No impersonation of others\n• Complete transactions in good faith\n• Meet in safe, public locations for exchanges",
+      "section4Title": "4. Tips and User-Generated Content",
+      "section4Content": "Users may submit tips and advice for the community. By submitting content, you:\n\n• Grant DormHub a non-exclusive, royalty-free, worldwide license to use, display, and distribute your content\n• Warrant that your content is original or you have the right to share it\n• Agree that content may be moderated, edited, or removed\n• Understand that tips require approval before being published\n\nContent Guidelines:\n• Must be helpful, relevant, and appropriate for the community\n• No profanity, offensive language, or personal attacks\n• No false, misleading, or harmful information\n• No advertising or self-promotion\n• No copyright violations or plagiarism\n\nDormHub reserves the right to reject, remove, or edit any content that violates these guidelines or is deemed inappropriate.",
+      "section5Title": "5. Local Business Information",
+      "section5Content": "DormHub provides information about local businesses, including student discounts, as a service to the community.\n\nImportant Disclaimers:\n• Business information is provided for reference only\n• We are not responsible for the accuracy of business hours, discounts, or prices\n• Businesses may change their offerings without notice\n• Student discounts must be verified directly with the business\n• We are not liable for disputes between users and businesses\n• We do not endorse or guarantee the quality of any business\n\nBusiness owners who wish to update their information should contact us directly.",
+      "section6Title": "6. Disclaimers and Limitation of Liability",
+      "section6Content": "IMPORTANT - PLEASE READ CAREFULLY:\n\nNo Guarantee of Transactions:\nDormHub is a platform that connects users. We do not:\n• Verify the identity or background of users\n• Guarantee the quality, safety, or legality of items\n• Oversee or participate in transactions\n• Provide buyer or seller protection\n• Store, ship, or deliver items\n\nLiability Limitations:\nTO THE MAXIMUM EXTENT PERMITTED BY LAW:\n• DormHub is provided \"as is\" without warranties of any kind\n• We are not liable for any direct, indirect, incidental, or consequential damages\n• We are not responsible for user conduct, items sold, or transaction disputes\n• We are not liable for loss of data, profits, or business opportunities\n• Our total liability shall not exceed the amount paid to us (if any) in the past 12 months\n\nUser Responsibility:\n• You use DormHub at your own risk\n• You are solely responsible for your transactions and interactions\n• You should exercise caution and common sense when meeting others\n• You should verify items before purchasing\n• You should meet in safe, public locations",
+      "section7Title": "7. Content Moderation and Account Termination",
+      "section7Content": "DormHub reserves the right to:\n\nContent Moderation:\n• Remove or refuse any content for any reason\n• Moderate, approve, or reject tips and listings\n• Investigate reports of policy violations\n• Take action on inappropriate behavior\n\nAccount Actions:\n• Suspend or terminate accounts that violate these terms\n• Remove users who engage in fraudulent or harmful behavior\n• Ban users who repeatedly violate community guidelines\n• Terminate accounts without prior notice in serious cases\n\nUsers may report inappropriate content or behavior through the reporting system. We will review reports and take appropriate action, though we cannot guarantee specific outcomes or response times.",
+      "section8Title": "8. Intellectual Property and Miscellaneous",
+      "section8Content": "Intellectual Property:\n• DormHub, its logo, and design are protected by copyright and trademark laws\n• Users retain ownership of their original content\n• You may not copy, modify, or distribute our platform without permission\n\nGoverning Law:\n• These terms are governed by the laws of Israel\n• Disputes will be resolved in the courts of Israel\n\nSeverability:\n• If any provision is found invalid, the remaining provisions remain in effect\n\nEntire Agreement:\n• These terms, along with our Privacy Policy, constitute the entire agreement between you and DormHub\n\nContact:\n• For questions about these terms, please contact us via WhatsApp: +972-52-727-5393\n\nBy using DormHub, you acknowledge that you have read, understood, and agree to these Terms of Service."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last Updated: {date}",
+      "intro": "At DormHub, we take your privacy seriously. This Privacy Policy explains how we collect, use, store, and protect your personal information when you use our platform. By using DormHub, you consent to the practices described in this policy.",
+      "section1Title": "1. Information We Collect",
+      "section1Content": "Personal Information:\nWhen you create an account on DormHub, we collect:\n• Full name\n• Email address\n• Phone number (optional)\n• Dorm/room location (for marketplace functionality)\n• Profile information you choose to provide\n\nAutomatically Collected Information:\n• IP address and device information\n• Browser type and version\n• Pages visited and time spent on the platform\n• Referring/exit pages\n• Operating system\n• Login timestamps\n\nUser-Generated Content:\n• Marketplace listings (title, description, images, price, location)\n• Tips and advice submitted to the community\n• Comments, votes, and interactions\n• Favorites and saved items\n• Reports of inappropriate content\n\nThird-Party Authentication:\nWe use Clerk for authentication, which may collect:\n• OAuth tokens from social media providers (Google, Apple, Facebook)\n• Authentication metadata\n\nNote: We minimize data collection and only collect what is necessary to provide our services.",
+      "section2Title": "2. How We Use Your Information",
+      "section2Content": "We use your information for the following purposes:\n\nCore Services:\n• Account creation and authentication\n• Displaying your listings on the marketplace\n• Enabling communication between buyers and sellers\n• Publishing approved tips and content\n• Providing access to local business information\n\nPlatform Improvement:\n• Analyzing usage patterns to improve user experience\n• Monitoring platform performance and fixing bugs\n• Understanding which features are most valuable\n• Preventing fraud and abuse\n\nCommunication:\n• Sending important account updates and security alerts\n• Notifying you of responses to your listings or tips\n• Responding to your support requests\n• Announcing new features or updates (you can opt out)\n\nSafety and Compliance:\n• Investigating reports of policy violations\n• Moderating content for appropriateness\n• Preventing spam, fraud, and abuse\n• Complying with legal obligations\n\nWe will never:\n• Sell your personal information to third parties\n• Share your data for marketing purposes without consent\n• Use your information for purposes not disclosed here",
+      "section3Title": "3. Information Sharing and Third-Party Services",
+      "section3Content": "We use trusted third-party services to operate DormHub:\n\nClerk (Authentication):\n• Manages user authentication and account security\n• Handles OAuth integrations with Google, Apple, Facebook\n• Privacy Policy: https://clerk.com/legal/privacy\n\nSupabase (Database and Storage):\n• Stores user data, listings, tips, and images\n• Hosts our database infrastructure\n• Privacy Policy: https://supabase.com/privacy\n\nVercel (Hosting):\n• Hosts and serves the DormHub platform\n• Provides infrastructure and performance monitoring\n• Privacy Policy: https://vercel.com/legal/privacy-policy\n\nWhen We May Share Information:\n• With your explicit consent\n• To comply with legal obligations (court orders, subpoenas)\n• To protect the rights, property, or safety of DormHub, our users, or others\n• In connection with a business transfer (merger, acquisition, sale)\n• With service providers bound by confidentiality agreements\n\nPublic Information:\n• Marketplace listings are visible to all users\n• Approved tips are publicly visible\n• Your username/display name is visible on your content\n• You control what information you include in listings and tips",
+      "section4Title": "4. Data Security and Retention",
+      "section4Content": "Security Measures:\nWe implement industry-standard security practices:\n• Encryption of data in transit (HTTPS/TLS)\n• Secure authentication through Clerk\n• Database access controls and Row Level Security (RLS)\n• Regular security audits and updates\n• Secure storage of user credentials\n• Limited access to personal data by staff\n\nData Retention:\n• Active account data: Retained while your account is active\n• Deleted content: Removed from public view immediately, permanently deleted after 30 days\n• Closed accounts: Data deleted within 90 days of account closure\n• Legal requirements: Some data may be retained longer if required by law\n• Backup copies: May persist in backups for up to 90 days\n\nYour Responsibilities:\n• Use a strong, unique password\n• Keep your credentials confidential\n• Log out on shared devices\n• Report suspicious activity immediately\n• Be cautious about what information you share in listings\n\nData Breaches:\nIn the unlikely event of a data breach, we will:\n• Investigate and contain the incident immediately\n• Notify affected users within 72 hours\n• Report to relevant authorities as required by law\n• Take steps to prevent future incidents",
+      "section5Title": "5. Your Privacy Rights and Choices",
+      "section5Content": "You have the following rights regarding your personal information:\n\nAccess and Portability:\n• View your account information at any time\n• Request a copy of your data in a portable format\n• Export your listings and content\n\nCorrection and Updates:\n• Update your profile information\n• Edit or delete your listings\n• Correct inaccurate information\n\nDeletion (Right to be Forgotten):\n• Delete individual listings or tips\n• Request full account deletion\n• We will delete your data within 90 days of request\n• Some information may be retained for legal compliance\n\nOptional Data:\n• Phone number is optional - you can choose not to provide it\n• You control what information appears in your listings\n• You can make listings anonymous\n\nCommunication Preferences:\n• Opt out of non-essential emails\n• Control notification settings\n• Choose how you want to be contacted\n\nHow to Exercise Your Rights:\n• Email us at: [your contact email]\n• Contact us via WhatsApp: +972-52-727-5393\n• Use the account settings page\n• We will respond to requests within 30 days",
+      "section6Title": "6. Cookies, Analytics, and GDPR Compliance",
+      "section6Content": "Cookies and Tracking:\n• We use essential cookies for authentication and security\n• Session cookies to keep you logged in\n• Preference cookies to remember your settings\n• Analytics cookies to understand usage (you can opt out)\n• We do not use advertising or tracking cookies\n\nThird-Party Analytics:\n• We may use Vercel Analytics to monitor performance\n• Analytics data is anonymized and aggregated\n• You can opt out through your browser settings\n\nGDPR Compliance (for EU/EEA users):\nIf you are in the European Union or European Economic Area, you have additional rights:\n• Right to access your personal data\n• Right to rectification of inaccurate data\n• Right to erasure (\"right to be forgotten\")\n• Right to restrict processing\n• Right to data portability\n• Right to object to processing\n• Right to withdraw consent at any time\n• Right to lodge a complaint with a supervisory authority\n\nLegal Basis for Processing:\n• Contract: To provide services you requested\n• Legitimate Interest: To improve and secure our platform\n• Consent: For optional features and communications\n• Legal Obligation: To comply with applicable laws\n\nInternational Data Transfers:\n• Your data may be processed outside your country of residence\n• We use appropriate safeguards for international transfers\n• Third-party services comply with GDPR and privacy regulations\n\nChildren's Privacy:\n• DormHub is not intended for users under 18\n• We do not knowingly collect data from minors\n• If we discover underage users, we will delete their accounts\n\nContact Information:\nFor privacy-related questions or to exercise your rights:\n• WhatsApp: +972-52-727-5393\n• Email: [Your contact email]\n\nThis Privacy Policy may be updated from time to time. We will notify you of significant changes and post the updated policy with a new \"Last Updated\" date."
+    }
   }
 }
