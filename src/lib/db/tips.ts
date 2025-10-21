@@ -24,6 +24,7 @@ export async function createTip(authorId: string, payload: CreateTipPayload): Pr
       title: payload.title,
       body: payload.body,
       tags: payload.tags || [],
+      images: payload.images || [],
       status: 'pending',
     })
     .select()
@@ -91,7 +92,8 @@ export async function getTipWithAuthor(tipId: string): Promise<TipWithAuthor | n
 export async function getTips(
   filters: TipFilters,
   limit = 20,
-  offset = 0
+  offset = 0,
+  userProfileId?: string
 ): Promise<PaginatedResponse<TipWithAuthor>> {
   const supabase = getSupabaseClient();
 
@@ -136,8 +138,26 @@ export async function getTips(
     throw new Error(`Failed to fetch tips: ${error.message}`);
   }
 
+  let tips = (data || []) as unknown as TipWithAuthor[];
+
+  // If user is logged in, check which tips they've voted as helpful
+  if (userProfileId && tips.length > 0) {
+    const tipIds = tips.map(t => t.id);
+    const { data: votes } = await supabase
+      .from('tip_votes')
+      .select('tip_id')
+      .eq('user_id', userProfileId)
+      .in('tip_id', tipIds);
+
+    const votedTipIds = new Set(votes?.map(v => v.tip_id) || []);
+    tips = tips.map(tip => ({
+      ...tip,
+      is_voted: votedTipIds.has(tip.id),
+    }));
+  }
+
   return {
-    data: (data || []) as unknown as TipWithAuthor[],
+    data: tips,
     pagination: {
       total: count || 0,
       limit,

@@ -17,14 +17,14 @@
 
 ### 🚧 **Missing Critical Features** (Must build before launch)
 - [ ] Content moderation & reporting system
-- [ ] Business owner dashboard
+- [V] Business owner dashboard
 - [ ] Admin dashboard for you
-- [ v] Terms of Service page (legal requirement)
-- [ ] Privacy Policy page (legal requirement)
+- [V] Terms of Service page (legal requirement)
+- [V] Privacy Policy page (legal requirement)
 - [ ] Business onboarding form/questionnaire
 - [ ] Profanity filter for tips
-- [ ] User profiles (view/edit)
-- [ ] Contact page with actual form
+- [v ] User profiles (view/edit)
+- [v ] Contact page with actual form
 
 ### 🎁 **New Feature Requests** (Optional for launch)
 - [ ] Product Tips (tips with product links, prices, apartment compatibility)

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import BusinessHoursEditor from './BusinessHoursEditor';
 import DiscountsEditor from './DiscountsEditor';
+import BusinessInfoEditor from './BusinessInfoEditor';
 
 interface BusinessHour {
   id: string;
@@ -54,6 +55,13 @@ interface BusinessDashboardProps {
 
 export default function BusinessDashboard({ business, userData }: BusinessDashboardProps) {
   const [activeTab, setActiveTab] = useState<'info' | 'hours' | 'discounts'>('info');
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleUpdate = () => {
+    setRefreshKey(prev => prev + 1);
+    // Force page refresh to get updated data
+    window.location.reload();
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -116,58 +124,8 @@ export default function BusinessDashboard({ business, userData }: BusinessDashbo
         <div className="mt-6 pb-12">
           {activeTab === 'info' && (
             <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4">Business Information</h2>
-              <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Name</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{business.name}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Category</dt>
-                  <dd className="mt-1 text-sm text-gray-900 capitalize">{business.category}</dd>
-                </div>
-                <div className="sm:col-span-2">
-                  <dt className="text-sm font-medium text-gray-500">Description</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{business.description || 'No description'}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Phone</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{business.phone || 'Not set'}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">WhatsApp</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{business.whatsapp || 'Not set'}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Address</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{business.address || 'Not set'}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Website</dt>
-                  <dd className="mt-1 text-sm text-gray-900">
-                    {business.website ? (
-                      <a href={business.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">
-                        {business.website}
-                      </a>
-                    ) : 'Not set'}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Status</dt>
-                  <dd className="mt-1">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      business.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {business.is_active ? 'Active' : 'Inactive'}
-                    </span>
-                  </dd>
-                </div>
-              </dl>
-              <div className="mt-6 p-4 bg-blue-50 rounded-md">
-                <p className="text-sm text-blue-800">
-                  To update your business information (name, phone, address), please contact support via WhatsApp: 054-609-3624
-                </p>
-              </div>
+              <h2 className="text-xl font-semibold text-gray-900 mb-6">Edit Business Information</h2>
+              <BusinessInfoEditor business={business} onUpdate={handleUpdate} />
             </div>
           )}
 

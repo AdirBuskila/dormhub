@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { TipImageUploader } from './TipImageUploader';
 
 interface SubmitTipFormProps {
   locale: string;
@@ -18,6 +19,7 @@ export function SubmitTipForm({ locale }: SubmitTipFormProps) {
     tags: '',
   });
 
+  const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -41,6 +43,7 @@ export function SubmitTipForm({ locale }: SubmitTipFormProps) {
         tags: formData.tags
           ? formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean)
           : [],
+        images: images.length > 0 ? images : undefined,
       };
 
       // Submit to API
@@ -61,6 +64,7 @@ export function SubmitTipForm({ locale }: SubmitTipFormProps) {
       // Success!
       setSuccess(true);
       setFormData({ title: '', body: '', tags: '' });
+      setImages([]);
 
       // Redirect after a brief delay
       setTimeout(() => {
@@ -144,6 +148,18 @@ export function SubmitTipForm({ locale }: SubmitTipFormProps) {
           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <p className="text-xs text-gray-500 mt-1">{t('form.tagsHint')}</p>
+      </div>
+
+      {/* Images */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Images (Optional)
+        </label>
+        <TipImageUploader 
+          images={images}
+          onImagesChange={setImages}
+          maxImages={3}
+        />
       </div>
 
       {/* Info Box */}

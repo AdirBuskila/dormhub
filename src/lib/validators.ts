@@ -96,6 +96,9 @@ export const submitTipSchema = z.object({
     .max(8, 'Maximum 8 tags allowed')
     .optional()
     .default([]),
+  images: z.array(z.string().url())
+    .max(3, 'Maximum 3 images allowed')
+    .optional(),
 });
 
 export const updateTipSchema = submitTipSchema.partial();

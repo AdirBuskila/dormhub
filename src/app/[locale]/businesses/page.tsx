@@ -65,6 +65,21 @@ function BusinessCard({ business, index = 0 }: { business: Business; index?: num
 
   // Get current day to highlight it
   const currentDay = daysOrder[new Date().getDay()];
+  
+  // Check if business is currently open
+  const isCurrentlyOpen = () => {
+    const now = new Date();
+    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const todayHours = sortedHours.find(h => h.day_of_week === currentDay);
+    
+    if (!todayHours || todayHours.is_closed || !todayHours.opens_at || !todayHours.closes_at) {
+      return false;
+    }
+    
+    return currentTime >= todayHours.opens_at.substring(0, 5) && currentTime <= todayHours.closes_at.substring(0, 5);
+  };
+  
+  const isOpen = isCurrentlyOpen();
 
   return (
     <div 
@@ -73,15 +88,26 @@ function BusinessCard({ business, index = 0 }: { business: Business; index?: num
     >
       {/* Header with category badge */}
       <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white">
-        <div className="flex items-start justify-between">
-          <div>
-            <h3 className="text-2xl font-bold mb-2">{business.name}</h3>
-            <span className="inline-block bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
-              {t(`category.${business.category}`)}
-            </span>
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-4 flex-1">
+            {business.logo_url && (
+              <div className="flex-shrink-0">
+                <img
+                  src={business.logo_url}
+                  alt={`${business.name} logo`}
+                  className="w-16 h-16 rounded-lg bg-white object-cover shadow-lg"
+                />
+              </div>
+            )}
+            <div>
+              <h3 className="text-2xl font-bold mb-2">{business.name}</h3>
+              <span className="inline-block bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
+                {t(`category.${business.category}`)}
+              </span>
+            </div>
           </div>
           {business.student_discounts.length > 0 && (
-            <div className="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1">
+            <div className="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-sm font-semibold flex items-center gap-1 flex-shrink-0">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
               </svg>
@@ -104,25 +130,47 @@ function BusinessCard({ business, index = 0 }: { business: Business; index?: num
             {t('openingHours')}
           </h4>
           <div className="space-y-2">
-            {sortedHours.map((hours) => (
-              <div 
-                key={hours.id}
-                className={`flex justify-between items-center py-2 px-3 rounded ${
-                  hours.day_of_week === currentDay ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'
-                }`}
-              >
-                <span className={`font-medium ${hours.day_of_week === currentDay ? 'text-blue-700' : 'text-gray-700'}`}>
-                  {t(`days.${hours.day_of_week}`)}
-                </span>
-                {hours.is_closed || !hours.opens_at ? (
-                  <span className="text-red-600 font-medium">{t('closed')}</span>
-                ) : (
-                  <span className="text-gray-600">
-                    {formatTime(hours.opens_at)} - {formatTime(hours.closes_at)}
-                  </span>
-                )}
-              </div>
-            ))}
+            {sortedHours.map((hours) => {
+              const isToday = hours.day_of_week === currentDay;
+              const isTodayOpen = isToday && isOpen;
+              
+              return (
+                <div 
+                  key={hours.id}
+                  className={`py-2 px-3 rounded ${
+                    isToday ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'
+                  }`}
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span className={`font-medium ${isToday ? 'text-blue-700' : 'text-gray-700'}`}>
+                        {t(`days.${hours.day_of_week}`)}
+                      </span>
+                      {isTodayOpen && (
+                        <div className="relative flex items-center">
+                          <span className="flex h-2.5 w-2.5">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500 shadow-lg shadow-green-500/50"></span>
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    {hours.is_closed || !hours.opens_at ? (
+                      <span className="text-red-600 font-medium">{t('closed')}</span>
+                    ) : (
+                      <span className="text-gray-600">
+                        {formatTime(hours.opens_at)} - {formatTime(hours.closes_at)}
+                      </span>
+                    )}
+                  </div>
+                  {hours.notes && (
+                    <div className="mt-1 text-xs text-gray-500 italic pl-0">
+                      {hours.notes}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -167,16 +215,13 @@ function BusinessCard({ business, index = 0 }: { business: Business; index?: num
 
         {/* Contact Information */}
         <div>
-          <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
-            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
+          <h4 className="text-lg font-semibold text-gray-900 mb-3">
             {t('contactInfo')}
           </h4>
           <div className="space-y-2">
             {business.address && (
               <div className="flex items-center gap-2 text-gray-700">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
@@ -185,10 +230,10 @@ function BusinessCard({ business, index = 0 }: { business: Business; index?: num
             )}
             {business.phone && (
               <div className="flex items-center gap-2 text-gray-700">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                <a href={`tel:${business.phone}`} className="text-sm hover:text-blue-600">{business.phone}</a>
+                <a href={`tel:${business.phone}`} className="text-sm hover:text-green-600 transition-colors">{business.phone}</a>
               </div>
             )}
             {business.whatsapp && (

@@ -59,7 +59,13 @@ export interface Tip {
   body: string;
   tags: string[];
   helpful_count: number;
+  flag_count: number;
   status: TipStatus;
+  images?: string[];
+  is_product_tip?: boolean;
+  product_link?: string | null;
+  estimated_cost_ils?: number | null;
+  suitable_for?: string[];
   created_at: string;
   updated_at: string;
 }
@@ -113,6 +119,7 @@ export interface CreateTipPayload {
   title: string;
   body: string;
   tags?: string[];
+  images?: string[];
 }
 
 export interface UpdateTipPayload {
@@ -135,6 +142,19 @@ export interface ListingWithOwner extends Listing {
 
 export interface TipWithAuthor extends Tip {
   author?: Pick<Profile, 'id' | 'full_name' | 'username' | 'avatar_url'> | null;
+  is_voted?: boolean;
+}
+
+export interface TipFlag {
+  id: UUID;
+  tip_id: UUID;
+  reporter_id?: UUID | null;
+  reason: string;
+  details?: string | null;
+  status: 'pending' | 'reviewed' | 'resolved';
+  created_at: string;
+  resolved_at?: string | null;
+  resolved_by?: UUID | null;
 }
 
 export interface ListingWithFavorite extends Listing {
