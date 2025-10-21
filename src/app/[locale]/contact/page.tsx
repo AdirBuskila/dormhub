@@ -31,7 +31,7 @@ export default function ContactPage() {
             <section className="bg-green-50 p-6 rounded-lg">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">{t('whatsappLabel')}</h3>
               <a
-                href={`https://wa.me/972527275393`}
+                href={`https://wa.me/9720546093624`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center text-2xl font-bold text-green-600 hover:text-green-800 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 rounded"

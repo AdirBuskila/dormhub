@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import SkeletonLoader from '@/components/SkeletonLoader';
 
 type DayOfWeek = 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
 
@@ -54,7 +55,7 @@ function formatTime(time: string | null): string {
   return time.substring(0, 5);
 }
 
-function BusinessCard({ business }: { business: Business }) {
+function BusinessCard({ business, index = 0 }: { business: Business; index?: number }) {
   const t = useTranslations('businesses');
   
   // Sort hours by day of week
@@ -66,7 +67,10 @@ function BusinessCard({ business }: { business: Business }) {
   const currentDay = daysOrder[new Date().getDay()];
 
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+    <div 
+      className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02] animate-fade-in"
+      style={{ animationDelay: `${index * 100}ms` }}
+    >
       {/* Header with category badge */}
       <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white">
         <div className="flex items-start justify-between">
@@ -235,12 +239,27 @@ export default function BusinessesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
-        <div className="container mx-auto px-4">
-          <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p className="mt-4 text-gray-600">Loading businesses...</p>
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <div className="bg-gradient-to-br from-blue-600 to-blue-800 text-white py-16">
+          <div className="container mx-auto px-4">
+            <div className="max-w-3xl mx-auto text-center">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                {t('title')}
+              </h1>
+              <p className="text-xl text-blue-100 mb-2">
+                {t('subtitle')}
+              </p>
+              <p className="text-blue-200">
+                {t('description')}
+              </p>
+            </div>
           </div>
+        </div>
+
+        {/* Loading Skeleton */}
+        <div className="container mx-auto px-4 py-12">
+          <SkeletonLoader type="business" count={6} />
         </div>
       </div>
     );
@@ -285,8 +304,8 @@ export default function BusinessesPage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {businesses.map((business) => (
-              <BusinessCard key={business.id} business={business} />
+            {businesses.map((business, index) => (
+              <BusinessCard key={business.id} business={business} index={index} />
             ))}
           </div>
         )}

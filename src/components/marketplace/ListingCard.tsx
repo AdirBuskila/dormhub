@@ -25,7 +25,7 @@ export function ListingCard({ listing, locale }: ListingCardProps) {
   return (
     <Link
       href={`/${locale}/marketplace/${listing.id}`}
-      className="group block bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-200"
+      className="group block bg-white rounded-lg shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-gray-200"
     >
       {/* Image */}
       <div className="relative aspect-square bg-gray-100">

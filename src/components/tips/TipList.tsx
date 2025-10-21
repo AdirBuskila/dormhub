@@ -24,13 +24,18 @@ export function TipList({ tips, onVote, votedTipIds = [] }: TipListProps) {
 
   return (
     <div className="space-y-4">
-      {tips.map((tip) => (
-        <TipCard
+      {tips.map((tip, index) => (
+        <div
           key={tip.id}
-          tip={tip}
-          onVote={onVote}
-          hasVoted={votedTipIds.includes(tip.id)}
-        />
+          className="animate-fade-in"
+          style={{ animationDelay: `${index * 50}ms` }}
+        >
+          <TipCard
+            tip={tip}
+            onVote={onVote}
+            hasVoted={votedTipIds.includes(tip.id)}
+          />
+        </div>
       ))}
     </div>
   );

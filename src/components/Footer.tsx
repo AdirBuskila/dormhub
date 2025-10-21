@@ -16,11 +16,11 @@ export default function Footer() {
         {/* Contact Section */}
         <div className="flex items-center justify-center mb-3">
           <a
-            href="https://wa.me/972527275393"
+            href="https://wa.me/9720546093624"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center p-2 hover:opacity-80 transition-opacity duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
-            title="+972 52-727-5393"
+            title="054-609-3624"
             aria-label="Contact us on WhatsApp"
           >
             <Image
@@ -33,7 +33,7 @@ export default function Footer() {
           </a>
         </div>
 
-        {/* Quick Links - All in one row on mobile */}
+        {/* Quick Links */}
         <nav className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mb-3 text-xs" aria-label="Footer navigation">
           <Link 
             href={`/${locale}/privacy`}
@@ -50,31 +50,10 @@ export default function Footer() {
           </Link>
           <span className="text-gray-400">•</span>
           <Link 
-            href={`/${locale}/accessibility`}
-            className="text-gray-600 hover:text-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
-          >
-            {t('accessibility')}
-          </Link>
-          <span className="text-gray-400">•</span>
-          <Link 
-            href={`/${locale}/about`}
-            className="text-gray-600 hover:text-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
-          >
-            {t('about')}
-          </Link>
-          <span className="text-gray-400">•</span>
-          <Link 
             href={`/${locale}/contact`}
             className="text-gray-600 hover:text-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
           >
             {t('contact')}
-          </Link>
-          <span className="text-gray-400">•</span>
-          <Link 
-            href={`/${locale}/delivery-returns`}
-            className="text-gray-600 hover:text-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
-          >
-            {t('deliveryReturns')}
           </Link>
         </nav>
 
