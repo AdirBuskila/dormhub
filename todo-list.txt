@@ -8,7 +8,7 @@
 
 ### ✅ **Completed Features**
 - [x] Marketplace (buy/sell/swap/giveaway)
-- [x] Tips & Info system
+- [x] Tips & Info system (general tips)
 - [x] Local Businesses with student discounts
 - [x] Bilingual support (English/Hebrew)
 - [x] User authentication (Clerk)
@@ -19,19 +19,26 @@
 - [ ] Content moderation & reporting system
 - [ ] Business owner dashboard
 - [ ] Admin dashboard for you
-- [ ] Terms of Service page (legal requirement)
+- [ v] Terms of Service page (legal requirement)
 - [ ] Privacy Policy page (legal requirement)
 - [ ] Business onboarding form/questionnaire
 - [ ] Profanity filter for tips
 - [ ] User profiles (view/edit)
 - [ ] Contact page with actual form
 
+### 🎁 **New Feature Requests** (Optional for launch)
+- [ ] Product Tips (tips with product links, prices, apartment compatibility)
+- [ ] Dorm Calendar (social events, movie nights, tournaments)
+
 ### 🔮 **Post-Launch Features** (v1.1+)
+- Product Tips system (product recommendations with links & pricing)
+- Dorm Calendar (social events, movie nights, tournaments)
 - Email notifications
 - Business self-management portal
 - Advanced analytics
 - Video support
 - Payment integration for business listings
+- Direct messaging between users
 
 ---
 
@@ -251,6 +258,205 @@ CREATE TABLE public.reports (
 
 ---
 
+## 🎁 **NEW FEATURES: Product Tips & Dorm Calendar**
+
+### Feature 1: Product Tips 🛍️
+
+**What it is:**
+Enhanced tips that recommend specific products to students, with links, pricing, and apartment compatibility.
+
+#### Database Schema Addition:
+```sql
+-- Extend the tips table or create a new product_tips table
+ALTER TABLE public.tips ADD COLUMN tip_type text DEFAULT 'general'; -- 'general' or 'product'
+ALTER TABLE public.tips ADD COLUMN product_url text;
+ALTER TABLE public.tips ADD COLUMN product_price_min numeric(10,2);
+ALTER TABLE public.tips ADD COLUMN product_price_max numeric(10,2);
+ALTER TABLE public.tips ADD COLUMN apartment_types text[]; -- ['single', 'couple', 'single_balcony']
+```
+
+#### Features to Build:
+1. **Submission Form Enhancement**
+   - Add "Product Tip" option when submitting
+   - Fields:
+     - Product name/title
+     - Product link (URL validation)
+     - Price range (min-max or approximate)
+     - Apartment compatibility (multi-select):
+       - Single room
+       - Couple room
+       - Single + Balcony
+       - Any apartment
+     - Why it's useful (description)
+     - Category (furniture, appliances, decor, storage, kitchen, etc.)
+
+2. **Display Product Tips**
+   - Show product image preview (from URL)
+   - Display price badge
+   - Show apartment type icons
+   - "Buy Now" button linking to product
+   - Track clicks on product links (analytics)
+
+3. **Filter by Apartment Type**
+   - Students can filter tips by their apartment type
+   - Show only relevant product recommendations
+
+#### UI Components:
+```typescript
+// File: src/components/tips/ProductTipCard.tsx
+// File: src/components/tips/ProductTipForm.tsx
+```
+
+**Time to build:** 4-6 hours
+**Priority:** Nice to have for launch (adds value but not critical)
+
+---
+
+### Feature 2: Dorm Calendar 📅
+
+**What it is:**
+A social events calendar showing recurring and one-time dorm events like "Arak Monday", movie nights, and gaming tournaments.
+
+#### Database Schema:
+```sql
+CREATE TABLE public.dorm_events (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  title text NOT NULL,
+  title_he text NOT NULL,
+  description text,
+  description_he text,
+  event_type text NOT NULL, -- 'social', 'movie', 'gaming', 'sports', 'study', 'other'
+  location text, -- 'common room', 'roof', 'lobby', etc.
+  location_he text,
+  
+  -- Timing
+  event_date date, -- for one-time events
+  event_time time, -- e.g., '22:00'
+  duration_hours numeric(3,1), -- e.g., 2.5 hours
+  
+  -- Recurring events
+  is_recurring boolean DEFAULT false,
+  recurrence_pattern text, -- 'weekly', 'biweekly', 'monthly'
+  day_of_week integer, -- 0=Sunday, 1=Monday, etc. (for recurring events)
+  
+  -- Metadata
+  organizer_id uuid REFERENCES public.profiles(id),
+  max_participants integer,
+  requires_registration boolean DEFAULT false,
+  is_approved boolean DEFAULT false,
+  image_url text,
+  
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- For event registrations (optional)
+CREATE TABLE public.event_registrations (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  event_id uuid REFERENCES public.dorm_events(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES public.profiles(id) ON DELETE CASCADE,
+  status text DEFAULT 'registered', -- 'registered', 'cancelled', 'attended'
+  created_at timestamptz DEFAULT now(),
+  UNIQUE(event_id, user_id)
+);
+```
+
+#### Example Events:
+1. **Arak Monday (שני ערק)**
+   - Type: Social
+   - Recurring: Weekly (Monday)
+   - Time: 22:00
+   - Location: Common room/Roof
+   - Description: "Gather for drinks, music, and socializing"
+
+2. **Movie Night**
+   - Type: Movie
+   - Recurring: Biweekly (Friday)
+   - Time: 20:00
+   - Location: Common room
+   - Description: "Vote on the movie in the group chat"
+
+3. **Mario Kart Tournament**
+   - Type: Gaming
+   - One-time or recurring monthly
+   - Max participants: 16
+   - Requires registration: Yes
+
+#### Features to Build:
+
+1. **Calendar View Page**
+   ```typescript
+   // File: src/app/[locale]/calendar/page.tsx
+   ```
+   - Monthly calendar view
+   - List view (upcoming events)
+   - Filter by event type
+   - Highlight today and upcoming events
+
+2. **Event Details Page**
+   ```typescript
+   // File: src/app/[locale]/calendar/[eventId]/page.tsx
+   ```
+   - Full event details
+   - Register button (if applicable)
+   - See who's attending (optional)
+   - Share event (WhatsApp, copy link)
+   - Add to personal calendar (iCal export)
+
+3. **Submit Event Form**
+   ```typescript
+   // File: src/app/[locale]/calendar/submit/page.tsx
+   ```
+   - Any student can suggest events
+   - Admin approval required
+   - Fields: title, description, type, location, date/time, recurring options
+
+4. **Admin Event Management**
+   - Approve/reject event submissions
+   - Create official events
+   - Edit/delete events
+   - See registration counts
+
+5. **Notifications (Future)**
+   - Remind users 1 day before registered events
+   - Notify when new events are posted
+
+#### UI Components:
+```typescript
+// File: src/components/calendar/CalendarView.tsx
+// File: src/components/calendar/EventCard.tsx
+// File: src/components/calendar/EventForm.tsx
+// File: src/components/calendar/RegisterButton.tsx
+```
+
+**Time to build:** 8-12 hours
+**Priority:** Post-launch feature (fun but not essential for MVP)
+
+---
+
+## 🎯 **Implementation Priority**
+
+### If Time Permits Before Launch:
+1. **Product Tips** (4-6 hours)
+   - Extends existing tips system
+   - Adds immediate value
+   - Lower complexity
+   - **Recommendation:** Build if you have 2-3 days after critical features
+
+2. **Dorm Calendar** (8-12 hours)
+   - Standalone feature
+   - Requires more UI work
+   - Great for engagement
+   - **Recommendation:** Save for v1.1 (post-launch)
+
+### Build Order (if doing both):
+1. Get all critical features done first (Days 1-8)
+2. Deploy and test (Days 9-10)
+3. Day 11: Add Product Tips if time permits
+4. Post-launch Week 1: Add Dorm Calendar
+
+---
+
 ## 🎯 **WEEK 2 (Days 9-11): Deployment & Testing**
 
 ### Day 9: Vercel Deployment
@@ -323,9 +529,12 @@ CREATE TABLE public.reports (
 - [ ] Favorite/unfavorite listings
 
 **Tips:**
-- [ ] Submit tip
+- [ ] Submit tip (general)
+- [ ] Submit product tip (if implemented)
 - [ ] View tips (only approved ones show)
+- [ ] Filter product tips by apartment type (if implemented)
 - [ ] Vote helpful on tip
+- [ ] Click product links (if product tips implemented)
 - [ ] Admin can approve tips
 - [ ] Profanity filter works
 
@@ -335,6 +544,15 @@ CREATE TABLE public.reports (
 - [ ] See student discounts
 - [ ] Contact buttons work (phone, WhatsApp)
 - [ ] Smart Buying section displays correctly
+
+**Dorm Calendar (if implemented):**
+- [ ] View calendar/events list
+- [ ] Filter events by type
+- [ ] View event details
+- [ ] Register for events (if registration enabled)
+- [ ] Submit event suggestions
+- [ ] Admin can approve/manage events
+- [ ] Recurring events display correctly
 
 **UI/UX:**
 - [ ] Navigation works on all pages
@@ -375,9 +593,12 @@ CREATE TABLE public.reports (
 
 **Content:**
 - [ ] Add initial tips (5-10 useful tips)
+- [ ] Add product tips if feature is built (3-5 recommendations)
+- [ ] Seed initial calendar events if feature is built (Arak Monday, etc.)
 - [ ] Verify all 4 businesses are live with correct info
 - [ ] Test all student discounts are accurate
 - [ ] Add welcome message on homepage
+- [ ] Update navigation to include new features (if built)
 
 **Communication:**
 - [ ] Prepare launch announcement
@@ -519,12 +740,25 @@ CREATE TABLE public.reports (
    - Search history
 
 ### NICE TO HAVE (v1.1+)
-10. Direct messaging between buyers/sellers
-11. Email notifications
-12. Push notifications
-13. Business analytics
-14. Image optimization/compression
-15. Video support
+10. **Product Tips** (4-6 hours)
+    - Extend tips table
+    - Add product-specific fields
+    - Enhanced submission form
+    - Display with product info
+
+11. **Dorm Calendar** (8-12 hours)
+    - Events database schema
+    - Calendar view page
+    - Event submission form
+    - Admin event management
+    - Registration system
+
+12. Direct messaging between buyers/sellers
+13. Email notifications
+14. Push notifications
+15. Business analytics
+16. Image optimization/compression
+17. Video support
 
 ---
 
@@ -669,13 +903,96 @@ CREATE TABLE public.reports (
 ---
 
 **Total Estimated Work: 60-80 hours over 11 days**
+**New Features Add: 12-18 additional hours**
 
 **Priority if time is tight:**
 1. Legal pages (MUST HAVE)
 2. Profanity filter (MUST HAVE)
 3. Reporting system (SHOULD HAVE)
 4. Admin dashboard (SHOULD HAVE)
-5. Everything else (NICE TO HAVE)
+5. User profiles & contact page (SHOULD HAVE)
+6. Product Tips (NICE TO HAVE - 4-6 hours)
+7. Dorm Calendar (NICE TO HAVE - 8-12 hours, recommend post-launch)
+
+---
+
+## 📝 **New Features: Quick Implementation Guide**
+
+### If you decide to build Product Tips:
+1. Run database migration (alter tips table)
+2. Update `SubmitTipForm.tsx` to include product fields
+3. Update `TipCard.tsx` to display product info
+4. Add apartment type filter to tips page
+5. Test product links and price display
+6. Add i18n keys (see below)
+
+**I18n Keys Needed (add to en.json & he.json):**
+```json
+{
+  "tips": {
+    "productTip": "Product Recommendation",
+    "generalTip": "General Tip",
+    "productUrl": "Product Link",
+    "priceRange": "Price Range",
+    "apartmentTypes": "Suitable for",
+    "apartmentType": {
+      "single": "Single Room",
+      "couple": "Couple Room",
+      "singleBalcony": "Single + Balcony",
+      "any": "Any Apartment"
+    },
+    "buyNow": "View Product",
+    "filterByApartment": "Filter by apartment type"
+  }
+}
+```
+
+### If you decide to build Dorm Calendar:
+1. Run database migration (create dorm_events & event_registrations tables)
+2. Create calendar page structure
+3. Build event submission form
+4. Add admin approval system
+5. Implement registration functionality (optional for v1)
+6. Seed initial events (Arak Monday, etc.)
+7. Add i18n keys (see below)
+8. Add calendar link to navigation
+
+**I18n Keys Needed (add to en.json & he.json):**
+```json
+{
+  "calendar": {
+    "title": "Dorm Calendar",
+    "events": "Events",
+    "upcomingEvents": "Upcoming Events",
+    "noEvents": "No upcoming events",
+    "eventTypes": {
+      "social": "Social",
+      "movie": "Movie Night",
+      "gaming": "Gaming",
+      "sports": "Sports",
+      "study": "Study Session",
+      "other": "Other"
+    },
+    "submitEvent": "Suggest Event",
+    "eventDetails": "Event Details",
+    "register": "Register",
+    "registered": "Registered",
+    "cancel": "Cancel Registration",
+    "location": "Location",
+    "time": "Time",
+    "duration": "Duration",
+    "participants": "Participants",
+    "recurring": "Recurring Event",
+    "everyWeek": "Every week",
+    "everyTwoWeeks": "Every two weeks",
+    "everyMonth": "Every month"
+  }
+}
+```
+
+**Recommendation:** 
+- Build Product Tips if you finish critical features by Day 10
+- Save Dorm Calendar for Week 1 post-launch (more complex, but very engaging!)
 
 ---
 
@@ -685,6 +1002,7 @@ With 11 days, you can definitely launch a working MVP. Focus on the critical fea
 
 **"Done is better than perfect"**
 
-Launch with the essentials, gather feedback, and iterate quickly. Good luck! 🚀
+Launch with the essentials, gather feedback, and iterate quickly. The new features (Product Tips & Dorm Calendar) will make DormHub even more engaging, but get the core experience solid first! 🚀
+
 
 
