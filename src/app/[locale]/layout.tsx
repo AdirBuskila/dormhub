@@ -7,6 +7,7 @@ import { locales } from '@/i18n/config';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { isAdmin } from '@/lib/auth';
 import "../globals.css";
 
 const geistSans = Geist({
@@ -50,6 +51,9 @@ export default async function LocaleLayout({
   // Providing all messages to the client
   // side is the easiest way to get started
   const messages = await getMessages();
+  
+  // Check if user is admin
+  const userIsAdmin = await isAdmin();
 
   return (
     <ClerkProvider>
@@ -58,7 +62,7 @@ export default async function LocaleLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
         >
           <NextIntlClientProvider messages={messages}>
-            <Navbar />
+            <Navbar isAdmin={userIsAdmin} />
             <main className="flex-1">
               {children}
             </main>

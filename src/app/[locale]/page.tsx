@@ -30,7 +30,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse-subtle" style={{ animationDelay: '2s' }}></div>
           
           {/* Floating bubbles */}
-          <FloatingBubbles count={20} />
+          <FloatingBubbles count={35} />
         </div>
 
         <div className="container mx-auto px-4 relative z-10">

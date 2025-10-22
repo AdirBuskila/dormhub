@@ -184,6 +184,8 @@
     "closed": "Closed",
     "requiresStudentId": "Show student ID required",
     "allDay": "All day",
+    "close": "Close",
+    "tapToExpand": "Tap to expand",
     "category": {
       "restaurant": "Restaurant",
       "minimarket": "Mini Market",

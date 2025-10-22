@@ -184,6 +184,8 @@
     "closed": "סגור",
     "requiresStudentId": "נדרש להציג תעודת סטודנט",
     "allDay": "כל היום",
+    "close": "סגור",
+    "tapToExpand": "לחץ להרחבה",
     "category": {
       "restaurant": "מסעדה",
       "minimarket": "מינימרקט",

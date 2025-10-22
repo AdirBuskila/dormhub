@@ -25,3 +25,4 @@ COMMENT ON COLUMN public.tips.flag_count IS 'Number of times this tip has been f
 COMMENT ON TABLE public.tip_votes IS 'User votes marking tips as helpful';
 
 
+

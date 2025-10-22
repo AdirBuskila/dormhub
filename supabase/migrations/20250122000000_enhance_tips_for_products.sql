@@ -19,3 +19,4 @@ COMMENT ON COLUMN public.tips.estimated_cost_ils IS 'Estimated cost in Israeli S
 COMMENT ON COLUMN public.tips.suitable_for IS 'Apartment types this product fits: single, couple, single-balcony, etc.';
 
 
+

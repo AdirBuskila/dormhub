@@ -55,7 +55,14 @@ function formatTime(time: string | null): string {
   return time.substring(0, 5);
 }
 
-function BusinessCard({ business, index = 0 }: { business: Business; index?: number }) {
+interface BusinessCardProps {
+  business: Business;
+  index?: number;
+  isExpanded?: boolean;
+  onToggle?: () => void;
+}
+
+function BusinessCard({ business, index = 0, isExpanded = false, onToggle }: BusinessCardProps) {
   const t = useTranslations('businesses');
   
   // Sort hours by day of week
@@ -69,36 +76,165 @@ function BusinessCard({ business, index = 0 }: { business: Business; index?: num
   // Check if business is currently open
   const isCurrentlyOpen = () => {
     const now = new Date();
-    const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+    
     const todayHours = sortedHours.find(h => h.day_of_week === currentDay);
     
     if (!todayHours || todayHours.is_closed || !todayHours.opens_at || !todayHours.closes_at) {
       return false;
     }
     
-    return currentTime >= todayHours.opens_at.substring(0, 5) && currentTime <= todayHours.closes_at.substring(0, 5);
+    // Convert opening and closing times to minutes since midnight
+    const [openHour, openMinute] = todayHours.opens_at.substring(0, 5).split(':').map(Number);
+    const [closeHour, closeMinute] = todayHours.closes_at.substring(0, 5).split(':').map(Number);
+    const openTimeInMinutes = openHour * 60 + openMinute;
+    const closeTimeInMinutes = closeHour * 60 + closeMinute;
+    
+    // Handle closing time past midnight (e.g., 00:00)
+    if (closeTimeInMinutes < openTimeInMinutes) {
+      // Business closes after midnight
+      return currentTimeInMinutes >= openTimeInMinutes || currentTimeInMinutes <= closeTimeInMinutes;
+    }
+    
+    // Normal case: business closes on the same day
+    return currentTimeInMinutes >= openTimeInMinutes && currentTimeInMinutes <= closeTimeInMinutes;
   };
   
   const isOpen = isCurrentlyOpen();
+  
+  // Get today's hours for compact view
+  const todayHours = sortedHours.find(h => h.day_of_week === currentDay);
+  
+  // Compact view for mobile (when not expanded)
+  if (!isExpanded) {
+    return (
+      <button
+        onClick={onToggle}
+        className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02] animate-fade-in w-full text-left flex flex-col h-full"
+        style={{ animationDelay: `${index * 100}ms` }}
+      >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-white flex-shrink-0">
+          <div className="flex items-start gap-3">
+            {business.logo_url ? (
+              <img
+                src={business.logo_url}
+                alt={`${business.name} logo`}
+                className="w-12 h-12 rounded-lg bg-white object-cover shadow-lg flex-shrink-0"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-lg bg-white shadow-lg flex-shrink-0 flex items-center justify-center">
+                <span className="text-2xl font-bold text-blue-600">
+                  {business.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-bold mb-1 truncate">{business.name}</h3>
+              <span className="inline-block bg-white/20 backdrop-blur-sm px-2 py-0.5 rounded-full text-xs">
+                {t(`category.${business.category}`)}
+              </span>
+            </div>
+          </div>
+          {business.student_discounts.length > 0 && (
+            <div className="mt-2 flex items-center gap-1 text-xs">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+              </svg>
+              <span className="bg-yellow-400 text-yellow-900 px-2 py-0.5 rounded-full font-semibold">
+                {t('studentDiscounts')}
+              </span>
+            </div>
+          )}
+        </div>
 
+        {/* Today's hours */}
+        <div className="p-4 flex-shrink-0">
+          <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="font-medium text-gray-700">{t('openingHours')}</span>
+              {isOpen && (
+                <div className="relative flex items-center">
+                  <span className="flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500 shadow-lg shadow-green-500/50"></span>
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+          {todayHours && (
+            <div className="mt-2 text-sm">
+              {todayHours.is_closed || !todayHours.opens_at ? (
+                <span className="text-red-600 font-medium">{t('closed')}</span>
+              ) : (
+                <span className="text-gray-600">
+                  {formatTime(todayHours.opens_at)} - {formatTime(todayHours.closes_at)}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Contact info */}
+        <div className="px-4 pb-4 space-y-1 flex-grow">
+          {business.phone && (
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <svg className="w-3 h-3 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              <span className="truncate">{business.phone}</span>
+            </div>
+          )}
+          {business.address && (
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <svg className="w-3 h-3 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span className="truncate">{business.address}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Tap to expand hint */}
+        <div className="px-4 pb-3 text-center flex-shrink-0">
+          <span className="text-xs text-gray-400">{t('tapToExpand') || 'Tap to expand'}</span>
+        </div>
+      </button>
+    );
+  }
+
+  // Full/expanded view
   return (
     <div 
-      className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:scale-[1.02] animate-fade-in"
+      className="bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 animate-fade-in"
       style={{ animationDelay: `${index * 100}ms` }}
     >
       {/* Header with category badge */}
       <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-4 flex-1">
-            {business.logo_url && (
-              <div className="flex-shrink-0">
+            <div className="flex-shrink-0">
+              {business.logo_url ? (
                 <img
                   src={business.logo_url}
                   alt={`${business.name} logo`}
                   className="w-16 h-16 rounded-lg bg-white object-cover shadow-lg"
                 />
-              </div>
-            )}
+              ) : (
+                <div className="w-16 h-16 rounded-lg bg-white shadow-lg flex items-center justify-center">
+                  <span className="text-3xl font-bold text-blue-600">
+                    {business.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+            </div>
             <div>
               <h3 className="text-2xl font-bold mb-2">{business.name}</h3>
               <span className="inline-block bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
@@ -263,6 +399,7 @@ export default function BusinessesPage() {
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchBusinesses() {
@@ -348,11 +485,52 @@ export default function BusinessesPage() {
             <p className="text-gray-500">No businesses found</p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {businesses.map((business, index) => (
-              <BusinessCard key={business.id} business={business} index={index} />
-            ))}
-          </div>
+          <>
+            {/* Expanded card overlay (mobile) */}
+            {expandedId && (
+              <div className="md:hidden fixed inset-0 bg-black/50 z-50 overflow-y-auto" onClick={() => setExpandedId(null)}>
+                <div className="min-h-screen p-4 flex items-start justify-center pt-20">
+                  <div className="w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={() => setExpandedId(null)}
+                      className="mb-4 w-full bg-white text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 shadow-lg"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                      {t('close') || 'Close'}
+                    </button>
+                    <BusinessCard
+                      business={businesses.find(b => b.id === expandedId)!}
+                      isExpanded={true}
+                      onToggle={() => setExpandedId(null)}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Grid layout */}
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-4 md:gap-8 max-w-6xl mx-auto auto-rows-fr">
+              {businesses.map((business, index) => (
+                <div key={business.id} className="md:col-span-1 flex">
+                  {/* Mobile: Show compact card */}
+                  <div className="md:hidden w-full">
+                    <BusinessCard
+                      business={business}
+                      index={index}
+                      isExpanded={false}
+                      onToggle={() => setExpandedId(business.id)}
+                    />
+                  </div>
+                  {/* Desktop: Show full card */}
+                  <div className="hidden md:block w-full">
+                    <BusinessCard business={business} index={index} isExpanded={true} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
