@@ -18,6 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const user = await getOptionalUser();
+  const t = await getTranslations({ locale, namespace: 'home' });
 
   return (
     <div className="min-h-screen">
@@ -58,12 +59,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             
             {/* Tagline */}
             <p className="text-2xl md:text-3xl font-bold mb-3 text-blue-100 animate-fade-in" style={{ animationDelay: '400ms' }}>
-              All your problems, solved
+              {t('hero.tagline')}
             </p>
 
             {/* Subtitle */}
             <p className="text-lg md:text-xl text-blue-200 mb-10 animate-fade-in" style={{ animationDelay: '600ms' }}>
-              Marketplace, Tips, Deals & More
+              {t('hero.subtitle')}
             </p>
 
             {/* Call to Action Buttons */}
@@ -74,7 +75,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   className="group bg-white text-blue-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105"
                 >
                   <span className="flex items-center justify-center gap-2">
-                    Get Started
+                    {t('hero.getStarted')}
                     <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
@@ -84,7 +85,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   href={`/${locale}/sign-in`}
                   className="bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-all duration-300 border-2 border-white/30 hover:border-white/50 hover:scale-105"
                 >
-                  Sign In
+                  {t('hero.signIn')}
                 </Link>
               </div>
             )}
@@ -95,39 +96,50 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   href={`/${locale}/marketplace`}
                   className="bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/20 transition-all duration-300 border-2 border-blue-400 hover:border-blue-300"
                 >
-                  Browse Marketplace
+                  {t('hero.browseMarketplace')}
                 </Link>
                 <Link
                   href={`/${locale}/tips`}
                   className="bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/20 transition-all duration-300 border-2 border-green-400 hover:border-green-300"
                 >
-                  Read Tips
+                  {t('hero.readTips')}
+                </Link>
+                <Link
+                  href={`/${locale}/dorm-calendar`}
+                  className="bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/20 transition-all duration-300 border-2 border-pink-400 hover:border-pink-300"
+                >
+                  {t('hero.dormCalendar')}
                 </Link>
                 <Link
                   href={`/${locale}/businesses`}
                   className="bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/20 transition-all duration-300 border-2 border-purple-400 hover:border-purple-300"
                 >
-                  Student Deals
+                  {t('hero.studentDeals')}
                 </Link>
               </div>
             )}
 
             {/* Features highlight */}
-            <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-6 animate-fade-in" style={{ animationDelay: '1000ms' }}>
+            <div className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in" style={{ animationDelay: '1000ms' }}>
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300">
                 <div className="text-3xl font-bold text-white mb-1">🛍️</div>
-                <div className="text-sm font-semibold text-white">Buy & Sell</div>
-                <div className="text-xs text-blue-200">Campus marketplace</div>
+                <div className="text-sm font-semibold text-white">{t('hero.features.buyAndSell')}</div>
+                <div className="text-xs text-blue-200">{t('hero.features.buyAndSellDesc')}</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300">
                 <div className="text-3xl font-bold text-white mb-1">💡</div>
-                <div className="text-sm font-semibold text-white">Student Tips</div>
-                <div className="text-xs text-blue-200">Community wisdom</div>
+                <div className="text-sm font-semibold text-white">{t('hero.features.studentTips')}</div>
+                <div className="text-xs text-blue-200">{t('hero.features.studentTipsDesc')}</div>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300">
+                <div className="text-3xl font-bold text-white mb-1">📅</div>
+                <div className="text-sm font-semibold text-white">{t('hero.features.calendar')}</div>
+                <div className="text-xs text-blue-200">{t('hero.features.calendarDesc')}</div>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all duration-300">
                 <div className="text-3xl font-bold text-white mb-1">🎁</div>
-                <div className="text-sm font-semibold text-white">Exclusive Deals</div>
-                <div className="text-xs text-blue-200">Save more money</div>
+                <div className="text-sm font-semibold text-white">{t('hero.features.exclusiveDeals')}</div>
+                <div className="text-xs text-blue-200">{t('hero.features.exclusiveDealsDesc')}</div>
               </div>
             </div>
           </div>
@@ -145,10 +157,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Explore DormHub
+            {t('explore.title')}
           </h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
             {/* Marketplace Card */}
             <Link
               href={`/${locale}/marketplace`}
@@ -166,13 +178,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </div>
               <div className="p-6">
                 <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
-                  Marketplace
+                  {t('explore.marketplace.title')}
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Buy, sell, swap, or give away items with other dorm residents. Find great deals on textbooks, furniture, electronics, and more.
+                  {t('explore.marketplace.description')}
                 </p>
                 <div className="flex items-center text-blue-600 font-medium">
-                  Browse Listings
+                  {t('explore.marketplace.cta')}
                   <svg className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -198,13 +210,45 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </div>
               <div className="p-6">
                 <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">
-                  Tips & Info
+                  {t('explore.tips.title')}
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Get helpful advice from experienced residents. Learn about move-in, laundry, study spots, and everything dorm life.
+                  {t('explore.tips.description')}
                 </p>
                 <div className="flex items-center text-green-600 font-medium">
-                  Read Tips
+                  {t('explore.tips.cta')}
+                  <svg className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </Link>
+
+            {/* Dorm Calendar Card */}
+            <Link
+              href={`/${locale}/dorm-calendar`}
+              className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 overflow-hidden group animate-fade-in"
+              style={{ animationDelay: '200ms' }}
+            >
+              <div className="bg-gradient-to-br from-pink-500 to-rose-600 h-48 flex items-center justify-center">
+                <svg className="w-24 h-24 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <div className="p-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-pink-600 transition-colors">
+                  {t('explore.calendar.title')}
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  {t('explore.calendar.description')}
+                </p>
+                <div className="flex items-center text-pink-600 font-medium">
+                  {t('explore.calendar.cta')}
                   <svg className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -216,7 +260,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <Link
               href={`/${locale}/businesses`}
               className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 overflow-hidden group animate-fade-in"
-              style={{ animationDelay: '200ms' }}
+              style={{ animationDelay: '300ms' }}
             >
               <div className="bg-gradient-to-br from-purple-500 to-purple-600 h-48 flex items-center justify-center">
                 <svg className="w-24 h-24 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -230,13 +274,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </div>
               <div className="p-6">
                 <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors">
-                  Local Businesses
+                  {t('explore.businesses.title')}
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  Discover shops and restaurants right below your dorm. Save money with exclusive student discounts!
+                  {t('explore.businesses.description')}
                 </p>
                 <div className="flex items-center text-purple-600 font-medium">
-                  View Businesses
+                  {t('explore.businesses.cta')}
                   <svg className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
@@ -259,10 +303,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Why DormHub?
+              {t('why.title')}
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Everything you need for dorm life, all in one place
+              {t('why.subtitle')}
             </p>
           </div>
 
@@ -278,10 +322,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <div className="absolute inset-0 bg-blue-400 rounded-2xl w-20 h-20 mx-auto blur-xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
-                Community First
+                {t('why.communityFirst.title')}
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                Built exclusively for dorm residents by residents who understand your needs
+                {t('why.communityFirst.description')}
               </p>
             </div>
 
@@ -296,10 +340,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <div className="absolute inset-0 bg-green-400 rounded-2xl w-20 h-20 mx-auto blur-xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-green-600 transition-colors">
-                Save Money
+                {t('why.saveMoney.title')}
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                Find affordable deals on everything you need without leaving campus
+                {t('why.saveMoney.description')}
               </p>
             </div>
 
@@ -314,10 +358,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 <div className="absolute inset-0 bg-purple-400 rounded-2xl w-20 h-20 mx-auto blur-xl opacity-40 group-hover:opacity-60 transition-opacity"></div>
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors">
-                Quick & Easy
+                {t('why.quickEasy.title')}
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                Post listings in seconds and get practical tips instantly
+                {t('why.quickEasy.description')}
               </p>
             </div>
           </div>
@@ -326,19 +370,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
             <div className="text-center bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50 animate-fade-in" style={{ animationDelay: '450ms' }}>
               <div className="text-3xl font-bold text-blue-600 mb-1">100+</div>
-              <div className="text-sm text-gray-600">Active Listings</div>
+              <div className="text-sm text-gray-600">{t('why.stats.activeListings')}</div>
             </div>
             <div className="text-center bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50 animate-fade-in" style={{ animationDelay: '550ms' }}>
               <div className="text-3xl font-bold text-green-600 mb-1">50+</div>
-              <div className="text-sm text-gray-600">Helpful Tips</div>
+              <div className="text-sm text-gray-600">{t('why.stats.helpfulTips')}</div>
             </div>
             <div className="text-center bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50 animate-fade-in" style={{ animationDelay: '650ms' }}>
               <div className="text-3xl font-bold text-purple-600 mb-1">24/7</div>
-              <div className="text-sm text-gray-600">Always Available</div>
+              <div className="text-sm text-gray-600">{t('why.stats.alwaysAvailable')}</div>
             </div>
             <div className="text-center bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-white/50 animate-fade-in" style={{ animationDelay: '750ms' }}>
-              <div className="text-3xl font-bold text-orange-600 mb-1">Free</div>
-              <div className="text-sm text-gray-600">Forever</div>
+              <div className="text-3xl font-bold text-orange-600 mb-1">{t('why.stats.free')}</div>
+              <div className="text-sm text-gray-600">{t('why.stats.forever')}</div>
             </div>
           </div>
         </div>
@@ -349,16 +393,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <section className="bg-blue-600 text-white py-16">
           <div className="container mx-auto px-4 text-center">
             <h2 className="text-3xl font-bold mb-4">
-              Ready to Join?
+              {t('cta.title')}
             </h2>
             <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              Sign up now and start connecting with your dorm community
+              {t('cta.subtitle')}
             </p>
             <Link
               href={`/${locale}/sign-up`}
               className="inline-block bg-white text-blue-600 px-8 py-3 rounded-md font-medium hover:bg-blue-50 transition-colors"
             >
-              Create Your Account
+              {t('cta.button')}
             </Link>
           </div>
         </section>

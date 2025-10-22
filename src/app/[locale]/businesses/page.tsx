@@ -326,7 +326,7 @@ function BusinessCard({ business, index = 0, isExpanded = false, onToggle }: Bus
                     <div className="flex-1">
                       <h5 className="font-semibold text-gray-900 mb-1">{discount.title}</h5>
                       {discount.description && (
-                        <p className="text-sm text-gray-700 mb-2">{discount.description}</p>
+                        <p className="text-sm text-gray-700 mb-2 whitespace-pre-line">{discount.description}</p>
                       )}
                       <div className="flex items-center gap-2">
                         <span className="inline-block bg-yellow-200 text-yellow-900 px-2 py-1 rounded text-xs font-medium">
@@ -566,7 +566,7 @@ export default function BusinessesPage() {
                                 <div className="flex-1">
                                   <h4 className="font-semibold text-gray-900">{discount.title}</h4>
                                   {discount.description && (
-                                    <p className="text-sm text-gray-600 mt-1">{discount.description}</p>
+                                    <p className="text-sm text-gray-600 mt-1 whitespace-pre-line">{discount.description}</p>
                                   )}
                                 </div>
                               </div>

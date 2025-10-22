@@ -20,3 +20,4 @@ COMMENT ON COLUMN public.tips.suitable_for IS 'Apartment types this product fits
 
 
 
+

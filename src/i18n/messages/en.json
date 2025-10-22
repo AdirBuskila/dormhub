@@ -26,6 +26,7 @@
     "marketplace": "Marketplace",
     "tips": "Tips & Info",
     "businesses": "Local Businesses",
+    "calendar": "Dorm Calendar",
     "about": "About",
     "contact": "Contact",
     "signIn": "Sign In",
@@ -35,7 +36,78 @@
   },
   "home": {
     "title": "DormHub - Your Dorm Community Platform",
-    "description": "Buy, sell, swap items and share tips with fellow dorm residents"
+    "description": "Buy, sell, swap items and share tips with fellow dorm residents",
+    "hero": {
+      "tagline": "All your problems, solved",
+      "subtitle": "Marketplace, Tips, Events, Deals & More",
+      "getStarted": "Get Started",
+      "signIn": "Sign In",
+      "browseMarketplace": "Browse Marketplace",
+      "readTips": "Read Tips",
+      "dormCalendar": "Dorm Calendar",
+      "studentDeals": "Student Deals",
+      "features": {
+        "buyAndSell": "Buy & Sell",
+        "buyAndSellDesc": "Campus marketplace",
+        "studentTips": "Student Tips",
+        "studentTipsDesc": "Community wisdom",
+        "calendar": "Dorm Calendar",
+        "calendarDesc": "Events & parties",
+        "exclusiveDeals": "Exclusive Deals",
+        "exclusiveDealsDesc": "Save more money"
+      }
+    },
+    "explore": {
+      "title": "Explore DormHub",
+      "marketplace": {
+        "title": "Marketplace",
+        "description": "Buy, sell, swap, or give away items with other dorm residents. Find great deals on textbooks, furniture, electronics, and more.",
+        "cta": "Browse Listings"
+      },
+      "tips": {
+        "title": "Tips & Info",
+        "description": "Get helpful advice from experienced residents. Learn about move-in, laundry, study spots, and everything dorm life.",
+        "cta": "Read Tips"
+      },
+      "calendar": {
+        "title": "Dorm Calendar",
+        "description": "Stay in the loop with parties, game nights, study groups, and all dorm events. Never miss the fun!",
+        "cta": "View Calendar"
+      },
+      "businesses": {
+        "title": "Local Businesses",
+        "description": "Discover shops and restaurants right below your dorm. Save money with exclusive student discounts!",
+        "cta": "View Businesses"
+      }
+    },
+    "why": {
+      "title": "Why DormHub?",
+      "subtitle": "Everything you need for dorm life, all in one place",
+      "communityFirst": {
+        "title": "Community First",
+        "description": "Built exclusively for dorm residents by residents who understand your needs"
+      },
+      "saveMoney": {
+        "title": "Save Money",
+        "description": "Find affordable deals on everything you need without leaving campus"
+      },
+      "quickEasy": {
+        "title": "Quick & Easy",
+        "description": "Post listings in seconds and get practical tips instantly"
+      },
+      "stats": {
+        "activeListings": "Active Listings",
+        "helpfulTips": "Helpful Tips",
+        "alwaysAvailable": "Always Available",
+        "free": "Free",
+        "forever": "Forever"
+      }
+    },
+    "cta": {
+      "title": "Ready to Join?",
+      "subtitle": "Sign up now and start connecting with your dorm community",
+      "button": "Create Your Account"
+    }
   },
   "marketplace": {
     "title": "Marketplace",
@@ -253,6 +325,134 @@
       "section5Content": "You have the following rights regarding your personal information:\n\nAccess and Portability:\n• View your account information at any time\n• Request a copy of your data in a portable format\n• Export your listings and content\n\nCorrection and Updates:\n• Update your profile information\n• Edit or delete your listings\n• Correct inaccurate information\n\nDeletion (Right to be Forgotten):\n• Delete individual listings or tips\n• Request full account deletion\n• We will delete your data within 90 days of request\n• Some information may be retained for legal compliance\n\nOptional Data:\n• Phone number is optional - you can choose not to provide it\n• You control what information appears in your listings\n• You can make listings anonymous\n\nCommunication Preferences:\n• Opt out of non-essential emails\n• Control notification settings\n• Choose how you want to be contacted\n\nHow to Exercise Your Rights:\n• Email us at: [your contact email]\n• Contact us via WhatsApp: +972-52-727-5393\n• Use the account settings page\n• We will respond to requests within 30 days",
       "section6Title": "6. Cookies, Analytics, and GDPR Compliance",
       "section6Content": "Cookies and Tracking:\n• We use essential cookies for authentication and security\n• Session cookies to keep you logged in\n• Preference cookies to remember your settings\n• Analytics cookies to understand usage (you can opt out)\n• We do not use advertising or tracking cookies\n\nThird-Party Analytics:\n• We may use Vercel Analytics to monitor performance\n• Analytics data is anonymized and aggregated\n• You can opt out through your browser settings\n\nGDPR Compliance (for EU/EEA users):\nIf you are in the European Union or European Economic Area, you have additional rights:\n• Right to access your personal data\n• Right to rectification of inaccurate data\n• Right to erasure (\"right to be forgotten\")\n• Right to restrict processing\n• Right to data portability\n• Right to object to processing\n• Right to withdraw consent at any time\n• Right to lodge a complaint with a supervisory authority\n\nLegal Basis for Processing:\n• Contract: To provide services you requested\n• Legitimate Interest: To improve and secure our platform\n• Consent: For optional features and communications\n• Legal Obligation: To comply with applicable laws\n\nInternational Data Transfers:\n• Your data may be processed outside your country of residence\n• We use appropriate safeguards for international transfers\n• Third-party services comply with GDPR and privacy regulations\n\nChildren's Privacy:\n• DormHub is not intended for users under 18\n• We do not knowingly collect data from minors\n• If we discover underage users, we will delete their accounts\n\nContact Information:\nFor privacy-related questions or to exercise your rights:\n• WhatsApp: +972-52-727-5393\n• Email: [Your contact email]\n\nThis Privacy Policy may be updated from time to time. We will notify you of significant changes and post the updated policy with a new \"Last Updated\" date."
+    }
+  },
+  "calendar": {
+    "title": "Dorm Calendar",
+    "subtitle": "See what's happening in the dorm",
+    "description": "Stay updated with dorm events and activities",
+    "createEvent": "Create Event",
+    "newEvent": "New Event",
+    "editEvent": "Edit Event",
+    "deleteEvent": "Delete Event",
+    "cancelEvent": "Cancel Event",
+    "eventDetails": "Event Details",
+    "noEvents": "No events scheduled",
+    "noEventsDescription": "Be the first to create an event!",
+    "upcomingEvents": "Upcoming Events",
+    "pastEvents": "Past Events",
+    "todayEvents": "Today's Events",
+    "eventType": {
+      "party": "Party",
+      "game_night": "Game Night",
+      "drinking_night": "Drinking Night",
+      "study_group": "Study Group",
+      "movie_night": "Movie Night",
+      "sports": "Sports",
+      "food": "Food Event",
+      "other": "Other"
+    },
+    "form": {
+      "title": "Event Title",
+      "titlePlaceholder": "e.g. Friday Night Party",
+      "description": "Description",
+      "descriptionPlaceholder": "Tell people what to expect...",
+      "eventType": "Event Type",
+      "location": "Location",
+      "locationPlaceholder": "e.g. Dorm Lounge, Room 305",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "maxAttendees": "Max Attendees",
+      "maxAttendeesPlaceholder": "Leave empty for unlimited",
+      "tags": "Tags",
+      "tagsPlaceholder": "Add tags (comma separated)",
+      "createSuccess": "Event created successfully!",
+      "updateSuccess": "Event updated successfully!",
+      "deleteSuccess": "Event deleted successfully!",
+      "createError": "Failed to create event",
+      "updateError": "Failed to update event",
+      "deleteError": "Failed to delete event"
+    },
+    "attendance": {
+      "going": "Going",
+      "interested": "Interested",
+      "notGoing": "Not Going",
+      "rsvp": "RSVP",
+      "changeRsvp": "Change RSVP",
+      "attendees": "Attendees",
+      "attendeeCount": "{count} going",
+      "maxReached": "Event is full",
+      "youAreGoing": "You're going!",
+      "youAreInterested": "You're interested",
+      "signInToRsvp": "Sign in to RSVP"
+    },
+    "filters": {
+      "all": "All Events",
+      "upcoming": "Upcoming",
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month"
+    },
+    "time": {
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "yesterday": "Yesterday",
+      "at": "at",
+      "to": "to",
+      "allDay": "All Day",
+      "started": "Started",
+      "ended": "Ended",
+      "cancelled": "Cancelled"
+    },
+    "confirmDelete": "Are you sure you want to delete this event?",
+    "createdBy": "Created by"
+  },
+  "guide": {
+    "title": "Freshman Guide - DormHub",
+    "backToTips": "Back to Tips",
+    "heading": "🎓 Freshman Guide — Welcome to the Dorms!",
+    "subtitle": "Hey there and welcome! To make your dorm life easier (and much smoother 😉), here are some must-have apps and things you should know before settling in.",
+    "apps": {
+      "title": "Must-Have Apps",
+      "downloadLinks": "Download for iPhone | Android",
+      "visitt": {
+        "name": "Visitt+",
+        "description": "Use this app for maintenance requests and reporting issues.",
+        "examples": "Examples: \"The 8th floor is dirty\" or \"My AC isn't working\""
+      },
+      "laundry": {
+        "name": "Cashless Laundry",
+        "description": "This app lets you activate and pay for the dorm's washing machines and dryers directly from your phone."
+      },
+      "lgthinq": {
+        "name": "LG ThinQ",
+        "description": "Control your air conditioner remotely from your phone — turn it on before you get back from class!"
+      }
+    },
+    "lounge": {
+      "title": "The Dorm Lounge (מועדון דיירים)",
+      "description": "The lounge is open to everyone — it's the heart of the dorms!",
+      "point1": "Most residents use it to study, chill, or hang out.",
+      "point2": "There's a water cooler available.",
+      "point3": "Please keep it quiet and respectful for others studying."
+    },
+    "shabbat": {
+      "title": "Friday Night Dinners",
+      "description": "Every other Friday, בית חב״ד hosts an amazing Shabbat dinner and Kiddush at the Dorm Lounge.",
+      "point1": "Free food, great vibes, and a welcoming community.",
+      "point2": "Hosted by Rabbi Shmuel and his wife Moshka.",
+      "contact1": "Want to join? Just contact",
+      "shmuel": "Shmuel",
+      "contact2": "— everyone's invited!"
+    },
+    "community": {
+      "title": "A Note from the Dorm Community",
+      "message": "Just be a good person 😊 Say hi to your neighbors, keep shared areas clean, and help make this dorm a great place for everyone."
+    },
+    "cta": {
+      "title": "Your Turn!",
+      "description": "What do you think should be added to this guide? Drop your ideas or tips — we'll include the best ones in the next version! 🙌",
+      "button": "Share Your Tips"
     }
   }
 }

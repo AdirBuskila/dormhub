@@ -26,3 +26,4 @@ COMMENT ON TABLE public.tip_votes IS 'User votes marking tips as helpful';
 
 
 
+

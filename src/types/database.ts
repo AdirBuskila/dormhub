@@ -11,6 +11,8 @@ export type ListingType = 'sell' | 'buy' | 'swap' | 'giveaway';
 export type ListingCondition = 'new' | 'like_new' | 'good' | 'fair' | 'poor';
 export type ListingStatus = 'active' | 'reserved' | 'sold' | 'removed';
 export type TipStatus = 'pending' | 'approved' | 'rejected';
+export type EventType = 'party' | 'game_night' | 'drinking_night' | 'study_group' | 'movie_night' | 'sports' | 'food' | 'other';
+export type AttendeeStatus = 'going' | 'interested' | 'not_going';
 
 // ============================================================================
 // DATABASE TABLES
@@ -87,6 +89,32 @@ export interface InfoPage {
   updated_at: string;
 }
 
+export interface DormEvent {
+  id: UUID;
+  title: string;
+  description?: string | null;
+  event_type: EventType;
+  location?: string | null;
+  start_time: string;
+  end_time: string;
+  created_by?: UUID | null;
+  created_at: string;
+  updated_at: string;
+  is_cancelled: boolean;
+  attendee_count: number;
+  max_attendees?: number | null;
+  tags: string[];
+}
+
+export interface EventAttendee {
+  id: UUID;
+  event_id: UUID;
+  profile_id: UUID;
+  status: AttendeeStatus;
+  created_at: string;
+  updated_at: string;
+}
+
 // ============================================================================
 // API PAYLOADS (for creation/updates)
 // ============================================================================
@@ -132,6 +160,29 @@ export interface ApproveTipPayload {
   status: 'approved' | 'rejected';
 }
 
+export interface CreateEventPayload {
+  title: string;
+  description?: string;
+  event_type: EventType;
+  location?: string;
+  start_time: string;
+  end_time: string;
+  max_attendees?: number;
+  tags?: string[];
+}
+
+export interface UpdateEventPayload {
+  title?: string;
+  description?: string;
+  event_type?: EventType;
+  location?: string;
+  start_time?: string;
+  end_time?: string;
+  is_cancelled?: boolean;
+  max_attendees?: number;
+  tags?: string[];
+}
+
 // ============================================================================
 // EXTENDED TYPES (with joins)
 // ============================================================================
@@ -161,6 +212,11 @@ export interface ListingWithFavorite extends Listing {
   is_favorited: boolean;
 }
 
+export interface DormEventWithCreator extends DormEvent {
+  creator?: Pick<Profile, 'id' | 'full_name' | 'username' | 'avatar_url'> | null;
+  user_status?: AttendeeStatus | null;
+}
+
 // ============================================================================
 // PAGINATION & FILTERING
 // ============================================================================
@@ -187,6 +243,15 @@ export interface TipFilters {
   status?: TipStatus;
   tags?: string[];
   author_id?: UUID;
+}
+
+export interface EventFilters {
+  event_type?: EventType;
+  start_date?: string;
+  end_date?: string;
+  tags?: string[];
+  created_by?: UUID;
+  is_cancelled?: boolean;
 }
 
 export interface PaginatedResponse<T> {
@@ -237,6 +302,8 @@ export const LISTING_TYPES: readonly ListingType[] = ['sell', 'buy', 'swap', 'gi
 export const LISTING_CONDITIONS: readonly ListingCondition[] = ['new', 'like_new', 'good', 'fair', 'poor'] as const;
 export const LISTING_STATUSES: readonly ListingStatus[] = ['active', 'reserved', 'sold', 'removed'] as const;
 export const TIP_STATUSES: readonly TipStatus[] = ['pending', 'approved', 'rejected'] as const;
+export const EVENT_TYPES: readonly EventType[] = ['party', 'game_night', 'drinking_night', 'study_group', 'movie_night', 'sports', 'food', 'other'] as const;
+export const ATTENDEE_STATUSES: readonly AttendeeStatus[] = ['going', 'interested', 'not_going'] as const;
 
 // Categories (can be extended)
 export const LISTING_CATEGORIES = [

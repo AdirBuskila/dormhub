@@ -25,6 +25,7 @@ export default function Navbar({ isAdmin = false }: NavbarProps) {
     { name: t('marketplace'), href: `/${locale}/marketplace` },
     { name: t('tips'), href: `/${locale}/tips` },
     { name: t('businesses'), href: `/${locale}/businesses` },
+    { name: t('calendar'), href: `/${locale}/dorm-calendar` },
   ];
 
   const isActive = (href: string) => {
