@@ -23,7 +23,6 @@ export function NewListingForm({ locale }: NewListingFormProps) {
     condition: 'good' as ListingCondition,
     category: '',
     tags: '',
-    location: '',
     images: [] as string[],
   });
 
@@ -52,7 +51,6 @@ export function NewListingForm({ locale }: NewListingFormProps) {
         tags: formData.tags
           ? formData.tags.split(',').map((tag) => tag.trim()).filter(Boolean)
           : [],
-        location: formData.location.trim() || undefined,
         images: formData.images,
       };
 
@@ -203,23 +201,6 @@ export function NewListingForm({ locale }: NewListingFormProps) {
             </option>
           ))}
         </select>
-      </div>
-
-      {/* Location */}
-      <div>
-        <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
-          {t('form.location')}
-        </label>
-        <input
-          id="location"
-          name="location"
-          type="text"
-          value={formData.location}
-          onChange={handleChange}
-          maxLength={200}
-          placeholder={t('form.locationPlaceholder')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
       </div>
 
       {/* Tags */}

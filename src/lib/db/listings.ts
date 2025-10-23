@@ -67,7 +67,7 @@ export async function getListingWithOwner(listingId: string): Promise<ListingWit
         id,
         full_name,
         username,
-        room,
+        phone,
         avatar_url
       )
     `)
@@ -100,7 +100,7 @@ export async function getListings(
         id,
         full_name,
         username,
-        room,
+        phone,
         avatar_url
       )
     `, { count: 'exact' });
@@ -249,7 +249,7 @@ export async function getUserFavorites(userId: string, limit = 50): Promise<List
           id,
           full_name,
           username,
-          room,
+          phone,
           avatar_url
         )
       )

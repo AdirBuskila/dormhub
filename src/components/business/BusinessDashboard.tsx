@@ -86,17 +86,18 @@ export default function BusinessDashboard({ business, userData }: BusinessDashbo
 
       {/* Tabs */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8">
+        <div className="border-b border-gray-200 overflow-x-auto">
+          <nav className="-mb-px flex space-x-4 sm:space-x-8 min-w-min">
             <button
               onClick={() => setActiveTab('info')}
               className={`${
                 activeTab === 'info'
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
+              } whitespace-nowrap py-4 px-2 sm:px-1 border-b-2 font-medium text-sm transition-colors`}
             >
-              Business Info
+              <span className="hidden sm:inline">Business Info</span>
+              <span className="sm:hidden">Info</span>
             </button>
             <button
               onClick={() => setActiveTab('hours')}
@@ -104,9 +105,10 @@ export default function BusinessDashboard({ business, userData }: BusinessDashbo
                 activeTab === 'hours'
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
+              } whitespace-nowrap py-4 px-2 sm:px-1 border-b-2 font-medium text-sm transition-colors`}
             >
-              Opening Hours
+              <span className="hidden sm:inline">Opening Hours</span>
+              <span className="sm:hidden">Hours</span>
             </button>
             <button
               onClick={() => setActiveTab('discounts')}
@@ -114,9 +116,10 @@ export default function BusinessDashboard({ business, userData }: BusinessDashbo
                 activeTab === 'discounts'
                   ? 'border-blue-500 text-blue-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
+              } whitespace-nowrap py-4 px-2 sm:px-1 border-b-2 font-medium text-sm transition-colors`}
             >
-              Student Discounts
+              <span className="hidden sm:inline">Student Discounts</span>
+              <span className="sm:hidden">Discounts</span>
             </button>
             <button
               onClick={() => setActiveTab('hotdeals')}
@@ -124,10 +127,11 @@ export default function BusinessDashboard({ business, userData }: BusinessDashbo
                 activeTab === 'hotdeals'
                   ? 'border-orange-500 text-orange-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-1`}
+              } whitespace-nowrap py-4 px-2 sm:px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-1`}
             >
               <span className="text-lg">🔥</span>
-              Hot Deals
+              <span className="hidden sm:inline">Hot Deals</span>
+              <span className="sm:hidden">Deals</span>
             </button>
           </nav>
         </div>

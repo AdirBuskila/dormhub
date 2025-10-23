@@ -75,6 +75,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
+    // Check hot deals limit (max 3 per business)
+    const { data: existingDeals, error: countError } = await supabaseAdmin
+      .from('hot_deals')
+      .select('id')
+      .eq('business_id', businessId);
+
+    if (countError) {
+      console.error('Error checking hot deals count:', countError);
+      return NextResponse.json({ error: 'Failed to check hot deals limit' }, { status: 500 });
+    }
+
+    if (existingDeals && existingDeals.length >= 3) {
+      return NextResponse.json(
+        { error: 'Maximum limit reached. Each business can have up to 3 hot deals.' },
+        { status: 400 }
+      );
+    }
+
     // Insert the hot deal
     const { data: hotDeal, error } = await supabaseAdmin
       .from('hot_deals')

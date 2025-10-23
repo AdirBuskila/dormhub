@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import type { DormEventWithCreator, AttendeeStatus } from '@/types/database';
 import { format } from 'date-fns';
+import ReportButton from '@/components/ReportButton';
 
 interface EventDetailsModalProps {
   isOpen: boolean;
@@ -103,7 +104,7 @@ export function EventDetailsModal({
 
           <div className="flex items-start gap-3 pr-10">
             <span className="text-4xl">{getEventIcon(event.event_type)}</span>
-            <div>
+            <div className="flex-1">
               <h2 className="text-2xl font-bold text-gray-900 mb-1">
                 {event.title}
               </h2>
@@ -112,6 +113,17 @@ export function EventDetailsModal({
               </p>
             </div>
           </div>
+
+          {/* Report Button - only show if not creator */}
+          {!isCreator && currentUserId && (
+            <div className="mt-4 flex justify-end">
+              <ReportButton 
+                itemType="event" 
+                itemId={event.id}
+                variant="text"
+              />
+            </div>
+          )}
 
           {event.is_cancelled && (
             <div className="mt-4 px-4 py-2 bg-red-100 text-red-700 rounded-md">

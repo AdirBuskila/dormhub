@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import type { TipWithAuthor } from '@/types/database';
+import ReportButton from '@/components/ReportButton';
 
 interface TipCardProps {
   tip: TipWithAuthor;
@@ -70,7 +71,7 @@ export function TipCard({ tip, onVote, hasVoted = false, onClick }: TipCardProps
               )}
             </div>
           </div>
-          <div className="flex items-center gap-3 ml-4">
+          <div className="flex items-center gap-2 ml-4">
             {/* Helpful votes */}
             <div className={`flex items-center gap-1 text-sm ${tip.is_voted ? 'text-green-600' : 'text-gray-600'}`}>
               <svg 
@@ -87,6 +88,15 @@ export function TipCard({ tip, onVote, hasVoted = false, onClick }: TipCardProps
                 />
               </svg>
               <span className="font-medium">{tip.helpful_count}</span>
+            </div>
+            
+            {/* Report Button */}
+            <div onClick={(e) => e.stopPropagation()}>
+              <ReportButton 
+                itemType="tip" 
+                itemId={tip.id}
+                variant="icon"
+              />
             </div>
           </div>
         </div>

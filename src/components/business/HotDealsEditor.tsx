@@ -73,6 +73,11 @@ export default function HotDealsEditor({ businessId }: HotDealsEditorProps) {
       return;
     }
 
+    if (hotDeals.length >= 3) {
+      setMessage({ type: 'error', text: 'Maximum limit reached. You can only have 3 hot deals at a time.' });
+      return;
+    }
+
     setSaving(true);
     setMessage(null);
 
@@ -91,14 +96,18 @@ export default function HotDealsEditor({ businessId }: HotDealsEditorProps) {
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to create hot deal');
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to create hot deal');
+      }
 
       await fetchHotDeals();
       resetForm();
       setMessage({ type: 'success', text: 'Hot deal created successfully!' });
     } catch (error) {
       console.error('Error creating hot deal:', error);
-      setMessage({ type: 'error', text: 'Failed to create hot deal. Please try again.' });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create hot deal. Please try again.';
+      setMessage({ type: 'error', text: errorMessage });
     } finally {
       setSaving(false);
     }
@@ -197,6 +206,8 @@ export default function HotDealsEditor({ businessId }: HotDealsEditorProps) {
     );
   }
 
+  const maxDealsReached = hotDeals.length >= 3;
+
   return (
     <div className="space-y-6 max-w-7xl">
       {message && (
@@ -207,17 +218,47 @@ export default function HotDealsEditor({ businessId }: HotDealsEditorProps) {
         </div>
       )}
 
+      {/* Hot Deals Limit Info */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🔥</span>
+            <div>
+              <p className="font-semibold text-gray-900">Hot Deals Limit</p>
+              <p className="text-sm text-gray-600">
+                You have <span className="font-bold text-orange-600">{hotDeals.length} of 3</span> hot deals
+              </p>
+            </div>
+          </div>
+          {maxDealsReached && (
+            <span className="text-xs font-medium text-orange-700 bg-orange-100 px-3 py-1 rounded-full">
+              Limit Reached
+            </span>
+          )}
+        </div>
+      </div>
+
       {/* Add New Deal Button */}
       {!showAddForm && (
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all font-semibold flex items-center justify-center gap-2 shadow-lg"
-        >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-          Create New Hot Deal
-        </button>
+        <div>
+          <button
+            onClick={() => setShowAddForm(true)}
+            disabled={maxDealsReached}
+            className={`px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg hover:from-orange-600 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all font-semibold flex items-center justify-center gap-2 shadow-lg ${
+              maxDealsReached ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Create New Hot Deal
+          </button>
+          {maxDealsReached && (
+            <p className="text-sm text-gray-600 mt-2">
+              You've reached the maximum of 3 hot deals. Delete an existing deal to create a new one.
+            </p>
+          )}
+        </div>
       )}
 
       {/* Add New Deal Form */}

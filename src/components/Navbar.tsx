@@ -90,24 +90,26 @@ export default function Navbar({ isAdmin = false, isBusinessOwner = false }: Nav
 
             {/* Desktop Navigation Links */}
             <div className="hidden md:ml-8 md:flex md:space-x-1">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={`inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                    item.special
-                      ? isActive(item.href)
-                        ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md hover:shadow-lg'
-                        : 'bg-gradient-to-r from-orange-400 to-red-400 text-white hover:from-orange-500 hover:to-red-500 shadow-md'
-                      : isActive(item.href)
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
-                >
-                  <span className="text-base">{item.icon}</span>
-                  <span>{item.name}</span>
-                </Link>
-              ))}
+              {navigation
+                .filter((item) => isSignedIn || item.href === `/${locale}`) // Only show home for unauthenticated users
+                .map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className={`inline-flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                      item.special
+                        ? isActive(item.href)
+                          ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md hover:shadow-lg'
+                          : 'bg-gradient-to-r from-orange-400 to-red-400 text-white hover:from-orange-500 hover:to-red-500 shadow-md'
+                        : isActive(item.href)
+                        ? 'bg-blue-50 text-blue-700'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    <span className="text-base">{item.icon}</span>
+                    <span>{item.name}</span>
+                  </Link>
+                ))}
             </div>
           </div>
 
@@ -154,18 +156,12 @@ export default function Navbar({ isAdmin = false, isBusinessOwner = false }: Nav
                 <UserButton afterSignOutUrl={`/${locale}`} />
               </div>
             ) : (
-              <div className="hidden md:flex items-center space-x-2">
+              <div className="hidden md:flex items-center">
                 <Link
                   href={`/${locale}/sign-in`}
-                  className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium"
-                >
-                  {t('signIn')}
-                </Link>
-                <Link
-                  href={`/${locale}/sign-up`}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                 >
-                  {t('signUp')}
+                  {t('signIn')}
                 </Link>
               </div>
             )}
@@ -207,51 +203,53 @@ export default function Navbar({ isAdmin = false, isBusinessOwner = false }: Nav
         }`}
       >
         <div className="px-3 pt-3 pb-4 space-y-2">
-          {navigation.map((item, index) => {
-            const isActiveLink = isActive(item.href);
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                className={`group relative flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-semibold transition-all duration-300 overflow-hidden ${
-                  isActiveLink
-                    ? `bg-gradient-to-r ${item.color} text-white shadow-lg transform scale-[1.02]`
-                    : 'bg-white text-gray-700 hover:shadow-md border border-gray-100 hover:border-gray-200'
-                } ${mobileMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}
-                style={{ 
-                  transitionDelay: mobileMenuOpen ? `${index * 60}ms` : '0ms'
-                }}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {/* Icon background glow for active state */}
-                {isActiveLink && (
-                  <div className="absolute inset-0 bg-white/10 animate-pulse" />
-                )}
-                
-                {/* Icon */}
-                <span className={`relative text-2xl flex-shrink-0 transition-transform duration-300 ${
-                  isActiveLink ? '' : 'group-hover:scale-110'
-                }`}>
-                  {item.icon}
-                </span>
-                
-                {/* Text */}
-                <span className="relative flex-1">{item.name}</span>
-                
-                {/* Arrow indicator for active */}
-                {isActiveLink && (
-                  <svg className="w-5 h-5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                  </svg>
-                )}
-                
-                {/* Subtle gradient overlay for non-active items */}
-                {!isActiveLink && (
-                  <div className={`absolute inset-0 bg-gradient-to-r ${item.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
-                )}
-              </Link>
-            );
-          })}
+          {navigation
+            .filter((item) => isSignedIn || item.href === `/${locale}`) // Only show home for unauthenticated users
+            .map((item, index) => {
+              const isActiveLink = isActive(item.href);
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`group relative flex items-center gap-4 px-4 py-3.5 rounded-xl text-base font-semibold transition-all duration-300 overflow-hidden ${
+                    isActiveLink
+                      ? `bg-gradient-to-r ${item.color} text-white shadow-lg transform scale-[1.02]`
+                      : 'bg-white text-gray-700 hover:shadow-md border border-gray-100 hover:border-gray-200'
+                  } ${mobileMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}
+                  style={{ 
+                    transitionDelay: mobileMenuOpen ? `${index * 60}ms` : '0ms'
+                  }}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {/* Icon background glow for active state */}
+                  {isActiveLink && (
+                    <div className="absolute inset-0 bg-white/10 animate-pulse" />
+                  )}
+                  
+                  {/* Icon */}
+                  <span className={`relative text-2xl flex-shrink-0 transition-transform duration-300 ${
+                    isActiveLink ? '' : 'group-hover:scale-110'
+                  }`}>
+                    {item.icon}
+                  </span>
+                  
+                  {/* Text */}
+                  <span className="relative flex-1">{item.name}</span>
+                  
+                  {/* Arrow indicator for active */}
+                  {isActiveLink && (
+                    <svg className="w-5 h-5 text-white/80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                    </svg>
+                  )}
+                  
+                  {/* Subtle gradient overlay for non-active items */}
+                  {!isActiveLink && (
+                    <div className={`absolute inset-0 bg-gradient-to-r ${item.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`} />
+                  )}
+                </Link>
+              );
+            })}
           
           {isSignedIn && (
             <>
@@ -306,22 +304,14 @@ export default function Navbar({ isAdmin = false, isBusinessOwner = false }: Nav
         </div>
         
         {!isSignedIn && (
-          <div className="px-3 pt-3 pb-4 border-t border-gray-200 space-y-2">
+          <div className="px-3 pt-3 pb-4 border-t border-gray-200">
             <Link
               href={`/${locale}/sign-in`}
-              className="group flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl text-base font-semibold transition-all duration-300 bg-white text-gray-700 hover:shadow-md border border-gray-200 hover:border-gray-300"
+              className="group flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl text-base font-semibold transition-all duration-300 bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg hover:from-blue-600 hover:to-blue-700"
               onClick={() => setMobileMenuOpen(false)}
             >
               <span className="text-xl">🔑</span>
               <span>{t('signIn')}</span>
-            </Link>
-            <Link
-              href={`/${locale}/sign-up`}
-              className="group flex items-center justify-center gap-3 px-4 py-3.5 rounded-xl text-base font-semibold transition-all duration-300 bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg hover:from-blue-600 hover:to-blue-700"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              <span className="text-xl">✨</span>
-              <span>{t('signUp')}</span>
             </Link>
           </div>
         )}

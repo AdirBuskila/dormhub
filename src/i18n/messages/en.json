@@ -119,6 +119,7 @@
     "createListing": "Post Listing",
     "newListing": "Create New Listing",
     "anonymous": "Anonymous",
+    "condition": "Condition",
     "type": {
       "sell": "For Sale",
       "buy": "Looking to Buy",
@@ -498,6 +499,32 @@
       "title": "Your Turn!",
       "description": "Think there's something we missed in this guide? We'd love to hear from you! Share your ideas, tips, or suggestions — we'll include the best ones in the next version! 🙌",
       "button": "Share Your Tips"
+    }
+  },
+  "report": {
+    "button": "Report",
+    "modal": {
+      "title": "Report Content",
+      "description": "Help us keep DormHub safe by reporting inappropriate content. Your report will be reviewed by our team.",
+      "reason": "Reason",
+      "selectReason": "Select a reason...",
+      "details": "Additional Details (Optional)",
+      "detailsPlaceholder": "Provide more context about this report...",
+      "cancel": "Cancel",
+      "submit": "Submit Report",
+      "submitting": "Submitting..."
+    },
+    "reasons": {
+      "inappropriate_content": "Inappropriate Content",
+      "spam": "Spam",
+      "harassment": "Harassment or Bullying",
+      "misinformation": "Misinformation",
+      "scam": "Scam or Fraud",
+      "other": "Other"
+    },
+    "success": {
+      "title": "Report Submitted",
+      "message": "Thank you for helping keep our community safe. We'll review this report soon."
     }
   }
 }

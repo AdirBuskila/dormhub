@@ -69,9 +69,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
             {/* Call to Action Buttons */}
             {!user && (
-              <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: '800ms' }}>
+              <div className="flex justify-center animate-fade-in" style={{ animationDelay: '800ms' }}>
                 <Link
-                  href={`/${locale}/sign-up`}
+                  href={`/${locale}/sign-in`}
                   className="group bg-white text-blue-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-blue-50 transition-all duration-300 shadow-xl hover:shadow-2xl hover:scale-105"
                 >
                   <span className="flex items-center justify-center gap-2">
@@ -80,12 +80,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                     </svg>
                   </span>
-                </Link>
-                <Link
-                  href={`/${locale}/sign-in`}
-                  className="bg-white/10 backdrop-blur-sm text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-all duration-300 border-2 border-white/30 hover:border-white/50 hover:scale-105"
-                >
-                  {t('hero.signIn')}
                 </Link>
               </div>
             )}
@@ -417,7 +411,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               {t('cta.subtitle')}
             </p>
             <Link
-              href={`/${locale}/sign-up`}
+              href={`/${locale}/sign-in`}
               className="inline-block bg-white text-blue-600 px-8 py-3 rounded-md font-medium hover:bg-blue-50 transition-colors"
             >
               {t('cta.button')}

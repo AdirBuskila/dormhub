@@ -1,10 +1,11 @@
 import React from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { getListingWithOwner } from '@/lib/db/listings';
 import { getOptionalUser } from '@/lib/auth';
+import { ListingActions } from '@/components/marketplace/ListingActions';
 
 export async function generateMetadata({
   params,
@@ -142,12 +143,6 @@ export default async function ListingDetailPage({
                 <span className="font-medium text-gray-900">{listing.category}</span>
               </div>
             )}
-            {listing.location && (
-              <div className="flex justify-between">
-                <span className="text-gray-600">Location:</span>
-                <span className="font-medium text-gray-900">{listing.location}</span>
-              </div>
-            )}
             <div className="flex justify-between">
               <span className="text-gray-600">Posted:</span>
               <span className="font-medium text-gray-900">
@@ -169,9 +164,6 @@ export default async function ListingDetailPage({
                 <p className="font-medium text-gray-900">
                   {listing.owner.username || listing.owner.full_name || 'Anonymous'}
                 </p>
-                {listing.owner.room && (
-                  <p className="text-sm text-gray-600">Room: {listing.owner.room}</p>
-                )}
               </div>
             </div>
           </div>
@@ -193,40 +185,15 @@ export default async function ListingDetailPage({
           )}
 
           {/* Actions */}
-          <div className="space-y-3">
-            {isOwner ? (
-              <>
-                <Link
-                  href={`/${locale}/marketplace/${listingId}/edit`}
-                  className="block w-full bg-blue-600 text-white text-center py-3 rounded-md font-medium hover:bg-blue-700 transition-colors"
-                >
-                  Edit Listing
-                </Link>
-                <p className="text-sm text-gray-500 text-center">This is your listing</p>
-              </>
-            ) : (
-              <>
-                <button
-                  className="w-full bg-blue-600 text-white py-3 rounded-md font-medium hover:bg-blue-700 transition-colors"
-                  onClick={() => {
-                    // Simple contact via phone or message
-                    alert('Contact feature coming soon! For now, reach out in person.');
-                  }}
-                >
-                  Contact Seller
-                </button>
-                <button
-                  className="w-full bg-white border border-gray-300 text-gray-700 py-3 rounded-md font-medium hover:bg-gray-50 transition-colors"
-                  onClick={() => {
-                    // Favorite functionality
-                    alert('Favorite feature coming soon!');
-                  }}
-                >
-                  Save to Favorites
-                </button>
-              </>
-            )}
-          </div>
+          <ListingActions
+            isOwner={isOwner}
+            user={user}
+            listingId={listingId}
+            locale={locale}
+            listingType={listing.type}
+            listingTitle={listing.title}
+            ownerPhone={listing.owner.phone}
+          />
         </div>
       </div>
     </div>

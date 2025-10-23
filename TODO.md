@@ -11,18 +11,40 @@
 - [x] Tips & Info system with approval workflow
 - [x] Local Businesses with student discounts
 - [x] **🔥 Hot Deals** (time-limited promotions with images)
+  - [x] Business owner can create/edit/delete hot deals
+  - [x] Image upload for hot deals
+  - [x] Expiration dates with "Ending Soon" badge
+  - [x] Public hot deals page (`/hot-deals`)
+  - [x] Open/closed indicator for businesses
+  - [x] Mobile-optimized card layout
+  - [x] Maximum 3 hot deals per business (API validation + UI enforcement)
 - [x] Dorm Calendar (events system)
+  - [x] Event creation with approval workflow
+  - [x] Event images (upload & display)
+  - [x] RSVP/attendance tracking with "Going 🔥" button
+  - [x] Filter by "going" events
+  - [x] Full-screen image viewing
 - [x] Bilingual support (English/Hebrew) with RTL
+  - [x] Fixed Hebrew text alignment across all pages
+  - [x] Fixed pluralization for attendance counts
 - [x] User authentication (Clerk with Google/Apple/Facebook)
+  - [x] Route protection - only home, sign-in, and tips guide accessible to unauthenticated users
+  - [x] Navbar shows only "Home" link to unauthenticated users
+  - [x] Simplified sign-in page with minimal design
+  - [x] Middleware properly redirects unauthenticated users to sign-in
 - [x] Responsive design (mobile-first)
 - [x] Enhanced navigation with icons and colors
+  - [x] Business owner "Manage Business" link in nav
 - [x] User profiles (view/edit)
 - [x] Business owner dashboard (manage hours, discounts, hot deals)
-- [x] Admin dashboard (manage users, tips, listings, businesses)
+  - [x] Responsive tabs that work on mobile without overflow
+- [x] Admin dashboard (manage users, tips, listings, businesses, hot deals, events)
+  - [x] Statistics dashboard (users, businesses, hot deals, events, tips, listings)
 - [x] Terms of Service page
 - [x] Privacy Policy page
 - [x] Contact page with form
 - [x] New resident guide banner on homepage
+  - [x] Complete guide page with sections for apps, dorm calendar, CS24 project
 
 ---
 
@@ -31,7 +53,7 @@
 ### 1. Content Moderation & Safety 🛡️
 **Time: 3-4 hours**
 
-- [ ] **Add Reporting System**
+- [V] **Add Reporting System**
   - [ ] Create `reports` table in database
   ```sql
   CREATE TABLE public.reports (
@@ -59,15 +81,26 @@
   - [ ] Add filter to event creation API
   - [ ] Test with various profane words
   - [ ] Create bypass option for admin-approved content
-
-### 2. Database Migration - Hot Deals 🔥
+dont need this, we will relay on the good people and the approval system
+### 2. Database Migrations 🔥
 **Time: 5 minutes**
 
-- [ ] Run the hot deals migration in Supabase SQL Editor
+- [V] Run the hot deals migration in Supabase SQL Editor
   - File: `supabase/migrations/20250124000000_create_hot_deals.sql`
   - [ ] Verify `hot_deals` table created
   - [ ] Verify `hot-deals` storage bucket created
   - [ ] Test RLS policies work correctly
+
+- [V] Run the event images migration in Supabase SQL Editor
+  - File: `supabase/migrations/20250125000001_add_event_images.sql`
+  - [ ] Verify `image_url` column added to `dorm_events`
+  - [ ] Verify `event-images` storage bucket created
+  - [ ] Test RLS policies work correctly
+
+- [V] Run the semester events seed in Supabase SQL Editor
+  - File: `supabase/migrations/20250125000000_add_semester_events.sql`
+  - [ ] Verify initial events created
+  - [ ] Check events display correctly on calendar
 
 ### 3. Testing & Bug Fixes 🧪
 **Time: 4-6 hours**
@@ -77,7 +110,9 @@
 - [ ] Test Apple sign-in flow (if configured)
 - [ ] Test Facebook sign-in flow (if configured)
 - [ ] Test sign-out functionality
-- [ ] Verify protected routes redirect to sign-in
+- [x] Verify protected routes redirect to sign-in
+  - [x] Unauthenticated users can only access home page and sign-in
+  - [x] Navbar shows only "Home" link to unauthenticated users
 - [ ] Test profile editing after sign-in
 
 #### Marketplace Tests
@@ -120,16 +155,23 @@
 - [ ] Public can view all active deals at `/hot-deals`
 - [ ] "Ending Soon" badge shows for deals expiring < 24hrs
 - [ ] Verify RLS - only business owners can manage their deals
+- [ ] Open/closed indicator displays correctly
+- [ ] Mobile layout displays 2 cards per row
+- [ ] WhatsApp contact button works
 
 #### Calendar Tests
 - [ ] View calendar page
-- [ ] Create event (requires approval)
-- [ ] View event details
-- [ ] Register for event (attendance)
+- [ ] Create event with image upload
+- [ ] View event details with image
+- [ ] Click image to view full-screen
+- [ ] "Going 🔥" button works on event cards
+- [ ] Register for event (attendance) from modal
 - [ ] Cancel registration
+- [ ] Filter by "going" events works
 - [ ] Admin approve/reject events
-- [ ] Edit event (admin only)
+- [ ] Edit event (admin only) with image
 - [ ] Delete event (admin only)
+- [ ] Hebrew pluralization displays correctly ("הולכים" not "הולך")
 
 #### Mobile/Responsive Tests
 - [ ] Test on iPhone (Safari)
@@ -306,7 +348,11 @@
   - [ ] Configure build settings (Next.js)
   - [ ] Add all environment variables
   - [ ] Set Node.js version (18.x or 20.x)
-  - [ ] Configure custom domain (if available)
+  - [ ] **Configure custom domain: `dormhub.co.il`**
+    - [ ] Add domain in Vercel dashboard
+    - [ ] Update DNS records (A/CNAME)
+    - [ ] Verify SSL certificate issued
+    - [ ] Test domain works with HTTPS
 
 - [ ] **Environment Variables** (Add to Vercel)
   ```
@@ -479,16 +525,31 @@
 7. ✅ Security audit passed
 
 ### Current Status:
-- **Core Platform:** 95% complete
-- **Hot Deals:** Feature complete, needs DB migration
+- **Core Platform:** 98% complete ✅
+- **Hot Deals:** Feature complete ✅ (needs DB migration)
+- **Calendar:** Enhanced with images & RSVP ✅
+- **Admin Panel:** Enhanced with statistics ✅
+- **Navigation:** Enhanced with business owner link ✅
 - **Testing:** Needs comprehensive testing
 - **Security:** Needs audit
 - **Deployment:** Ready to deploy
+- **Domain:** dormhub.co.il purchased, needs connection
 
 ### Estimated Time to Launch:
-- **Critical work remaining:** ~15-20 hours
-- **With testing & polish:** ~25-30 hours
-- **Recommended timeline:** 4-5 focused days
+- **Critical work remaining:** ~12-15 hours
+- **With testing & polish:** ~20-25 hours
+- **Recommended timeline:** 3-4 focused days
+
+### Recent Updates (January 25, 2025):
+- ✅ Hot Deals fully implemented with mobile optimization
+- ✅ Event images with full-screen viewing
+- ✅ Calendar RSVP/attendance tracking enhanced
+- ✅ Admin statistics dashboard added
+- ✅ Business owner navigation link added
+- ✅ Hebrew RTL fixes and translation improvements
+- ✅ Business modal UX improvements
+- 🔜 Need to run database migrations
+- 🔜 Need to connect dormhub.co.il domain
 
 ---
 

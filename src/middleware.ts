@@ -1,24 +1,20 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 import createIntlMiddleware from 'next-intl/middleware';
 import { locales, defaultLocale } from './i18n/config';
+import { NextResponse } from 'next/server';
 
 // Define public routes (no authentication required)
+// Home page, sign-in, and tips guide are accessible to unauthenticated users
 const isPublicRoute = createRouteMatcher([
   '/',
   '/en',
   '/he',
   '/en/sign-in(.*)',
   '/he/sign-in(.*)',
-  '/en/sign-up(.*)',
-  '/he/sign-up(.*)',
-  '/en/test-user',
-  '/he/test-user',
-  '/test-user',
-  '/en/customer/new-order',
-  '/he/customer/new-order',
-  '/customer/new-order',
-  '/api/health',
-  '/api/test-db'
+  '/en/tips/guide',
+  '/he/tips/guide',
+  '/tips/guide',
+  '/api/health', // Health check endpoint
 ]);
 
 const intlMiddleware = createIntlMiddleware({
@@ -27,27 +23,38 @@ const intlMiddleware = createIntlMiddleware({
   localePrefix: 'as-needed'
 });
 
-export default clerkMiddleware((auth, req) => {
+export default clerkMiddleware(async (auth, req) => {
   // For API routes, only run Clerk middleware (no i18n or protection)
   if (req.nextUrl.pathname.startsWith('/api/')) {
     // Let Clerk set up auth context but don't protect API routes here
     // API routes will handle their own authentication
-    return;
+    return NextResponse.next();
   }
 
-  // Handle internationalization first
-  const intlResponse = intlMiddleware(req);
-  if (intlResponse) {
-    return intlResponse;
+  // Get the user ID from auth
+  const { userId } = await auth();
+
+  // Check if route requires authentication
+  const isPublic = isPublicRoute(req);
+  
+  console.log('Middleware check:', {
+    path: req.nextUrl.pathname,
+    isPublic,
+    userId,
+    requiresAuth: !isPublic
+  });
+
+  // If not a public route and no user is authenticated, redirect to sign-in
+  if (!isPublic && !userId) {
+    const locale = req.nextUrl.pathname.startsWith('/he') ? 'he' : 'en';
+    const signInUrl = new URL(`/${locale}/sign-in`, req.url);
+    signInUrl.searchParams.set('redirect_url', req.url);
+    console.log('Redirecting to sign-in:', signInUrl.toString());
+    return NextResponse.redirect(signInUrl);
   }
 
-  // Allow public routes without authentication
-  if (isPublicRoute(req)) return;
-  
-  console.log('Middleware protecting route:', req.nextUrl.pathname);
-  
-  // Protect all other routes
-  auth.protect();
+  // Handle internationalization
+  return intlMiddleware(req);
 });
 
 export const config = {
