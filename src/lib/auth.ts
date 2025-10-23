@@ -155,6 +155,23 @@ export async function isAdmin(): Promise<boolean> {
 }
 
 /**
+ * Check if the current user is a business owner
+ */
+export async function isBusinessOwner(): Promise<boolean> {
+  const user = await getOptionalUser();
+  if (!user) return false;
+
+  const supabase = getSupabaseClient();
+  const { data } = await supabase
+    .from('businesses')
+    .select('id')
+    .eq('owner_clerk_id', user.clerkId)
+    .single();
+
+  return !!data;
+}
+
+/**
  * Require admin access - throws error if not admin
  */
 export async function requireAdmin(): Promise<CurrentUser> {

@@ -97,6 +97,7 @@ export interface DormEvent {
   location?: string | null;
   start_time: string;
   end_time: string;
+  image_url?: string | null;
   created_by?: UUID | null;
   created_at: string;
   updated_at: string;
@@ -167,6 +168,7 @@ export interface CreateEventPayload {
   location?: string;
   start_time: string;
   end_time: string;
+  image_url?: string;
   max_attendees?: number;
   tags?: string[];
 }
@@ -178,6 +180,7 @@ export interface UpdateEventPayload {
   location?: string;
   start_time?: string;
   end_time?: string;
+  image_url?: string;
   is_cancelled?: boolean;
   max_attendees?: number;
   tags?: string[];

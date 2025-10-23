@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import type { DormEventWithCreator, CreateEventPayload, UpdateEventPayload, EventType } from '@/types/database';
 import { EVENT_TYPES } from '@/types/database';
+import { EventImageUploader } from './EventImageUploader';
 
 interface EventModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export function EventModal({ isOpen, onClose, onSubmit, event, mode }: EventModa
     location: '',
     start_time: '',
     end_time: '',
+    image_url: '',
     max_attendees: undefined,
     tags: [],
   });
@@ -36,6 +38,7 @@ export function EventModal({ isOpen, onClose, onSubmit, event, mode }: EventModa
         location: event.location || '',
         start_time: new Date(event.start_time).toISOString().slice(0, 16),
         end_time: new Date(event.end_time).toISOString().slice(0, 16),
+        image_url: event.image_url || '',
         max_attendees: event.max_attendees || undefined,
         tags: event.tags || [],
       });
@@ -50,6 +53,7 @@ export function EventModal({ isOpen, onClose, onSubmit, event, mode }: EventModa
         location: '',
         start_time: now.toISOString().slice(0, 16),
         end_time: oneHourLater.toISOString().slice(0, 16),
+        image_url: '',
         max_attendees: undefined,
         tags: [],
       });
@@ -162,6 +166,12 @@ export function EventModal({ isOpen, onClose, onSubmit, event, mode }: EventModa
             />
           </div>
 
+          {/* Event Image */}
+          <EventImageUploader
+            imageUrl={formData.image_url}
+            onImageUrlChange={(url) => setFormData({ ...formData, image_url: url })}
+          />
+
           {/* Date and Time */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -218,14 +228,14 @@ export function EventModal({ isOpen, onClose, onSubmit, event, mode }: EventModa
               onClick={onClose}
               className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-md hover:bg-gray-200 transition-colors"
             >
-              {t('common.cancel', { ns: 'common' })}
+              {t('form.cancel')}
             </button>
             <button
               type="submit"
               disabled={loading}
               className="flex-1 px-6 py-3 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? t('common.loading', { ns: 'common' }) : t('common.save', { ns: 'common' })}
+              {loading ? t('form.saving') : t('form.save')}
             </button>
           </div>
         </form>

@@ -13,7 +13,7 @@ export default function DormCalendarPage() {
   const { user, isLoaded } = useUser();
   const [events, setEvents] = useState<DormEventWithCreator[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'upcoming' | 'today'>('upcoming');
+  const [filter, setFilter] = useState<'all' | 'upcoming' | 'today' | 'going'>('upcoming');
   const [selectedEvent, setSelectedEvent] = useState<DormEventWithCreator | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -47,11 +47,20 @@ export default function DormCalendarPage() {
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
         url += `start_date=${today.toISOString()}&end_date=${tomorrow.toISOString()}`;
+      } else if (filter === 'going') {
+        url += 'mode=upcoming';
       }
 
       const response = await fetch(url);
       const data = await response.json();
-      setEvents(data.data || []);
+      
+      // Filter by going status if needed
+      let filteredEvents = data.data || [];
+      if (filter === 'going') {
+        filteredEvents = filteredEvents.filter((event: DormEventWithCreator) => event.user_status === 'going');
+      }
+      
+      setEvents(filteredEvents);
     } catch (error) {
       console.error('Error fetching events:', error);
     } finally {
@@ -63,7 +72,7 @@ export default function DormCalendarPage() {
     fetchEvents();
   }, [filter]);
 
-  const handleCreateEvent = async (payload: CreateEventPayload) => {
+  const handleCreateEvent = async (payload: CreateEventPayload | UpdateEventPayload) => {
     try {
       const response = await fetch('/api/events', {
         method: 'POST',
@@ -83,7 +92,7 @@ export default function DormCalendarPage() {
     }
   };
 
-  const handleUpdateEvent = async (payload: UpdateEventPayload) => {
+  const handleUpdateEvent = async (payload: CreateEventPayload | UpdateEventPayload) => {
     if (!selectedEvent) return;
 
     try {
@@ -145,6 +154,22 @@ export default function DormCalendarPage() {
         if (updatedEvent) {
           setSelectedEvent({ ...updatedEvent, user_status: status });
         }
+      }
+    } catch (error) {
+      console.error('Error updating attendance:', error);
+    }
+  };
+
+  const handleQuickRSVP = async (eventId: string, status: AttendeeStatus) => {
+    try {
+      const response = await fetch(`/api/events/${eventId}/attendance`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+
+      if (response.ok) {
+        await fetchEvents();
       }
     } catch (error) {
       console.error('Error updating attendance:', error);
@@ -217,6 +242,18 @@ export default function DormCalendarPage() {
           >
             {t('filters.today')}
           </button>
+          {isLoaded && user && (
+            <button
+              onClick={() => setFilter('going')}
+              className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                filter === 'going'
+                  ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {t('filters.going')}
+            </button>
+          )}
         </div>
 
         {/* Events Grid */}
@@ -249,6 +286,8 @@ export default function DormCalendarPage() {
                 key={event.id}
                 event={event}
                 onClick={() => handleEventClick(event)}
+                onRSVP={(status) => handleQuickRSVP(event.id, status)}
+                isAuthenticated={isLoaded && !!user}
               />
             ))}
           </div>

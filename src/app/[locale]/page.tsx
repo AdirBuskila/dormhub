@@ -153,6 +153,24 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </div>
       </section>
 
+      {/* New Resident Guide Banner */}
+      <Link
+        href={`/${locale}/tips/guide`}
+        className="block bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 hover:from-amber-500 hover:via-yellow-500 hover:to-amber-600 transition-all duration-300 transform hover:scale-[1.01] shadow-lg hover:shadow-xl animate-fade-in"
+      >
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center gap-3 py-4 text-center">
+            <span className="text-2xl animate-bounce">📖</span>
+            <span className="text-gray-900 font-bold text-base md:text-lg">
+              {t('newResidentBanner')}
+            </span>
+            <svg className="w-5 h-5 text-gray-900 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </div>
+        </div>
+      </Link>
+
       {/* Main Modules */}
       <section className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">

@@ -26,17 +26,20 @@
     "marketplace": "Marketplace",
     "tips": "Tips & Info",
     "businesses": "Local Businesses",
+    "hotDeals": "Hot Deals",
     "calendar": "Dorm Calendar",
     "about": "About",
     "contact": "Contact",
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "signOut": "Sign Out",
-    "profile": "Profile"
+    "profile": "Profile",
+    "manageBusiness": "Manage Business"
   },
   "home": {
     "title": "DormHub - Your Dorm Community Platform",
     "description": "Buy, sell, swap items and share tips with fellow dorm residents",
+    "newResidentBanner": "New to the dorms? Here's a complete guide for you! 📖",
     "hero": {
       "tagline": "All your problems, solved",
       "subtitle": "Marketplace, Tips, Events, Deals & More",
@@ -277,6 +280,23 @@
     "smartBuying": "Smart Buying",
     "smartBuyingDescription": "See all student discounts in one place"
   },
+  "hotDeals": {
+    "title": "Hot Deals",
+    "subtitle": "Limited-time offers from local businesses",
+    "description": "Grab these amazing deals before they're gone!",
+    "noDeals": "No hot deals right now",
+    "checkBackSoon": "Check back soon for new deals!",
+    "businessOwner": "Are you a business owner?",
+    "businessOwnerCTA": "Create hot deals to attract more customers!",
+    "createDeal": "Create Your Hot Deal",
+    "category": {
+      "restaurant": "Restaurant",
+      "minimarket": "Mini Market",
+      "bakery": "Bakery",
+      "supermarket": "Supermarket",
+      "other": "Other"
+    }
+  },
   "footer": {
     "about": "About",
     "privacy": "Privacy",
@@ -360,12 +380,19 @@
       "eventType": "Event Type",
       "location": "Location",
       "locationPlaceholder": "e.g. Dorm Lounge, Room 305",
+      "eventImage": "Event Image",
+      "uploadImage": "Click to upload or drag and drop",
       "startTime": "Start Time",
       "endTime": "End Time",
       "maxAttendees": "Max Attendees",
       "maxAttendeesPlaceholder": "Leave empty for unlimited",
       "tags": "Tags",
       "tagsPlaceholder": "Add tags (comma separated)",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "delete": "Delete",
+      "deleting": "Deleting...",
       "createSuccess": "Event created successfully!",
       "updateSuccess": "Event updated successfully!",
       "deleteSuccess": "Event deleted successfully!",
@@ -375,6 +402,7 @@
     },
     "attendance": {
       "going": "Going",
+      "goingPlural": "going",
       "interested": "Interested",
       "notGoing": "Not Going",
       "rsvp": "RSVP",
@@ -390,6 +418,7 @@
       "all": "All Events",
       "upcoming": "Upcoming",
       "today": "Today",
+      "going": "I'm Going",
       "thisWeek": "This Week",
       "thisMonth": "This Month"
     },
@@ -429,6 +458,22 @@
         "description": "Control your air conditioner remotely from your phone — turn it on before you get back from class!"
       }
     },
+    "calendar": {
+      "title": "Dorm Calendar",
+      "description": "Stay in the loop with the DormHub Calendar — it's the best way to keep up with parties, game nights, study sessions, and everything happening in the dorms.",
+      "point1": "Never miss out on the fun!",
+      "point2": "See who's attending and RSVP to events.",
+      "point3": "Check it regularly to stay connected with the community."
+    },
+    "cs24": {
+      "title": "CS24 — Your Study Buddy",
+      "description": "Another H.I.T student project that's perfect for your studies! CS24 (cs24.co.il) offers:",
+      "point1": "Free solved tests and quizzes",
+      "point2": "Course materials",
+      "point3": "Tutors — all in one place",
+      "credit": "Developed by Daniel Ziv",
+      "creditLink": "https://www.linkedin.com/in/daniel-ziv/"
+    },
     "lounge": {
       "title": "The Dorm Lounge (מועדון דיירים)",
       "description": "The lounge is open to everyone — it's the heart of the dorms!",
@@ -451,7 +496,7 @@
     },
     "cta": {
       "title": "Your Turn!",
-      "description": "What do you think should be added to this guide? Drop your ideas or tips — we'll include the best ones in the next version! 🙌",
+      "description": "Think there's something we missed in this guide? We'd love to hear from you! Share your ideas, tips, or suggestions — we'll include the best ones in the next version! 🙌",
       "button": "Share Your Tips"
     }
   }

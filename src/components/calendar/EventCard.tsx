@@ -8,6 +8,8 @@ import { format } from 'date-fns';
 interface EventCardProps {
   event: DormEventWithCreator;
   onClick?: () => void;
+  onRSVP?: (status: 'going') => void;
+  isAuthenticated?: boolean;
 }
 
 const EVENT_TYPE_COLORS: Record<EventType, { bg: string; text: string; border: string; icon: string }> = {
@@ -21,7 +23,7 @@ const EVENT_TYPE_COLORS: Record<EventType, { bg: string; text: string; border: s
   other: { bg: 'bg-gray-50', text: 'text-gray-700', border: 'border-gray-200', icon: '📅' },
 };
 
-export function EventCard({ event, onClick }: EventCardProps) {
+export function EventCard({ event, onClick, onRSVP, isAuthenticated }: EventCardProps) {
   const t = useTranslations('calendar');
   const colors = EVENT_TYPE_COLORS[event.event_type];
 
@@ -52,94 +54,131 @@ export function EventCard({ event, onClick }: EventCardProps) {
 
   return (
     <div
-      onClick={onClick}
       className={`
-        ${colors.bg} ${colors.border} border-2 rounded-lg p-4 cursor-pointer
+        ${colors.bg} ${colors.border} border-2 rounded-lg overflow-hidden cursor-pointer
         transition-all duration-200 hover:shadow-lg hover:-translate-y-1
         ${event.is_cancelled ? 'opacity-60' : ''}
         ${isOngoing ? 'ring-2 ring-green-500 ring-offset-2' : ''}
       `}
     >
-      {/* Header */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">{colors.icon}</span>
-          <div>
-            <h3 className={`font-bold text-lg ${colors.text}`}>
-              {event.title}
-            </h3>
-            <p className="text-xs text-gray-600">
-              {t(`eventType.${event.event_type}`)}
-            </p>
+      {/* Event Image */}
+      {event.image_url && event.image_url.trim() !== '' && (
+        <div 
+          className="w-full h-40 overflow-hidden"
+          onClick={onClick}
+        >
+          <img
+            src={event.image_url}
+            alt={event.title}
+            className="w-full h-full object-cover transition-transform duration-200 hover:scale-105"
+          />
+        </div>
+      )}
+
+      {/* Card Content */}
+      <div className="p-4" onClick={onClick}>
+        {/* Header */}
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">{colors.icon}</span>
+            <div>
+              <h3 className={`font-bold text-lg ${colors.text}`}>
+                {event.title}
+              </h3>
+              <p className="text-xs text-gray-600">
+                {t(`eventType.${event.event_type}`)}
+              </p>
+            </div>
           </div>
+          {event.is_cancelled && (
+            <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded">
+              {t('time.cancelled')}
+            </span>
+          )}
         </div>
-        {event.is_cancelled && (
-          <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-semibold rounded">
-            {t('time.cancelled')}
-          </span>
+
+        {/* Description */}
+        {event.description && (
+          <p className="text-sm text-gray-700 mb-3 line-clamp-2">
+            {event.description}
+          </p>
         )}
-      </div>
 
-      {/* Description */}
-      {event.description && (
-        <p className="text-sm text-gray-700 mb-3 line-clamp-2">
-          {event.description}
-        </p>
-      )}
-
-      {/* Date and Time */}
-      <div className="flex items-center gap-2 text-sm text-gray-700 mb-2">
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <span className="font-medium">
-          {formatDate(startDate)} {t('time.at')} {format(startDate, 'HH:mm')}
-        </span>
-      </div>
-
-      {/* Location */}
-      {event.location && (
-        <div className="flex items-center gap-2 text-sm text-gray-700 mb-3">
+        {/* Date and Time */}
+        <div className="flex items-center gap-2 text-sm text-gray-700 mb-2">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          <span>{event.location}</span>
-        </div>
-      )}
-
-      {/* Attendance Info */}
-      <div className="flex items-center justify-between pt-3 border-t border-gray-200">
-        <div className="flex items-center gap-2">
-          <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-          </svg>
-          <span className="text-sm font-medium text-gray-700">
-            {event.attendee_count} {t('attendance.going').toLowerCase()}
-            {event.max_attendees && ` / ${event.max_attendees}`}
+          <span className="font-medium">
+            {formatDate(startDate)} {t('time.at')} {format(startDate, 'HH:mm')}
           </span>
         </div>
 
-        {/* User Status Badge */}
-        {event.user_status && (
-          <span className={`
-            px-2 py-1 text-xs font-semibold rounded
-            ${event.user_status === 'going' ? 'bg-green-100 text-green-700' : ''}
-            ${event.user_status === 'interested' ? 'bg-blue-100 text-blue-700' : ''}
-            ${event.user_status === 'not_going' ? 'bg-gray-100 text-gray-700' : ''}
-          `}>
-            {t(`attendance.${event.user_status}`)}
-          </span>
+        {/* Location */}
+        {event.location && (
+          <div className="flex items-center gap-2 text-sm text-gray-700 mb-3">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            <span>{event.location}</span>
+          </div>
+        )}
+
+        {/* Attendance Info and RSVP Button */}
+        <div className="space-y-3 pt-3 border-t border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+              <span className="text-sm font-medium text-gray-700">
+                {event.attendee_count} {t('attendance.goingPlural')}
+                {event.max_attendees && ` / ${event.max_attendees}`}
+              </span>
+            </div>
+
+            {/* User Status Badge */}
+            {event.user_status && (
+              <span className={`
+                px-2 py-1 text-xs font-semibold rounded
+                ${event.user_status === 'going' ? 'bg-green-100 text-green-700' : ''}
+                ${event.user_status === 'interested' ? 'bg-blue-100 text-blue-700' : ''}
+                ${event.user_status === 'not_going' ? 'bg-gray-100 text-gray-700' : ''}
+              `}>
+                {t(`attendance.${event.user_status}`)}
+              </span>
+            )}
+          </div>
+
+          {/* RSVP Button */}
+          {isAuthenticated && onRSVP && !event.is_cancelled && !isPast && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onRSVP('going');
+              }}
+              className={`
+                w-full py-2.5 px-4 rounded-lg font-bold text-sm transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg
+                ${event.user_status === 'going'
+                  ? 'bg-green-100 text-green-700 border-2 border-green-300'
+                  : 'bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600'
+                }
+              `}
+            >
+              {event.user_status === 'going' ? '✅ מגיע' : 'מגיע 🔥'}
+            </button>
+          )}
+        </div>
+
+        {/* Status Indicator */}
+        {isOngoing && !event.is_cancelled && (
+          <div className="mt-3 flex items-center gap-2 text-green-700 bg-green-100 px-3 py-2 rounded-md">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-xs font-semibold uppercase">{t('time.started')} - Live Now!</span>
+          </div>
         )}
       </div>
-
-      {/* Status Indicator */}
-      {isOngoing && !event.is_cancelled && (
-        <div className="mt-3 flex items-center gap-2 text-green-700 bg-green-100 px-3 py-2 rounded-md">
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-xs font-semibold uppercase">{t('time.started')} - Live Now!</span>
-        </div>
-      )}
     </div>
   );
 }

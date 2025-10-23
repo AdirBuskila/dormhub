@@ -29,11 +29,14 @@ export function EventDetailsModal({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showFullImage, setShowFullImage] = useState(false);
 
   if (!isOpen || !event) return null;
 
   const startDate = new Date(event.start_time);
   const endDate = new Date(event.end_time);
+  const now = new Date();
+  const isPast = endDate < now;
   const isCreator = event.created_by === currentUserId;
   const isFull = event.max_attendees && event.attendee_count >= event.max_attendees;
 
@@ -60,8 +63,33 @@ export function EventDetailsModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 animate-scale-in">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <>
+      {/* Full Screen Image Modal */}
+      {showFullImage && event.image_url && event.image_url.trim() !== '' && (
+        <div 
+          className="fixed inset-0 z-[60] bg-black bg-opacity-95 flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setShowFullImage(false)}
+        >
+          <button
+            onClick={() => setShowFullImage(false)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
+          >
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <img
+            src={event.image_url}
+            alt={event.title}
+            className="max-w-full max-h-full object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+
+      {/* Event Details Modal */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 animate-scale-in">
+        <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="relative p-6 border-b border-gray-200">
           <button
@@ -94,6 +122,25 @@ export function EventDetailsModal({
 
         {/* Content */}
         <div className="p-6 space-y-6">
+          {/* Event Image */}
+          {event.image_url && event.image_url.trim() !== '' && (
+            <div 
+              className="rounded-lg overflow-hidden cursor-pointer group relative"
+              onClick={() => setShowFullImage(true)}
+            >
+              <img
+                src={event.image_url}
+                alt={event.title}
+                className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-transparent group-hover:bg-black/30 transition-all duration-300 flex items-center justify-center pointer-events-none">
+                <svg className="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                </svg>
+              </div>
+            </div>
+          )}
+
           {/* Description */}
           {event.description && (
             <div>
@@ -139,7 +186,7 @@ export function EventDetailsModal({
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
                 <span className="font-semibold text-gray-900">
-                  {event.attendee_count} {t('attendance.going').toLowerCase()}
+                  {event.attendee_count} {t('attendance.goingPlural')}
                   {event.max_attendees && ` / ${event.max_attendees}`}
                 </span>
               </div>
@@ -158,56 +205,22 @@ export function EventDetailsModal({
             </div>
           )}
 
-          {/* RSVP Buttons */}
-          {!event.is_cancelled && currentUserId && !isCreator && (
-            <div className="space-y-3">
-              <p className="text-sm font-medium text-gray-700">{t('attendance.rsvp')}</p>
-              <div className="grid grid-cols-3 gap-2">
-                <button
-                  onClick={() => handleRSVP('going')}
-                  disabled={loading || (isFull && event.user_status !== 'going')}
-                  className={`
-                    px-4 py-2 rounded-md font-medium transition-colors
-                    ${event.user_status === 'going' 
-                      ? 'bg-green-600 text-white' 
-                      : 'bg-green-100 text-green-700 hover:bg-green-200'}
-                    disabled:opacity-50 disabled:cursor-not-allowed
-                  `}
-                >
-                  {t('attendance.going')}
-                </button>
-                <button
-                  onClick={() => handleRSVP('interested')}
-                  disabled={loading}
-                  className={`
-                    px-4 py-2 rounded-md font-medium transition-colors
-                    ${event.user_status === 'interested' 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-blue-100 text-blue-700 hover:bg-blue-200'}
-                  `}
-                >
-                  {t('attendance.interested')}
-                </button>
-                <button
-                  onClick={() => handleRSVP('not_going')}
-                  disabled={loading}
-                  className={`
-                    px-4 py-2 rounded-md font-medium transition-colors
-                    ${event.user_status === 'not_going' 
-                      ? 'bg-gray-600 text-white' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}
-                  `}
-                >
-                  {t('attendance.notGoing')}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {!currentUserId && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-              <p className="text-blue-700">{t('attendance.signInToRsvp')}</p>
-            </div>
+          {/* RSVP Button */}
+          {!event.is_cancelled && currentUserId && !isCreator && !isPast && onRSVP && (
+            <button
+              onClick={() => handleRSVP('going')}
+              disabled={loading || (isFull && event.user_status !== 'going')}
+              className={`
+                w-full py-3 px-4 rounded-lg font-bold text-base transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-md hover:shadow-lg
+                ${event.user_status === 'going'
+                  ? 'bg-green-100 text-green-700 border-2 border-green-300'
+                  : 'bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600'
+                }
+                disabled:opacity-50 disabled:cursor-not-allowed
+              `}
+            >
+              {event.user_status === 'going' ? '✅ מגיע' : 'מגיע 🔥'}
+            </button>
           )}
 
           {/* Creator Actions */}
@@ -237,14 +250,14 @@ export function EventDetailsModal({
                     onClick={() => setShowDeleteConfirm(false)}
                     className="px-4 py-2 bg-gray-100 text-gray-700 font-medium rounded-md hover:bg-gray-200 transition-colors"
                   >
-                    {t('common.cancel', { ns: 'common' })}
+                    {t('form.cancel')}
                   </button>
                   <button
                     onClick={handleDelete}
                     disabled={loading}
                     className="px-4 py-2 bg-red-600 text-white font-medium rounded-md hover:bg-red-700 transition-colors disabled:opacity-50"
                   >
-                    {loading ? t('common.loading', { ns: 'common' }) : t('common.delete', { ns: 'common' })}
+                    {loading ? t('form.deleting') : t('form.delete')}
                   </button>
                 </>
               )}
@@ -253,6 +266,7 @@ export function EventDetailsModal({
         </div>
       </div>
     </div>
+    </>
   );
 }
 

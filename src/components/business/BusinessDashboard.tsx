@@ -4,6 +4,7 @@ import { useState } from 'react';
 import BusinessHoursEditor from './BusinessHoursEditor';
 import DiscountsEditor from './DiscountsEditor';
 import BusinessInfoEditor from './BusinessInfoEditor';
+import HotDealsEditor from './HotDealsEditor';
 
 interface BusinessHour {
   id: string;
@@ -54,7 +55,7 @@ interface BusinessDashboardProps {
 }
 
 export default function BusinessDashboard({ business, userData }: BusinessDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'info' | 'hours' | 'discounts'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'hours' | 'discounts' | 'hotdeals'>('info');
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleUpdate = () => {
@@ -117,6 +118,17 @@ export default function BusinessDashboard({ business, userData }: BusinessDashbo
             >
               Student Discounts
             </button>
+            <button
+              onClick={() => setActiveTab('hotdeals')}
+              className={`${
+                activeTab === 'hotdeals'
+                  ? 'border-orange-500 text-orange-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center gap-1`}
+            >
+              <span className="text-lg">🔥</span>
+              Hot Deals
+            </button>
           </nav>
         </div>
 
@@ -141,6 +153,10 @@ export default function BusinessDashboard({ business, userData }: BusinessDashbo
               businessId={business.id}
               initialDiscounts={business.student_discounts}
             />
+          )}
+
+          {activeTab === 'hotdeals' && (
+            <HotDealsEditor businessId={business.id} />
           )}
         </div>
       </div>

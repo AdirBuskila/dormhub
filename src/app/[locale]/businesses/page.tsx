@@ -152,7 +152,7 @@ function BusinessCard({ business, index = 0, isExpanded = false, onToggle }: Bus
 
         {/* Today's hours */}
         <div className="p-4 flex-shrink-0">
-          <div className="flex items-center justify-between text-sm">
+          <div className="flex items-center justify-start text-sm">
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -169,7 +169,7 @@ function BusinessCard({ business, index = 0, isExpanded = false, onToggle }: Bus
             </div>
           </div>
           {todayHours && (
-            <div className="mt-2 text-sm">
+            <div className="mt-2 text-sm flex items-center gap-2">
               {todayHours.is_closed || !todayHours.opens_at ? (
                 <span className="text-red-600 font-medium">{t('closed')}</span>
               ) : (
@@ -277,8 +277,8 @@ function BusinessCard({ business, index = 0, isExpanded = false, onToggle }: Bus
                     isToday ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'
                   }`}
                 >
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 flex-1">
                       <span className={`font-medium ${isToday ? 'text-blue-700' : 'text-gray-700'}`}>
                         {t(`days.${hours.day_of_week}`)}
                       </span>
@@ -294,13 +294,13 @@ function BusinessCard({ business, index = 0, isExpanded = false, onToggle }: Bus
                     {hours.is_closed || !hours.opens_at ? (
                       <span className="text-red-600 font-medium">{t('closed')}</span>
                     ) : (
-                      <span className="text-gray-600">
+                      <span className="text-gray-600 whitespace-nowrap">
                         {formatTime(hours.opens_at)} - {formatTime(hours.closes_at)}
                       </span>
                     )}
                   </div>
                   {hours.notes && (
-                    <div className="mt-1 text-xs text-gray-500 italic pl-0">
+                    <div className="mt-1 text-xs text-gray-500 italic">
                       {hours.notes}
                     </div>
                   )}
@@ -489,22 +489,22 @@ export default function BusinessesPage() {
             {/* Expanded card overlay (mobile) */}
             {expandedId && (
               <div className="md:hidden fixed inset-0 bg-black/50 z-50 overflow-y-auto" onClick={() => setExpandedId(null)}>
-                <div className="min-h-screen p-4 flex items-start justify-center pt-20">
+                <div className="min-h-screen p-4 flex items-start justify-center pt-20 pb-8">
                   <div className="w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
+                    <BusinessCard
+                      business={businesses.find(b => b.id === expandedId)!}
+                      isExpanded={true}
+                      onToggle={() => setExpandedId(null)}
+                    />
                     <button
                       onClick={() => setExpandedId(null)}
-                      className="mb-4 w-full bg-white text-gray-700 px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 shadow-lg"
+                      className="mt-4 w-full bg-white text-gray-700 px-4 py-3 rounded-lg font-medium flex items-center justify-center gap-2 shadow-lg hover:bg-gray-50 transition-colors"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
                       {t('close') || 'Close'}
                     </button>
-                    <BusinessCard
-                      business={businesses.find(b => b.id === expandedId)!}
-                      isExpanded={true}
-                      onToggle={() => setExpandedId(null)}
-                    />
                   </div>
                 </div>
               </div>
